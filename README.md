@@ -42,7 +42,7 @@ Chocolatey is recommended for managing Node.js versions.
 
 ```powershell
 # Download and install Chocolatey (Run in PowerShell)
-powershell -c "irm [https://community.chocolatey.org/install.ps1](https://community.chocolatey.org/install.ps1)|iex"
+powershell -c "irm https://community.chocolatey.org/install.ps1 | iex"
 
 # Download and install Node.js (v24.11.0 is the current LTS)
 choco install nodejs --version="24.11.0"
