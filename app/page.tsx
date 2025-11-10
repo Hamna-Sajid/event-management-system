@@ -1,13 +1,17 @@
-'use client';
-import { usePathname } from 'next/navigation';
-import LandingPage from './landing_page/page';
-import SignInPage from './signin/page';
-import SignUpPage from './signup/page';
+import Header from "@/components/header"
+import Hero from "@/components/hero"
+import UpcomingEvents from "@/components/upcoming-events"
+import CallToAction from "@/components/call-to-action"
+import Footer from "@/components/footer"
 
-export default function Page() {
-    const pathname = usePathname();
-
-    if (pathname === '/signin') return <SignInPage />;
-    if (pathname === '/signup') return <SignUpPage />;
-    return <LandingPage />;
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-gradient-to-b from-[#110205] via-[#1a0509] to-[#110205]">
+      <Header />
+      <Hero />
+      <UpcomingEvents />
+      <CallToAction />
+      <Footer />
+    </main>
+  )
 }
