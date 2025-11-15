@@ -74,11 +74,39 @@ All commits must adhere to the **Conventional Commits** specification. This ensu
 
 The Pull Request is the official gateway for merging code into `main`.
 
+### PR Workflow
+
 1. **Submission:** Push your feature branch to the remote repository and open a Pull Request targeting the `main` branch.
-2. **Review:** A review from a designated team member is mandatory.
-3. **Approval:** The reviewer/tester must verify functionality and provide explicit approval.
-4. **Merging:** Once approved, the feature branch must be merged into `main` using the **squash and merge** option. This ensures that the feature's entire history is consolidated into a single, clean commit on `main`.
-5. **Cleanup:** The feature branch must be deleted immediately after a successful merge.
+2. **Automated Checks:** GitHub Actions will automatically run:
+   - ESLint (code quality)
+   - Build verification
+   - Test suite (all tests must pass)
+3. **Review:** A review from a designated team member is mandatory.
+4. **Approval:** The reviewer/tester must verify functionality and provide explicit approval.
+5. **Merging:** Once approved and all checks pass, the feature branch must be merged into `main` using the **squash and merge** option. This ensures that the feature's entire history is consolidated into a single, clean commit on `main`.
+6. **Cleanup:** The feature branch must be deleted immediately after a successful merge.
+
+### Testing Requirements
+
+**All new features and bug fixes must include tests.** This is mandatory for PR approval.
+
+- **New functions in `lib/`** require unit tests
+- **New React components in `components/`** require component tests
+- **Bug fixes** must include a regression test
+
+Refer to **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** for detailed testing instructions, templates, and examples.
+
+### Pull Request Template
+
+When creating a Pull Request on GitHub, a template will automatically populate with the following sections:
+
+- Description of changes
+- Type of change (feature, bug fix, etc.)
+- Testing checklist
+- Test coverage details
+- Related issues
+
+The template is located at `.github/pull_request_template.md` and will appear automatically when you create a new PR.
 
 ---
 
