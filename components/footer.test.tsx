@@ -95,7 +95,7 @@ describe('Footer', () => {
   })
 
   it('should render contact icons', () => {
-    const { container } = render(<Footer />)
+    render(<Footer />)
     
     // Icons are rendered as SVGs from lucide-react
     const contactSection = screen.getByText('Contact').parentElement
