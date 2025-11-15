@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Calendar, MapPin, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -48,10 +49,11 @@ export default function UpcomingEvents() {
             <div key={event.id} className="glass rounded-xl overflow-hidden glass-hover group">
               {/* Event Image */}
               <div className="relative h-40 overflow-hidden">
-                <img
+                <Image
                   src={event.image || "/placeholder.svg"}
                   alt={event.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#110205] to-transparent opacity-60" />
               </div>
