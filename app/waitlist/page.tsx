@@ -134,7 +134,7 @@ export default function WaitlistThankYou() {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto text-[rgba(255,255,255,0.5)]"
               >
                 Back to Home
               </Button>
