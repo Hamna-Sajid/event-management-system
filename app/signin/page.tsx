@@ -1,43 +1,140 @@
-'use client';
-import { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { useRouter } from 'next/navigation';
-import { app } from '../../firebase';
+'use client'
 
-export default function SignInPage() {
-    const auth = getAuth(app);
-    const router = useRouter();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { app } from '../../firebase'
+import { Eye, EyeOff } from 'lucide-react'
 
-    const handleSignIn = async () => {
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            router.push('/create_society');
-        } catch (err: any) {
-            setError(err.message);
-        }
-    };
+export default function SignIn() {
+  const auth = getAuth(app)
+  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
 
-    return (
-        <div style={{ padding: 20 }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>Sign In Page</h1>
-            <h2>This is the sign-in page</h2>
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-            />
-            <button onClick={handleSignIn}>Sign In</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+    
+    try {
+      await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      router.push('/create-society')
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+      {/* Central Glassmorphic Card */}
+      <div className="w-full max-w-md glass rounded-xl p-8 space-y-8">
+        {/* Logo and Title */}
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+            <span className="text-white font-bold text-2xl">IE</span>
+          </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
+            <p className="text-[rgba(255,255,255,0.6)]">Sign in to your IEMS account</p>
+          </div>
         </div>
-    );
+
+        {/* Sign In Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Error Message */}
+          {error && (
+            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
+
+          {/* Email Field */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+              Email Address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+            />
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(255,255,255,0.5)] hover:text-white transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Forgot Password Link */}
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-[#d02243] hover:text-[#aa1c37] transition-colors font-medium"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Sign In Button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2.5 px-4 bg-[#d02243] hover:bg-[#aa1c37] disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200"
+          >
+            {isLoading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        {/* Sign Up Link */}
+        <div className="text-center">
+          <p className="text-[rgba(255,255,255,0.6)]">
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-[#d02243] hover:text-[#aa1c37] font-semibold transition-colors">
+              Sign Up
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
