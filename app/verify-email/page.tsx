@@ -47,11 +47,12 @@ export default function VerifyEmail() {
         await sendEmailVerification(user)
         setSuccess('Verification email sent! Please check your inbox.')
       }
-    } catch (err: any) {
-      if (err.code === 'auth/too-many-requests') {
+    } catch (err) {
+      const error = err as { code?: string; message?: string }
+      if (error.code === 'auth/too-many-requests') {
         setError('Too many requests. Please wait a few minutes before trying again.')
       } else {
-        setError(err.message)
+        setError(error.message || 'An error occurred')
       }
     } finally {
       setIsLoading(false)
@@ -77,8 +78,9 @@ export default function VerifyEmail() {
           setError('Email not verified yet. Please check your inbox and click the verification link.')
         }
       }
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      const error = err as { message?: string }
+      setError(error.message || 'An error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -115,7 +117,7 @@ export default function VerifyEmail() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Verify Your Email</h1>
             <p className="text-[rgba(255,255,255,0.6)] text-sm">
-              We've sent a verification email to
+              We&apos;ve sent a verification email to
             </p>
             <p className="text-white font-medium mt-1">{userEmail}</p>
           </div>
@@ -134,7 +136,7 @@ export default function VerifyEmail() {
             </li>
             <li className="flex gap-2">
               <span className="text-[#d02243] font-bold">3.</span>
-              <span>Return to this page and click "I've Verified My Email"</span>
+              <span>Return to this page and click &quot;I&apos;ve Verified My Email&quot;</span>
             </li>
           </ol>
         </div>
@@ -178,10 +180,11 @@ export default function VerifyEmail() {
         {/* Help Text */}
         <div className="text-center">
           <p className="text-xs text-[rgba(255,255,255,0.5)]">
-            Didn't receive the email? Check your spam folder or click resend.
+            Didn&apos;t receive the email? Check your spam folder or click resend.
           </p>
         </div>
       </div>
     </div>
   )
 }
+

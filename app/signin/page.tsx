@@ -4,7 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { app } from '../../firebase'
+import { app, firestore } from '../../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignIn() {
@@ -29,10 +30,24 @@ export default function SignIn() {
     setIsLoading(true)
     
     try {
-      await signInWithEmailAndPassword(auth, formData.email, formData.password)
-      router.push('/create-society')
-    } catch (err: any) {
-      setError(err.message)
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password)
+      
+      // Get user privilege from Firestore
+      const userDoc = await getDoc(doc(firestore, 'users', userCredential.user.uid))
+      const userData = userDoc.data()
+      const privilege = userData?.privilege ?? 0
+      
+      // Route based on privilege level
+      if (privilege >= 2) {
+        // Admin: Route to create society
+        router.push('/create-society')
+      } else {
+        // Normal user: Route to waitlist page
+        router.push('/waitlist')
+      }
+    } catch (err) {
+      const error = err as { message?: string }
+      setError(error.message || 'An error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -128,7 +143,7 @@ export default function SignIn() {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-[rgba(255,255,255,0.6)]">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-[#d02243] hover:text-[#aa1c37] font-semibold transition-colors">
               Sign Up
             </Link>
@@ -138,3 +153,4 @@ export default function SignIn() {
     </div>
   )
 }
+

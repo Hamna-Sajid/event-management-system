@@ -58,10 +58,11 @@ export default function SignUp() {
       // Send verification email
       await sendEmailVerification(userCredential.user)
       
-      // Redirect to verification page
-      router.push('/verify-email')
-    } catch (err: any) {
-      setError(err.message)
+      // Redirect to waitlist thank you page
+      router.push('/waitlist')
+    } catch (err) {
+      const error = err as { message?: string }
+      setError(error.message || 'An error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -207,3 +208,4 @@ export default function SignUp() {
     </div>
   )
 }
+

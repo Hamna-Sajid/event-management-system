@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 export default function Hero() {
   return (
@@ -9,7 +10,7 @@ export default function Hero() {
       <div className="max-w-4xl mx-auto text-center">
         {/* Badge */}
         <div className="inline-block mb-8 px-4 py-2 glass rounded-full">
-          <span className="text-sm text-[rgba(255,255,255,0.8)]">✨ Discover Premium Event Experiences</span>
+          <span className="text-sm text-[rgba(255,255,255,0.8)]">✨ Coming Soon to IBA</span>
         </div>
 
         {/* Main Headline */}
@@ -20,8 +21,8 @@ export default function Hero() {
 
         {/* Subheadline */}
         <p className="text-lg md:text-xl text-[rgba(255,255,255,0.7)] mb-12 max-w-2xl mx-auto leading-relaxed">
-          Experience curated events, networking opportunities, and unforgettable moments. Manage your event journey
-          seamlessly with IEMS.
+          Discover events, connect with societies, and manage your campus experience all in one place. 
+          Join the waitlist for early access.
         </p>
 
         {/* Hero Card with Glassmorphism */}
@@ -29,38 +30,40 @@ export default function Hero() {
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div>
               <div className="text-3xl font-bold text-[#d02243] mb-2">500+</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Events Hosted</p>
+              <p className="text-sm text-[rgba(255,255,255,0.6)]">Events Annually</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">50K+</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Active Members</p>
+              <div className="text-3xl font-bold text-[#d02243] mb-2">50+</div>
+              <p className="text-sm text-[rgba(255,255,255,0.6)]">Active Societies</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">100%</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Satisfaction</p>
+              <div className="text-3xl font-bold text-[#d02243] mb-2">5K+</div>
+              <p className="text-sm text-[rgba(255,255,255,0.6)]">IBA Students</p>
             </div>
           </div>
 
           <p className="text-[rgba(255,255,255,0.8)] mb-6">
-            Join thousands of professionals and enthusiasts discovering exceptional events through our intelligent
-            platform.
+            Be among the first to experience a unified platform for discovering and managing all IBA events.
           </p>
 
-          <Button className="w-full bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-lg">
-            Explore Events Now
-            <ArrowRight size={20} className="ml-2" />
-          </Button>
+          <Link href="/signup">
+            <Button className="w-full bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-lg">
+              Join Waitlist
+              <ArrowRight size={20} className="ml-2" />
+            </Button>
+          </Link>
         </div>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            variant="outline"
-            className="border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
-          >
-            Learn More
-          </Button>
-          <Button className="bg-[#d02243] hover:bg-[#aa1c37] text-white">Get Started</Button>
+          <Link href="/signin">
+            <Button
+              variant="outline"
+              className="border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent w-full sm:w-auto"
+            >
+              Already have an account?
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
