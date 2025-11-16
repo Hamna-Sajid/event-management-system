@@ -1,31 +1,24 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import CallToAction from './call-to-action'
 
 describe('CallToAction', () => {
   it('should render the main headline', () => {
     render(<CallToAction />)
     
-    expect(screen.getByText(/Ready to Experience IBA Events/i)).toBeInTheDocument()
+    expect(screen.getByText(/Ready to Transform Your IBA Experience/i)).toBeInTheDocument()
   })
 
   it('should render the description text', () => {
     render(<CallToAction />)
     
-    expect(screen.getByText(/Join our community of professionals and enthusiasts/i)).toBeInTheDocument()
+    expect(screen.getByText(/Join the waitlist to get early access/i)).toBeInTheDocument()
   })
 
-  it('should render Create Account button', () => {
+  it('should render Join Waitlist Now button', () => {
     render(<CallToAction />)
     
-    expect(screen.getByRole('button', { name: /Create Account/i })).toBeInTheDocument()
-  })
-
-  it('should render Browse Events button', () => {
-    render(<CallToAction />)
-    
-    expect(screen.getByRole('button', { name: /Browse Events/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Join Waitlist Now/i })).toBeInTheDocument()
   })
 
   it('should display trust badges', () => {
@@ -33,7 +26,7 @@ describe('CallToAction', () => {
     
     expect(screen.getByText(/No credit card required/i)).toBeInTheDocument()
     expect(screen.getByText(/Free to join/i)).toBeInTheDocument()
-    expect(screen.getByText(/Instant access/i)).toBeInTheDocument()
+    expect(screen.getByText(/Early access guaranteed/i)).toBeInTheDocument()
   })
 
   it('should render sparkles icon', () => {
@@ -43,24 +36,11 @@ describe('CallToAction', () => {
     expect(iconContainer).toBeInTheDocument()
   })
 
-  it('should handle Create Account button click', async () => {
-    const user = userEvent.setup()
-    render(<CallToAction />)
+  it('should have Join Waitlist link pointing to signup', () => {
+    const { container } = render(<CallToAction />)
     
-    const createAccountButton = screen.getByRole('button', { name: /Create Account/i })
-    await user.click(createAccountButton)
-    
-    expect(createAccountButton).toBeInTheDocument()
-  })
-
-  it('should handle Browse Events button click', async () => {
-    const user = userEvent.setup()
-    render(<CallToAction />)
-    
-    const browseEventsButton = screen.getByRole('button', { name: /Browse Events/i })
-    await user.click(browseEventsButton)
-    
-    expect(browseEventsButton).toBeInTheDocument()
+    const link = container.querySelector('a[href="/signup"]')
+    expect(link).toBeInTheDocument()
   })
 
   it('should apply glassmorphism effect to main container', () => {
@@ -70,24 +50,20 @@ describe('CallToAction', () => {
     expect(glassCard).toHaveClass('glass-hover', 'rounded-2xl')
   })
 
-  it('should apply correct button variants', () => {
+  it('should apply correct button styling', () => {
     render(<CallToAction />)
     
-    const createAccountButton = screen.getByRole('button', { name: /Create Account/i })
-    const browseEventsButton = screen.getByRole('button', { name: /Browse Events/i })
+    const waitlistButton = screen.getByRole('button', { name: /Join Waitlist Now/i })
     
-    expect(createAccountButton).toHaveClass('bg-[#d02243]')
-    expect(browseEventsButton).toHaveClass('border-[rgba(255,255,255,0.2)]')
+    expect(waitlistButton).toHaveClass('bg-[#d02243]')
   })
 
-  it('should have large button sizes', () => {
+  it('should have large button size', () => {
     render(<CallToAction />)
     
-    const createAccountButton = screen.getByRole('button', { name: /Create Account/i })
-    const browseEventsButton = screen.getByRole('button', { name: /Browse Events/i })
+    const waitlistButton = screen.getByRole('button', { name: /Join Waitlist Now/i })
     
-    expect(createAccountButton).toHaveClass('py-6')
-    expect(browseEventsButton).toHaveClass('py-6')
+    expect(waitlistButton).toHaveClass('py-6')
   })
 
   it('should center align content', () => {
@@ -97,3 +73,4 @@ describe('CallToAction', () => {
     expect(mainDiv).toBeInTheDocument()
   })
 })
+

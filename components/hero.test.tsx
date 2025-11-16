@@ -1,6 +1,5 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import Hero from './hero'
 
 describe('Hero', () => {
@@ -8,70 +7,60 @@ describe('Hero', () => {
     render(<Hero />)
     
     expect(screen.getByText(/Your Gateway to/i)).toBeInTheDocument()
-    expect(screen.getByText(/IBA Events/i)).toBeInTheDocument()
+    // Use getAllByText since "IBA Events" appears in both the headline and description
+    const ibaEventsElements = screen.getAllByText(/IBA Events/i)
+    expect(ibaEventsElements.length).toBeGreaterThan(0)
   })
 
-  it('should render the badge with discovery text', () => {
+  it('should render the badge with coming soon text', () => {
     render(<Hero />)
     
-    expect(screen.getByText(/Discover Premium Event Experiences/i)).toBeInTheDocument()
+    expect(screen.getByText(/Coming Soon to IBA/i)).toBeInTheDocument()
   })
 
   it('should render the subheadline description', () => {
     render(<Hero />)
     
-    expect(screen.getByText(/Experience curated events, networking opportunities/i)).toBeInTheDocument()
+    expect(screen.getByText(/Discover events, connect with societies/i)).toBeInTheDocument()
   })
 
   it('should display statistics correctly', () => {
     render(<Hero />)
     
     expect(screen.getByText('500+')).toBeInTheDocument()
-    expect(screen.getByText('Events Hosted')).toBeInTheDocument()
+    expect(screen.getByText('Events Annually')).toBeInTheDocument()
     
-    expect(screen.getByText('50K+')).toBeInTheDocument()
-    expect(screen.getByText('Active Members')).toBeInTheDocument()
+    expect(screen.getByText('50+')).toBeInTheDocument()
+    expect(screen.getByText('Active Societies')).toBeInTheDocument()
     
-    expect(screen.getByText('100%')).toBeInTheDocument()
-    expect(screen.getByText('Satisfaction')).toBeInTheDocument()
+    expect(screen.getByText('5K+')).toBeInTheDocument()
+    expect(screen.getByText('IBA Students')).toBeInTheDocument()
   })
 
-  it('should render all call-to-action buttons', () => {
+  it('should render Join Waitlist button', () => {
     render(<Hero />)
     
-    expect(screen.getByRole('button', { name: /Explore Events Now/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Learn More/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Get Started/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Join Waitlist/i })).toBeInTheDocument()
   })
 
-  it('should handle Explore Events button click', async () => {
-    const user = userEvent.setup()
+  it('should render Already have an account button', () => {
     render(<Hero />)
     
-    const exploreButton = screen.getByRole('button', { name: /Explore Events Now/i })
-    await user.click(exploreButton)
-    
-    expect(exploreButton).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Already have an account/i })).toBeInTheDocument()
   })
 
-  it('should handle Learn More button click', async () => {
-    const user = userEvent.setup()
-    render(<Hero />)
+  it('should have Join Waitlist link pointing to signup', () => {
+    const { container } = render(<Hero />)
     
-    const learnMoreButton = screen.getByRole('button', { name: /Learn More/i })
-    await user.click(learnMoreButton)
-    
-    expect(learnMoreButton).toBeInTheDocument()
+    const links = container.querySelectorAll('a[href="/signup"]')
+    expect(links.length).toBeGreaterThan(0)
   })
 
-  it('should handle Get Started button click', async () => {
-    const user = userEvent.setup()
-    render(<Hero />)
+  it('should have signin link', () => {
+    const { container } = render(<Hero />)
     
-    const getStartedButton = screen.getByRole('button', { name: /Get Started/i })
-    await user.click(getStartedButton)
-    
-    expect(getStartedButton).toBeInTheDocument()
+    const link = container.querySelector('a[href="/signin"]')
+    expect(link).toBeInTheDocument()
   })
 
   it('should apply glassmorphism styling to hero card', () => {
@@ -83,10 +72,9 @@ describe('Hero', () => {
     expect(heroCard).toHaveClass('glass-hover')
   })
 
-  it('should render arrow icon in primary CTA', () => {
+  it('should render early access message', () => {
     render(<Hero />)
     
-    const exploreButton = screen.getByRole('button', { name: /Explore Events Now/i })
-    expect(exploreButton).toBeInTheDocument()
+    expect(screen.getByText(/Be among the first to experience/i)).toBeInTheDocument()
   })
 })
