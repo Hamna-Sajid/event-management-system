@@ -1,9 +1,12 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
 
 export default function CallToAction() {
+  const router = useRouter()
+
   return (
     <section className="py-20 px-6">
       <div className="max-w-4xl mx-auto">
@@ -24,7 +27,11 @@ export default function CallToAction() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-base">
+            <Button 
+              size="lg" 
+              className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-base"
+              onClick={() => router.push('/signup')}
+            >
               Create Account
               <ArrowRight size={20} className="ml-2" />
             </Button>
