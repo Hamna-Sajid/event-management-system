@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import LandingPage from './landing_page/page';
+import LandingPage from './landing-page/page';
 import SignInPage from './signin/page';
 import SignUpPage from './signup/page';
 
