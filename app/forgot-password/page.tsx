@@ -23,13 +23,14 @@ export default function ForgotPassword() {
       await sendPasswordResetEmail(auth, email)
       setSuccess(true)
       setEmail('')
-    } catch (err: any) {
-      if (err.code === 'auth/user-not-found') {
+    } catch (err) {
+      const error = err as { code?: string; message?: string }
+      if (error.code === 'auth/user-not-found') {
         setError('No account found with this email address.')
-      } else if (err.code === 'auth/invalid-email') {
+      } else if (error.code === 'auth/invalid-email') {
         setError('Please enter a valid email address.')
       } else {
-        setError(err.message)
+        setError(error.message || 'An error occurred')
       }
     } finally {
       setIsLoading(false)
@@ -48,7 +49,7 @@ export default function ForgotPassword() {
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Reset Password</h1>
             <p className="text-[rgba(255,255,255,0.6)]">
-              Enter your email and we'll send you a link to reset your password
+              Enter your email and we&apos;ll send you a link to reset your password
             </p>
           </div>
         </div>
