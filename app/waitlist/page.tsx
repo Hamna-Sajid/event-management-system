@@ -1,10 +1,55 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import { app, firestore } from '../../firebase'
 import { CheckCircle2, Mail, Bell, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function WaitlistThankYou() {
+  const router = useRouter()
+  const [userName, setUserName] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const auth = getAuth(app)
+    
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        router.push('/signin')
+        return
+      }
+
+      try {
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(firestore, 'users', user.uid))
+        if (userDoc.exists()) {
+          const userData = userDoc.data()
+          setUserName(userData.fullName || user.email?.split('@')[0] || 'there')
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error)
+        setUserName(user.email?.split('@')[0] || 'there')
+      } finally {
+        setIsLoading(false)
+      }
+    })
+
+    return () => unsubscribe()
+  }, [router])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
+        <div className="glass rounded-lg p-8">
+          <div className="text-white text-lg">Loading...</div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
@@ -20,9 +65,12 @@ export default function WaitlistThankYou() {
           {/* Heading */}
           <div className="space-y-3">
             <h1 className="text-3xl md:text-4xl font-bold text-white">
-              You&apos;re on the Waitlist!
+              Hey {userName}!
             </h1>
             <p className="text-lg text-[rgba(255,255,255,0.7)]">
+              You&apos;re on the Waitlist
+            </p>
+            <p className="text-sm text-[rgba(255,255,255,0.5)]">
               Thank you for joining the IBA Event Management System
             </p>
           </div>
