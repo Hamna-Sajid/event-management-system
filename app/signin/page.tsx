@@ -39,8 +39,8 @@ export default function SignIn() {
       
       // Route based on privilege level
       if (privilege >= 2) {
-        // Admin: Route to create society
-        router.push('/create-society')
+        // Admin: Route to admin dashboard
+        router.push('/admin')
       } else {
         // Normal user: Route to waitlist page
         router.push('/waitlist')

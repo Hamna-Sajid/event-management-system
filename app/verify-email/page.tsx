@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged, sendEmailVerification } from 'firebase/auth'
-import { app } from '../../firebase'
+import { doc, updateDoc, getDoc } from 'firebase/firestore'
+import { app, firestore } from '../../firebase'
 import { Mail, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default function VerifyEmail() {
@@ -16,7 +17,7 @@ export default function VerifyEmail() {
   const [isVerified, setIsVerified] = useState(false)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         // No user logged in, redirect to signup
         router.push('/signup')
@@ -25,10 +26,27 @@ export default function VerifyEmail() {
         setIsVerified(user.emailVerified)
         
         if (user.emailVerified) {
-          // Email already verified, redirect to create society
-          setTimeout(() => {
-            router.push('/create-society')
-          }, 2000)
+          // Email already verified, check privilege and redirect accordingly
+          try {
+            const userDocRef = doc(firestore, 'users', user.uid)
+            const userDoc = await getDoc(userDocRef)
+            const userData = userDoc.data()
+            const privilege = userData?.privilege ?? 0
+
+            setTimeout(() => {
+              if (privilege >= 2) {
+                router.push('/admin')
+              } else {
+                router.push('/waitlist')
+              }
+            }, 2000)
+          } catch (error) {
+            console.error('Error fetching user data:', error)
+            // Default to waitlist if there's an error
+            setTimeout(() => {
+              router.push('/waitlist')
+            }, 2000)
+          }
         }
       }
     })
@@ -69,10 +87,26 @@ export default function VerifyEmail() {
       if (user) {
         await user.reload()
         if (user.emailVerified) {
+          // Update emailVerified status in Firestore
+          const userDocRef = doc(firestore, 'users', user.uid)
+          await updateDoc(userDocRef, {
+            emailVerified: true
+          })
+          
+          // Get user privilege to determine redirect
+          const userDoc = await getDoc(userDocRef)
+          const userData = userDoc.data()
+          const privilege = userData?.privilege ?? 0
+
           setIsVerified(true)
           setSuccess('Email verified successfully! Redirecting...')
+          
           setTimeout(() => {
-            router.push('/create-society')
+            if (privilege >= 2) {
+              router.push('/admin')
+            } else {
+              router.push('/waitlist')
+            }
           }, 2000)
         } else {
           setError('Email not verified yet. Please check your inbox and click the verification link.')
@@ -97,7 +131,7 @@ export default function VerifyEmail() {
             <div className="text-center">
               <h1 className="text-2xl font-bold text-white mb-2">Email Verified!</h1>
               <p className="text-[rgba(255,255,255,0.6)]">
-                Redirecting you to complete your profile...
+                Redirecting you...
               </p>
             </div>
           </div>
