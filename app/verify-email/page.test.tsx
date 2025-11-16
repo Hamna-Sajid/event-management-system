@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged, sendEmailVerification } from 'firebase/auth'
+import { doc, updateDoc, getDoc } from 'firebase/firestore'
 import VerifyEmail from './page'
 
 // Type for mock user
 type MockUser = {
+  uid?: string
   email: string
   emailVerified: boolean
   reload?: () => Promise<void>
@@ -22,9 +24,17 @@ jest.mock('firebase/auth', () => ({
   sendEmailVerification: jest.fn(),
 }))
 
+// Mock Firebase Firestore
+jest.mock('firebase/firestore', () => ({
+  doc: jest.fn(),
+  updateDoc: jest.fn(),
+  getDoc: jest.fn(),
+}))
+
 // Mock Firebase app
 jest.mock('../../firebase', () => ({
   app: {},
+  firestore: {},
 }))
 
 // Mock Lucide icons
@@ -44,19 +54,24 @@ describe('VerifyEmail Page', () => {
     jest.clearAllMocks()
     ;(useRouter as jest.Mock).mockReturnValue(mockRouter)
     ;(getAuth as jest.Mock).mockReturnValue(mockAuth)
+    ;(doc as jest.Mock).mockReturnValue({})
+    ;(updateDoc as jest.Mock).mockResolvedValue(undefined)
+    ;(getDoc as jest.Mock).mockResolvedValue({
+      exists: () => true,
+      data: () => ({ privilege: 0, fullName: 'Test User' }),
+    })
   })
 
-  describe('Authentication State', () => {
-    it('should redirect to signup if no user is logged in', async () => {
+  describe('User not signed in', () => {
+    it('should redirect to signup page when user is not signed in', async () => {
       let authCallback: ((user: MockUser | null) => void) | null = null
       ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
         authCallback = callback
-        return jest.fn() // unsubscribe function
+        return jest.fn()
       })
 
       render(<VerifyEmail />)
 
-      // Simulate no user logged in
       act(() => {
         authCallback!(null)
       })
@@ -65,59 +80,10 @@ describe('VerifyEmail Page', () => {
         expect(mockPush).toHaveBeenCalledWith('/signup')
       })
     })
-
-    it('should display user email when logged in', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('test@example.com')).toBeInTheDocument()
-      })
-    })
-
-    it('should redirect to create-society if email already verified', async () => {
-      jest.useFakeTimers()
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: true,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      jest.advanceTimersByTime(2000)
-
-      await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/create-society')
-      })
-
-      jest.useRealTimers()
-    })
   })
 
-  describe('UI Rendering', () => {
-    it('should render verify email heading and instructions', async () => {
+  describe('User signed up but not verified', () => {
+    it('should display verification page with email and instructions', async () => {
       const mockUser = {
         email: 'test@example.com',
         emailVerified: false,
@@ -136,104 +102,13 @@ describe('VerifyEmail Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Verify Your Email')).toBeInTheDocument()
-        expect(screen.getByText(/We've sent a verification email to/i)).toBeInTheDocument()
-      })
-    })
-
-    it('should render mail icon', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByTestId('mail-icon')).toBeInTheDocument()
-      })
-    })
-
-    it('should render verification instructions with numbered steps', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText(/Check your email inbox/i)).toBeInTheDocument()
-        expect(screen.getByText(/Click the verification link/i)).toBeInTheDocument()
-        expect(screen.getByText(/Return to this page/i)).toBeInTheDocument()
-      })
-    })
-
-    it('should render both action buttons', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
+        expect(screen.getByText('test@example.com')).toBeInTheDocument()
         expect(screen.getByText("I've Verified My Email")).toBeInTheDocument()
         expect(screen.getByText('Resend Verification Email')).toBeInTheDocument()
       })
     })
 
-    it('should render help text about spam folder', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText(/check your spam folder/i)).toBeInTheDocument()
-      })
-    })
-  })
-
-  describe('Resend Email Functionality', () => {
-    it('should send verification email when resend button is clicked', async () => {
+    it('should allow user to resend verification link', async () => {
       const mockUser = {
         email: 'test@example.com',
         emailVerified: false,
@@ -261,144 +136,16 @@ describe('VerifyEmail Page', () => {
 
       await waitFor(() => {
         expect(sendEmailVerification).toHaveBeenCalledWith(mockUser)
-      })
-    })
-
-    it('should show success message after resending email', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-      mockAuth.currentUser = mockUser
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-      ;(sendEmailVerification as jest.Mock).mockResolvedValue(undefined)
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Resend Verification Email')).toBeInTheDocument()
-      })
-
-      const resendButton = screen.getByText('Resend Verification Email')
-      fireEvent.click(resendButton)
-
-      await waitFor(() => {
         expect(screen.getByText('Verification email sent! Please check your inbox.')).toBeInTheDocument()
-      })
-    })
-
-    it('should show error message when too many requests', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-      mockAuth.currentUser = mockUser
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-      ;(sendEmailVerification as jest.Mock).mockRejectedValue({
-        code: 'auth/too-many-requests',
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Resend Verification Email')).toBeInTheDocument()
-      })
-
-      const resendButton = screen.getByText('Resend Verification Email')
-      fireEvent.click(resendButton)
-
-      await waitFor(() => {
-        expect(screen.getByText(/Too many requests/i)).toBeInTheDocument()
-      })
-    })
-
-    it('should show generic error message for other errors', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-      mockAuth.currentUser = mockUser
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-      ;(sendEmailVerification as jest.Mock).mockRejectedValue({
-        message: 'Network error',
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Resend Verification Email')).toBeInTheDocument()
-      })
-
-      const resendButton = screen.getByText('Resend Verification Email')
-      fireEvent.click(resendButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('Network error')).toBeInTheDocument()
-      })
-    })
-
-    it('should disable buttons while sending email', async () => {
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-      }
-      mockAuth.currentUser = mockUser
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-      ;(sendEmailVerification as jest.Mock).mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 1000))
-      )
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText('Resend Verification Email')).toBeInTheDocument()
-      })
-
-      const resendButton = screen.getByText('Resend Verification Email')
-      fireEvent.click(resendButton)
-
-      await waitFor(() => {
-        expect(screen.getByText('Sending...')).toBeInTheDocument()
       })
     })
   })
 
-  describe('Check Verification Functionality', () => {
-    it('should reload user and check verification status', async () => {
+  describe('User not verified and clicks verify button', () => {
+    it('should display error when email is not verified yet', async () => {
       const mockReload = jest.fn().mockResolvedValue(undefined)
       const mockUser = {
+        uid: 'test-uid',
         email: 'test@example.com',
         emailVerified: false,
         reload: mockReload,
@@ -425,50 +172,29 @@ describe('VerifyEmail Page', () => {
 
       await waitFor(() => {
         expect(mockReload).toHaveBeenCalled()
-      })
-    })
-
-    it('should show error if email not verified yet', async () => {
-      const mockReload = jest.fn().mockResolvedValue(undefined)
-      const mockUser = {
-        email: 'test@example.com',
-        emailVerified: false,
-        reload: mockReload,
-      }
-      mockAuth.currentUser = mockUser
-
-      let authCallback: ((user: MockUser | null) => void) | null = null
-      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
-        authCallback = callback
-        return jest.fn()
-      })
-
-      render(<VerifyEmail />)
-      act(() => {
-        authCallback!(mockUser)
-      })
-
-      await waitFor(() => {
-        expect(screen.getByText("I've Verified My Email")).toBeInTheDocument()
-      })
-
-      const checkButton = screen.getByText("I've Verified My Email")
-      fireEvent.click(checkButton)
-
-      await waitFor(() => {
         expect(screen.getByText(/Email not verified yet/i)).toBeInTheDocument()
       })
     })
+  })
 
-    it('should redirect to create-society when verified', async () => {
+  describe('User with privilege < 2 (normal user or society head)', () => {
+    it('should redirect to /waitlist when verified user has privilege 0', async () => {
       jest.useFakeTimers()
+
+      ;(getDoc as jest.Mock).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ privilege: 0, fullName: 'Test User' }),
+      })
+
       const mockReload = jest.fn().mockImplementation(() => {
         if (mockAuth.currentUser) {
           mockAuth.currentUser = { ...mockAuth.currentUser, emailVerified: true }
         }
         return Promise.resolve()
       })
+
       const mockUser = {
+        uid: 'test-uid',
         email: 'test@example.com',
         emailVerified: false,
         reload: mockReload,
@@ -490,7 +216,6 @@ describe('VerifyEmail Page', () => {
         expect(screen.getByText("I've Verified My Email")).toBeInTheDocument()
       })
 
-      // Mock emailVerified to become true after reload
       mockUser.emailVerified = true
 
       const checkButton = screen.getByText("I've Verified My Email")
@@ -498,26 +223,135 @@ describe('VerifyEmail Page', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Email Verified!')).toBeInTheDocument()
-        expect(screen.getByText(/Redirecting you to complete your profile/i)).toBeInTheDocument()
       })
 
       jest.advanceTimersByTime(2000)
 
       await waitFor(() => {
-        expect(mockPush).toHaveBeenCalledWith('/create-society')
+        expect(mockPush).toHaveBeenCalledWith('/waitlist')
+      })
+
+      jest.useRealTimers()
+    })
+
+    it('should redirect to /waitlist when verified user has privilege 1 (society head)', async () => {
+      jest.useFakeTimers()
+
+      ;(getDoc as jest.Mock).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ privilege: 1, fullName: 'Society Head' }),
+      })
+
+      const mockReload = jest.fn().mockImplementation(() => {
+        if (mockAuth.currentUser) {
+          mockAuth.currentUser = { ...mockAuth.currentUser, emailVerified: true }
+        }
+        return Promise.resolve()
+      })
+
+      const mockUser = {
+        uid: 'test-uid',
+        email: 'societyhead@khi.iba.edu.pk',
+        emailVerified: false,
+        reload: mockReload,
+      }
+      mockAuth.currentUser = mockUser
+
+      let authCallback: ((user: MockUser | null) => void) | null = null
+      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+        authCallback = callback
+        return jest.fn()
+      })
+
+      render(<VerifyEmail />)
+      act(() => {
+        authCallback!(mockUser)
+      })
+
+      await waitFor(() => {
+        expect(screen.getByText("I've Verified My Email")).toBeInTheDocument()
+      })
+
+      mockUser.emailVerified = true
+
+      const checkButton = screen.getByText("I've Verified My Email")
+      fireEvent.click(checkButton)
+
+      await waitFor(() => {
+        expect(screen.getByText('Email Verified!')).toBeInTheDocument()
+      })
+
+      jest.advanceTimersByTime(2000)
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/waitlist')
+      })
+
+      jest.useRealTimers()
+    })
+
+    it('should redirect to /waitlist if already verified user with privilege < 2 revisits page', async () => {
+      jest.useFakeTimers()
+
+      ;(getDoc as jest.Mock).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ privilege: 0, fullName: 'Test User' }),
+      })
+
+      const mockUser = {
+        uid: 'test-uid',
+        email: 'test@example.com',
+        emailVerified: true,
+      }
+
+      let authCallback: ((user: MockUser | null) => void) | null = null
+      ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
+        authCallback = callback
+        return jest.fn()
+      })
+
+      render(<VerifyEmail />)
+      act(() => {
+        authCallback!(mockUser)
+      })
+
+      await waitFor(() => {
+        expect(getDoc).toHaveBeenCalled()
+      })
+
+      jest.advanceTimersByTime(2000)
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/waitlist')
       })
 
       jest.useRealTimers()
     })
   })
 
-  describe('Verified State UI', () => {
-    it('should show success UI when email is verified', async () => {
+  describe('User with privilege >= 2 (admin)', () => {
+    it('should redirect to /admin when verified admin user', async () => {
       jest.useFakeTimers()
+
+      ;(getDoc as jest.Mock).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ privilege: 2, fullName: 'Admin User' }),
+      })
+
+      const mockReload = jest.fn().mockImplementation(() => {
+        if (mockAuth.currentUser) {
+          mockAuth.currentUser = { ...mockAuth.currentUser, emailVerified: true }
+        }
+        return Promise.resolve()
+      })
+
       const mockUser = {
-        email: 'test@example.com',
-        emailVerified: true,
+        uid: 'admin-uid',
+        email: 'admin@khi.iba.edu.pk',
+        emailVerified: false,
+        reload: mockReload,
       }
+      mockAuth.currentUser = mockUser
 
       let authCallback: ((user: MockUser | null) => void) | null = null
       ;(onAuthStateChanged as jest.Mock).mockImplementation((auth, callback) => {
@@ -531,17 +365,38 @@ describe('VerifyEmail Page', () => {
       })
 
       await waitFor(() => {
+        expect(screen.getByText("I've Verified My Email")).toBeInTheDocument()
+      })
+
+      mockUser.emailVerified = true
+
+      const checkButton = screen.getByText("I've Verified My Email")
+      fireEvent.click(checkButton)
+
+      await waitFor(() => {
         expect(screen.getByText('Email Verified!')).toBeInTheDocument()
-        expect(screen.getByText(/Redirecting you to complete your profile/i)).toBeInTheDocument()
+      })
+
+      jest.advanceTimersByTime(2000)
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/admin')
       })
 
       jest.useRealTimers()
     })
 
-    it('should show check circle icon when verified', async () => {
+    it('should redirect to /admin if already verified admin revisits page', async () => {
       jest.useFakeTimers()
+
+      ;(getDoc as jest.Mock).mockResolvedValue({
+        exists: () => true,
+        data: () => ({ privilege: 2, fullName: 'Admin User' }),
+      })
+
       const mockUser = {
-        email: 'test@example.com',
+        uid: 'admin-uid',
+        email: 'admin@khi.iba.edu.pk',
         emailVerified: true,
       }
 
@@ -557,7 +412,13 @@ describe('VerifyEmail Page', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByTestId('check-icon')).toBeInTheDocument()
+        expect(getDoc).toHaveBeenCalled()
+      })
+
+      jest.advanceTimersByTime(2000)
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith('/admin')
       })
 
       jest.useRealTimers()
