@@ -4,6 +4,49 @@ import { Search, LogIn, UserPlus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
+/**
+ * @component Header
+ * 
+ * Navigation header with authentication controls
+ * 
+ * @remarks
+ * This component provides the main navigation header with:
+ * - IEMS logo with brand colors
+ * - Search button (desktop only)
+ * - Login button with navigation
+ * - Sign Up button with navigation
+ * - Sticky positioning at top of viewport
+ * - Backdrop blur effect with semi-transparent background
+ * 
+ * Features:
+ * - Client-side navigation using Next.js router
+ * - Responsive design (hides text on mobile, shows icons)
+ * - Glass morphism styling
+ * - Brand identity with gradient logo
+ * 
+ * Navigation behavior:
+ * - Login button → /signin
+ * - Sign Up button → /signup
+ * - Search button → (placeholder, no action yet)
+ * 
+ * @example
+ * ```tsx
+ * import Header from '@/components/header'
+ * 
+ * export default function RootLayout({ children }) {
+ *   return (
+ *     <html>
+ *       <body>
+ *         <Header />
+ *         {children}
+ *       </body>
+ *     </html>
+ *   )
+ * }
+ * ```
+ * 
+ * @category Components
+ */
 export default function Header() {
   const router = useRouter()
 

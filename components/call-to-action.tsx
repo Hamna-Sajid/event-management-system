@@ -4,6 +4,42 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
 
+/**
+ * @component CallToAction
+ * 
+ * Call-to-action section encouraging users to join the waitlist
+ * 
+ * @remarks
+ * This component displays a prominent CTA section with:
+ * - Eye-catching gradient icon (Sparkles)
+ * - Compelling headline and description
+ * - Primary action button linking to signup
+ * - Trust indicators (free, no credit card, early access)
+ * - Glass morphism styling with hover effects
+ * 
+ * Design features:
+ * - Centered layout with max-width constraint
+ * - Responsive padding (mobile to desktop)
+ * - Gradient background on icon
+ * - Brand colors (#d02243 primary red)
+ * 
+ * @example
+ * ```tsx
+ * import CallToAction from '@/components/call-to-action'
+ * 
+ * export default function LandingPage() {
+ *   return (
+ *     <>
+ *       <Hero />
+ *       <CallToAction />
+ *       <Footer />
+ *     </>
+ *   )
+ * }
+ * ```
+ * 
+ * @category Components
+ */
 export default function CallToAction() {
   return (
     <section className="py-20 px-6">

@@ -1,3 +1,39 @@
+/**
+ * @testSuite CallToAction
+ * Test suite for Call-to-Action component
+ * 
+ * @remarks
+ * Tests for the promotional call-to-action section covering:
+ * - Semantic HTML structure (section element)
+ * - Heading display for context (h2 heading)
+ * - Primary CTA button rendering and functionality
+ * - Navigation link to signup page
+ * - Descriptive paragraph content
+ * - Button accessibility and meaningful content
+ * - Semantic heading hierarchy
+ * 
+ * @testCoverage
+ * - **Structure Tests**: Validates section element and semantic HTML
+ * - **Content Tests**: Ensures heading and paragraphs render
+ * - **Interactive Tests**: Verifies button and link functionality
+ * - **Accessibility Tests**: Confirms button has meaningful content and is enabled
+ * - **SEO Tests**: Checks proper heading hierarchy for screen readers
+ * 
+ * @edgeCases
+ * - Multiple paragraphs for trust indicators
+ * - Button must have non-empty text content
+ * - At least one heading for accessibility
+ * 
+ * @expectedValues
+ * - 1 section element
+ * - 1 h2 heading
+ * - 1 enabled button
+ * - Link href: /signup
+ * - At least 1 paragraph
+ * - Button text length > 0
+ * - At least 1 heading for screen readers
+ */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import CallToAction from './call-to-action'

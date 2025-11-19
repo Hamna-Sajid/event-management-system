@@ -1,3 +1,41 @@
+/**
+ * @testSuite Hero
+ * 
+ * Test suite for Hero component
+ * 
+ * @remarks
+ * Comprehensive tests for the Hero section component covering:
+ * - Semantic HTML structure (section element)
+ * - Heading hierarchy (h1 main heading)
+ * - Badge rendering for promotional content
+ * - Description paragraph display
+ * - Dynamic statistics fetching and display
+ * - Call-to-action buttons (Join Waitlist, Already have account)
+ * - Navigation links (signup, signin)
+ * - Button accessibility and enabled states
+ * - Promotional content sections
+ * 
+ * @testCoverage
+ * - **Structure Tests**: Validates semantic HTML and component structure
+ * - **Content Tests**: Ensures all required text elements render
+ * - **Statistics Tests**: Verifies async data fetching displays correctly
+ * - **Interactive Tests**: Confirms buttons and links are functional
+ * - **Accessibility Tests**: Checks heading hierarchy and button states
+ * 
+ * @edgeCases
+ * - Async state updates with waitFor to prevent act() warnings
+ * - Multiple buttons rendered (primary and secondary CTAs)
+ * - Statistics loaded from mocked Firestore (50 events, 25 societies, 1000 users)
+ * 
+ * @expectedValues
+ * - Total Events: 50
+ * - Total Societies: 25  
+ * - Total Users: 1000
+ * - Minimum 2 buttons (Join Waitlist + Already have account)
+ * - Links: /signup and /signin
+ * - All buttons enabled by default
+ */
+
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import Hero from './hero'
