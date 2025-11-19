@@ -1,3 +1,66 @@
+/**
+ * @testSuite Privileges
+ * 
+ * Test suite for user privilege management system
+ * 
+ * @remarks
+ * Comprehensive tests for role-based access control covering:
+ * - UserPrivilege enum (NORMAL_USER: 0, SOCIETY_HEAD: 1, ADMIN: 2)
+ * - getUserPrivilege: Fetch user's privilege level from Firestore
+ * - updateUserPrivilege: Update user's privilege with timestamp
+ * - isNormalUser: Check if user has normal user privileges
+ * - isSocietyHead: Check if user is a society head
+ * - isAdmin: Check if user has admin privileges
+ * - canManageSociety: Check if user can manage societies (head or admin)
+ * - getPrivilegeName: Get human-readable privilege name
+ * 
+ * @testCoverage
+ * - **Enum Tests**: Validates privilege level values (0, 1, 2)
+ * - **getUserPrivilege**: Document existence, missing fields, errors, all privilege levels
+ * - **updateUserPrivilege**: Updates with timestamps, downgrades, error handling
+ * - **Role Checkers**: isNormalUser, isSocietyHead, isAdmin, canManageSociety
+ * - **Utility Tests**: getPrivilegeName for all levels and invalid inputs
+ * 
+ * @edgeCases
+ * - Missing user document returns 0 (normal user)
+ * - Missing privilege field defaults to 0
+ * - Firestore errors return 0 with console.error
+ * - Timestamp included in all privilege updates
+ * - Update failures throw errors
+ * - Invalid privilege levels return "Unknown"
+ * - NaN and Infinity handled in getPrivilegeName
+ * 
+ * @expectedValues
+ * **UserPrivilege Enum:**
+ * - NORMAL_USER: 0
+ * - SOCIETY_HEAD: 1
+ * - ADMIN: 2
+ * 
+ * **getUserPrivilege:**
+ * - Existing user with privilege: returns privilege level (0, 1, or 2)
+ * - Non-existent user: returns 0
+ * - Missing privilege field: returns 0
+ * - Error: returns 0 (with console.error)
+ * 
+ * **updateUserPrivilege:**
+ * - Updates privilege field to new level
+ * - Includes privilegeUpdatedAt timestamp (ISO string)
+ * - Timestamp between before and after update time
+ * - Throws error on Firestore failure
+ * 
+ * **Role Checkers:**
+ * - isNormalUser: true only for privilege 0
+ * - isSocietyHead: true only for privilege 1
+ * - isAdmin: true only for privilege 2
+ * - canManageSociety: true for privilege >= 1 (society head or admin)
+ * 
+ * **getPrivilegeName:**
+ * - 0 → "Normal User"
+ * - 1 → "Society Head"
+ * - 2 → "Admin"
+ * - Invalid (3, -1, 999, NaN, Infinity) → "Unknown"
+ */
+
 import {
   UserPrivilege,
   getUserPrivilege,
