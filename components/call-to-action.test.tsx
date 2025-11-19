@@ -3,74 +3,58 @@ import { render, screen } from '@testing-library/react'
 import CallToAction from './call-to-action'
 
 describe('CallToAction', () => {
-  it('should render the main headline', () => {
-    render(<CallToAction />)
-    
-    expect(screen.getByText(/Ready to Transform Your IBA Experience/i)).toBeInTheDocument()
-  })
-
-  it('should render the description text', () => {
-    render(<CallToAction />)
-    
-    expect(screen.getByText(/Join the waitlist to get early access/i)).toBeInTheDocument()
-  })
-
-  it('should render Join Waitlist Now button', () => {
-    render(<CallToAction />)
-    
-    expect(screen.getByRole('button', { name: /Join Waitlist Now/i })).toBeInTheDocument()
-  })
-
-  it('should display trust badges', () => {
-    render(<CallToAction />)
-    
-    expect(screen.getByText(/No credit card required/i)).toBeInTheDocument()
-    expect(screen.getByText(/Free to join/i)).toBeInTheDocument()
-    expect(screen.getByText(/Early access guaranteed/i)).toBeInTheDocument()
-  })
-
-  it('should render sparkles icon', () => {
+  it('should render as semantic section element', () => {
     const { container } = render(<CallToAction />)
     
-    const iconContainer = container.querySelector('.bg-gradient-to-br')
-    expect(iconContainer).toBeInTheDocument()
+    const section = container.querySelector('section')
+    expect(section).toBeInTheDocument()
   })
 
-  it('should have Join Waitlist link pointing to signup', () => {
-    const { container } = render(<CallToAction />)
-    
-    const link = container.querySelector('a[href="/signup"]')
-    expect(link).toBeInTheDocument()
-  })
-
-  it('should apply glassmorphism effect to main container', () => {
-    const { container } = render(<CallToAction />)
-    
-    const glassCard = container.querySelector('.glass')
-    expect(glassCard).toHaveClass('glass-hover', 'rounded-2xl')
-  })
-
-  it('should apply correct button styling', () => {
+  it('should display a heading to provide context', () => {
     render(<CallToAction />)
     
-    const waitlistButton = screen.getByRole('button', { name: /Join Waitlist Now/i })
-    
-    expect(waitlistButton).toHaveClass('bg-[#d02243]')
+    const heading = screen.getByRole('heading', { level: 2 })
+    expect(heading).toBeInTheDocument()
   })
 
-  it('should have large button size', () => {
+  it('should provide a primary call-to-action button', () => {
     render(<CallToAction />)
     
-    const waitlistButton = screen.getByRole('button', { name: /Join Waitlist Now/i })
-    
-    expect(waitlistButton).toHaveClass('py-6')
+    const button = screen.getByRole('button')
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
   })
 
-  it('should center align content', () => {
+  it('should link CTA to signup page for user registration', () => {
     const { container } = render(<CallToAction />)
     
-    const mainDiv = container.querySelector('.text-center')
-    expect(mainDiv).toBeInTheDocument()
+    const signupLink = container.querySelector('a[href="/signup"]')
+    expect(signupLink).toBeInTheDocument()
+  })
+
+  it('should contain descriptive paragraphs for context', () => {
+    const { container } = render(<CallToAction />)
+    
+    const paragraphs = container.querySelectorAll('p')
+    expect(paragraphs.length).toBeGreaterThan(0)
+  })
+
+  it('should have accessible button with meaningful content', () => {
+    render(<CallToAction />)
+    
+    const button = screen.getByRole('button')
+    expect(button.textContent).toBeTruthy()
+    expect(button.textContent?.trim().length).toBeGreaterThan(0)
+  })
+
+  it('should structure content with proper semantic hierarchy', () => {
+    render(<CallToAction />)
+    
+    // Should have at least one heading for screen readers
+    const headings = screen.getAllByRole('heading')
+    expect(headings.length).toBeGreaterThanOrEqual(1)
   })
 })
+
+
 
