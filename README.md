@@ -90,6 +90,9 @@ This project uses custom JSDoc parsing for automated API documentation generatio
 ```bash
 # Generate markdown documentation
 npm run docs
+
+# Serve documentation locally for development
+npx vitepress dev docs
 ```
 
 Documentation is generated in `docs/markdown/` directory.
