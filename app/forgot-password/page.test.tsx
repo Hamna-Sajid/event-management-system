@@ -1,3 +1,61 @@
+/**
+ * @testSuite ForgotPassword
+ * 
+ * Test suite for Forgot Password page
+ * 
+ * @remarks
+ * Comprehensive tests for the password reset functionality covering:
+ * - UI rendering (heading, description, icons, form elements)
+ * - Form validation (email required, email format)
+ * - Firebase integration (sendPasswordResetEmail)
+ * - User feedback (success messages, error messages, loading states)
+ * - Error handling (user not found, invalid email, network errors)
+ * - Navigation (back to sign in link)
+ * - Styling (glassmorphic design)
+ * 
+ * @testCoverage
+ * - **UI Structure Tests**: Heading, description, icons, email input, buttons, links
+ * - **Form Validation**: Required fields, email format validation
+ * - **Firebase Integration**: sendPasswordResetEmail called with correct email
+ * - **Success Flow**: Success message, email input cleared, button re-enabled
+ * - **Loading States**: Button disabled, loading indicator shown during submission
+ * - **Error Handling**: User not found, invalid email, network errors, generic errors
+ * - **Navigation**: Back to sign in link works correctly
+ * - **Styling**: Glassmorphic card styling applied
+ * 
+ * @edgeCases
+ * - Empty email submission prevented
+ * - Invalid email format rejected
+ * - User not found error displayed
+ * - Network errors handled gracefully
+ * - Button disabled during submission
+ * - Email input cleared on success
+ * - Multiple rapid submissions prevented
+ * 
+ * @expectedValues
+ * **UI Elements:**
+ * - Heading: "Reset Password"
+ * - Email input: type="email", required, placeholder present
+ * - Button: "Send Reset Link"
+ * - Back link: href="/signin"
+ * - Icons: Mail and ArrowLeft rendered
+ * 
+ * **Form Behavior:**
+ * - Valid email: calls sendPasswordResetEmail
+ * - Success: shows "Password reset email sent", clears input
+ * - Loading: button disabled, shows "Sending..."
+ * 
+ * **Error Messages:**
+ * - "auth/user-not-found": "No user found with this email"
+ * - "auth/invalid-email": "Invalid email address"
+ * - "auth/network-request-failed": "Network error"
+ * - Generic: "Failed to send reset email"
+ * 
+ * **Email Domain:**
+ * - Accepts any valid email format
+ * - No domain restrictions for password reset
+ */
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth'
 import ForgotPassword from './page'

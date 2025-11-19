@@ -1,3 +1,71 @@
+/**
+ * @testSuite VerifyEmail
+ * 
+ * Test suite for Email Verification page
+ * 
+ * @remarks
+ * Comprehensive tests for the email verification flow covering:
+ * - Authentication checks (redirect to signup if not signed in)
+ * - Verification status display (email, instructions, verification state)
+ * - Resend verification email functionality
+ * - Privilege-based routing (waitlist for users, admin for admins)
+ * - Firestore updates (emailVerified field, timestamp)
+ * - Error handling (unverified state, network errors)
+ * - User experience (loading states, success messages)
+ * 
+ * @testCoverage
+ * - **Authentication Tests**: Redirect to signup if not signed in
+ * - **Verification Display**: Shows user email, instructions, verification status
+ * - **Resend Functionality**: Sends new verification email on button click
+ * - **Check Verification**: Reloads user, checks emailVerified status
+ * - **Privilege Routing**: Redirects based on privilege level (0/1 → waitlist, 2 → admin)
+ * - **Firestore Updates**: Updates emailVerified and timestamp on verification
+ * - **Error Handling**: Displays errors for unverified state, network failures
+ * - **Already Verified**: Redirects if user revisits page after verification
+ * 
+ * @edgeCases
+ * - Not signed in: redirect to /signup
+ * - Unverified email: shows verification page with resend option
+ * - Already verified user: immediate redirect based on privilege
+ * - Privilege 0 (normal user): redirect to /waitlist
+ * - Privilege 1 (society head): redirect to /waitlist
+ * - Privilege 2 (admin): redirect to /admin
+ * - Network error during resend: error message displayed
+ * - Firestore update fails: error handled gracefully
+ * 
+ * @expectedValues
+ * **Authentication:**
+ * - Not signed in: redirect to /signup
+ * - Signed in: verification page loads
+ * 
+ * **Email Display:**
+ * - User email shown: e.g., "test@example.com"
+ * - Instructions: "A verification link has been sent"
+ * - Resend button: "Resend Verification Email"
+ * - Check button: "I've Verified My Email"
+ * 
+ * **Verification Flow:**
+ * - Resend: calls sendEmailVerification
+ * - Check: reloads user, checks emailVerified
+ * - Success: updates Firestore with emailVerified=true and timestamp
+ * 
+ * **Routing:**
+ * - Verified + privilege 0: redirect to /waitlist
+ * - Verified + privilege 1: redirect to /waitlist
+ * - Verified + privilege 2: redirect to /admin
+ * - Already verified on page load: immediate redirect
+ * 
+ * **Error Messages:**
+ * - Unverified: "Your email is not verified yet"
+ * - Resend error: "Failed to send verification email"
+ * - Update error: Firestore errors handled
+ * 
+ * **Firestore Updates:**
+ * - Field: emailVerified = true
+ * - Field: emailVerifiedAt = ISO timestamp
+ * - Document: users/{userId}
+ */
+
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged, sendEmailVerification } from 'firebase/auth'

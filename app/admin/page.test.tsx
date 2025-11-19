@@ -1,3 +1,60 @@
+/**
+ * @testSuite AdminDashboard
+ * 
+ * Test suite for Admin Dashboard page
+ * 
+ * @remarks
+ * Comprehensive tests for the admin dashboard covering:
+ * - Authentication and authorization (admin privilege level 2 required)
+ * - Society management (create, list, unique names, ID generation)
+ * - Society head assignment (email validation, verification requirements)
+ * - Role management (prevent duplicate roles, multiple society heads)
+ * - Redirect flows (signin, waitlist, admin)
+ * - Form validation and error handling
+ * 
+ * @testCoverage
+ * - **Authentication Tests**: Redirects for unauthenticated users and non-admins
+ * - **Dashboard Loading**: Displays dashboard for admin users (privilege >= 2)
+ * - **Society Creation**: Unique names, ID generation from name, duplicate prevention
+ * - **Email Validation**: Only @khi.iba.edu.pk domain allowed for society heads
+ * - **Verification Requirements**: Society heads must have verified email
+ * - **Role Constraints**: Prevents duplicate roles and multiple society head assignments
+ * - **Error Handling**: Form validation, Firestore errors, network failures
+ * 
+ * @edgeCases
+ * - Unauthenticated user redirects to signin
+ * - Non-admin (privilege < 2) redirects to waitlist
+ * - Duplicate society names prevented
+ * - Society ID generated from name (lowercase, hyphens)
+ * - Invalid email domain rejected
+ * - Unverified email prevents society head assignment
+ * - User cannot be head of multiple societies
+ * - Duplicate role assignments in same society prevented
+ * 
+ * @expectedValues
+ * **Authentication:**
+ * - Unauthenticated: redirect to /signin
+ * - Privilege < 2: redirect to /waitlist
+ * - Privilege >= 2: dashboard loads
+ * 
+ * **Society Creation:**
+ * - Unique names required
+ * - Society ID: lowercase name with hyphens (e.g., "Tech Society" → "tech-society")
+ * - Firestore document created with name and ID
+ * 
+ * **Society Head Assignment:**
+ * - Email domain: @khi.iba.edu.pk only
+ * - Email must be verified
+ * - User can only be head of one society
+ * - No duplicate roles in same society
+ * 
+ * **UI Elements:**
+ * - Dashboard header visible for admin
+ * - Society creation form rendered
+ * - Society list displayed
+ * - Role assignment interface available
+ */
+
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'

@@ -1,3 +1,40 @@
+/**
+ * @testSuite Header
+ * 
+ * Test suite for Header navigation component
+ * 
+ * @remarks
+ * Comprehensive tests for the site header/navigation bar covering:
+ * - Semantic HTML structure (header element)
+ * - Brand logo rendering
+ * - Search button functionality
+ * - Login button rendering and navigation
+ * - Sign up button rendering and navigation
+ * - Navigation behavior with Next.js router
+ * - Button states and accessibility
+ * 
+ * @testCoverage
+ * - **Structure Tests**: Validates header element exists
+ * - **Content Tests**: Ensures logo and buttons render
+ * - **Navigation Tests**: Verifies router.push calls for login/signup
+ * - **Interactive Tests**: Confirms button clicks trigger navigation
+ * - **Accessibility Tests**: Checks all buttons are enabled
+ * 
+ * @edgeCases
+ * - Multiple buttons (search, login, sign up) - minimum 3
+ * - User interaction with userEvent for realistic testing
+ * - Mocked Next.js router for navigation testing
+ * - Text matching with case-insensitive search
+ * 
+ * @expectedValues
+ * - 1 header element
+ * - At least 3 buttons (search + login + sign up)
+ * - Login button navigates to: /signin
+ * - Sign up button navigates to: /signup
+ * - All buttons enabled
+ * - Logo/brand section rendered as span elements
+ */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

@@ -94,7 +94,7 @@ The Pull Request is the official gateway for merging code into `main`.
 - **New React components in `components/`** require component tests
 - **Bug fixes** must include a regression test
 
-Refer to **[TESTING_GUIDE.md](./TESTING_GUIDE.md)** for detailed testing instructions, templates, and examples.
+Refer to the [Testing Guide](./docs/guide/testing.md) for detailed testing instructions, patterns, and best practices.
 
 ### Pull Request Template
 

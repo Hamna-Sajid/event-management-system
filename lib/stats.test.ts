@@ -1,3 +1,49 @@
+/**
+ * @testSuite Stats
+ * 
+ * Test suite for statistics utility functions
+ * 
+ * @remarks
+ * Comprehensive tests for Firestore statistics functions covering:
+ * - getTotalSocieties: Fetch count of all societies
+ * - getTotalUsers: Fetch count of all registered users
+ * - getTotalEvents: Fetch count of all events
+ * - Error handling and fallback to 0
+ * - Edge cases (zero values, large numbers, undefined counts)
+ * 
+ * @testCoverage
+ * - **Success Cases**: Validates correct Firestore collection queries and count retrieval
+ * - **Error Handling**: Ensures functions return 0 on errors with console logging
+ * - **Edge Cases**: Tests zero values, large numbers, missing data, undefined counts
+ * - **Integration Tests**: Verifies correct collection names for all functions
+ * 
+ * @edgeCases
+ * - Firestore errors return 0 instead of throwing
+ * - Missing count field in snapshot returns undefined
+ * - Zero count handled correctly (not treated as error)
+ * - Large numbers (999999) processed correctly
+ * - Console.error called on failures
+ * 
+ * @expectedValues
+ * **getTotalSocieties:**
+ * - Success: 25 societies
+ * - Error: 0 (with console.error)
+ * - Missing count: undefined
+ * - Collection: 'societies'
+ * 
+ * **getTotalUsers:**
+ * - Success: 1000 users
+ * - Error: 0 (with console.error)
+ * - Zero users: 0 (valid)
+ * - Collection: 'users'
+ * 
+ * **getTotalEvents:**
+ * - Success: 50 events
+ * - Error: 0 (with console.error)
+ * - Large count: 999999
+ * - Collection: 'events'
+ */
+
 import { getTotalSocieties, getTotalUsers, getTotalEvents } from './stats'
 import { firestore } from '@/firebase'
 import { collection, getCountFromServer } from 'firebase/firestore'

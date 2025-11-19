@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "docs": [
+    {
+      "name": "libs.md",
+      "title": "Library Functions",
+      "description": "Utility functions for privileges, statistics, and more",
+      "include": ["lib/**/*.{ts,tsx}"],
+      "exclude": ["lib/**/*.test.{ts,tsx}", "lib/utils.ts"],
+      "isTest": false
+    },
+    {
+      "name": "components.md",
+      "title": "Components",
+      "description": "React components for the application",
+      "include": ["components/**/*.{ts,tsx}"],
+      "exclude": [
+        "components/**/*.test.{ts,tsx}",
+        "components/ui/**"
+      ],
+      "isTest": false
+    },
+    {
+      "name": "tests.md",
+      "title": "Test Suites",
+      "description": "Comprehensive test documentation for all components and utility functions",
+      "include": [
+        "components/**/*.test.{ts,tsx}",
+        "app/**/*.test.{ts,tsx}",
+        "lib/**/*.test.{ts,tsx}"
+      ],
+      "isTest": true
+    }
+  ],
+  "outputDir": "docs/api",
+  "createIndex": true,
+  "indexLinks": [
+    {
+      "title": "Installation Guide",
+      "link": "/guide/installation"
+    },
+    {
+      "title": "Testing Overview",
+      "link": "/guide/testing"
+    },
+    {
+      "title": "Documentation Standards",
+      "link": "/guide/documentation-standards"
+    }
+  ]
+}

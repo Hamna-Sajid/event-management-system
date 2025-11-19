@@ -6,6 +6,40 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getTotalEvents, getTotalSocieties, getTotalUsers } from "@/lib/stats"
 
+/**
+ * @component Hero
+ * 
+ * 
+ * Hero section component displaying dynamic platform statistics and call-to-action buttons.
+ * 
+ * @remarks
+ * This is the main landing page hero section that:
+ * - Fetches real-time statistics from Firestore on component mount
+ * - Displays event count, society count, and user count
+ * - Provides primary CTA (Join Waitlist) and secondary CTA (Sign In)
+ * - Uses glassmorphism design for the statistics card
+ * 
+ * Statistics are fetched in parallel using `Promise.all` for optimal performance.
+ * If fetch fails, statistics default to 0 (handled in the stats functions).
+ * 
+ * @example
+ * Usage in a page:
+ * ```tsx
+ * import Hero from '@/components/hero'
+ * 
+ * export default function LandingPage() {
+ *   return (
+ *     <>
+ *       <Header />
+ *       <Hero />
+ *       <Footer />
+ *     </>
+ *   )
+ * }
+ * ```
+ * 
+ * @category Components
+ */
 export default function Hero() {
   const [stats, setStats] = useState({
     events: 0,
