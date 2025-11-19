@@ -87,10 +87,10 @@ npm run docs
 
 ## Documentation
 
-- **[Installation Guide](./guide/installation)** - Set up the project locally
+- **[Installation Guide](./guide/installation.md)** - Set up the project locally
 - **[API Reference](./api/)** - Complete API documentation for components and utilities
-- **[Testing Guide](./guide/testing)** - Testing strategy and approach
-- **[Documentation Standards](./guide/documentation-standards)** - Guidelines for writing documentation
+- **[Testing Guide](./guide/testing.md)** - Testing strategy and approach
+- **[Documentation Standards](./guide/documentation-standards.md)** - Guidelines for writing documentation
 
 ## Tech Stack
 

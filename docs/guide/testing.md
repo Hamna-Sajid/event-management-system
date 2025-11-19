@@ -4,7 +4,7 @@
 
 The IBA Event Management System uses **Jest** as its testing framework with **React Testing Library** for component testing. This guide covers testing practices, patterns, and CI/CD integration.
 
-For detailed test suite documentation including all test cases, see the [Test Suites Reference](/api/tests).
+For detailed test suite documentation including all test cases, see the [Test Suites Reference](/api/tests.md).
 
 ---
 

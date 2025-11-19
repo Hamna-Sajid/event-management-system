@@ -10,6 +10,6 @@ Welcome to the API reference for the IBA Event Management System.
 
 ## Quick Links
 
-- [Installation Guide](/guide/installation)
-- [Testing Overview](/guide/testing)
-- [Documentation Standards](/guide/documentation-standards)
+- [Installation Guide](/guide/installation.md)
+- [Testing Overview](/guide/testing.md)
+- [Documentation Standards](/guide/documentation-standards.md)
