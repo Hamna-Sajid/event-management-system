@@ -3,8 +3,28 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getTotalEvents, getTotalSocieties, getTotalUsers } from "@/lib/stats"
 
 export default function Hero() {
+  const [stats, setStats] = useState({
+    events: 0,
+    societies: 0,
+    users: 0,
+  })
+
+  useEffect(() => {
+    async function fetchStats() {
+      const [events, societies, users] = await Promise.all([
+        getTotalEvents(),
+        getTotalSocieties(),
+        getTotalUsers(),
+      ])
+      setStats({ events, societies, users })
+    }
+    fetchStats()
+  }, [])
+
   return (
     <section className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-20">
       <div className="max-w-4xl mx-auto text-center">
@@ -29,16 +49,16 @@ export default function Hero() {
         <div className="glass rounded-2xl p-8 md:p-12 mb-12 max-w-2xl mx-auto glass-hover">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">500+</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Events Annually</p>
+              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.events}</div>
+              <p className="text-sm text-[rgba(255,255,255,0.6)]">Upcoming Events</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">50+</div>
+              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.societies}</div>
               <p className="text-sm text-[rgba(255,255,255,0.6)]">Active Societies</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">5K+</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">IBA Students</p>
+              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.users}</div>
+              <p className="text-sm text-[rgba(255,255,255,0.6)]">Users</p>
             </div>
           </div>
 
