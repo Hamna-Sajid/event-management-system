@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "docs": "node scripts/generate-docs.js",
+    "docs": "node scripts/generate-docs.mjs",
     "docs:dev": "npm run docs && vitepress dev docs"
   },
   "dependencies": {

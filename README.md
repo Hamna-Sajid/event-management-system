@@ -81,18 +81,30 @@ This project is built using [Next.js](https://nextjs.org). For in-depth informat
 
 -----
 
+## Documentation
+
+This project uses custom JSDoc parsing for automated API documentation generation from JSDoc comments in the source code.
+
+### Generating Documentation
+
+```bash
+# Generate markdown documentation
+npm run docs
+```
+
+Documentation is generated in `docs/markdown/` directory.
+
+### Documentation Standards
+
+For guidelines on writing documentation, see [DOCUMENTATION_STANDARDS.md](docs/DOCUMENTATION_STANDARDS.md).
+
+-----
+
 ## Contributing
 
 Contribution guidelines can be found at [CONTRIBUTING.md](CONTRIBUTING.md).y
 
 -----
-
-## Deployment
-
-The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-  * **Live Link**: Project deployment link will be added here once available.
-  * **Deployment Documentation**: [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)
 
 ## License
 
