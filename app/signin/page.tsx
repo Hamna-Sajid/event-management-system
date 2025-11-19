@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { app, firestore } from '../../firebase'
-import { doc, getDoc } from 'firebase/firestore'
+import { signInWithEmail } from '../../lib/firebase_functions/auth'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignIn() {
-  const auth = getAuth(app)
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -30,12 +27,7 @@ export default function SignIn() {
     setIsLoading(true)
     
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password)
-      
-      // Get user privilege from Firestore
-      const userDoc = await getDoc(doc(firestore, 'users', userCredential.user.uid))
-      const userData = userDoc.data()
-      const privilege = userData?.privilege ?? 0
+      const privilege = await signInWithEmail(formData.email, formData.password);
       
       // Route based on privilege level
       if (privilege >= 2) {

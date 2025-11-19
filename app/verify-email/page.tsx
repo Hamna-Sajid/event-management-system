@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { getAuth, onAuthStateChanged, sendEmailVerification } from 'firebase/auth'
-import { doc, updateDoc, getDoc } from 'firebase/firestore'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import { app, firestore } from '../../firebase'
+import { resendVerificationEmail, checkEmailVerification } from '../../lib/firebase_functions/auth'
 import { Mail, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default function VerifyEmail() {
@@ -60,11 +61,8 @@ export default function VerifyEmail() {
     setIsLoading(true)
 
     try {
-      const user = auth.currentUser
-      if (user) {
-        await sendEmailVerification(user)
-        setSuccess('Verification email sent! Please check your inbox.')
-      }
+      await resendVerificationEmail()
+      setSuccess('Verification email sent! Please check your inbox.')
     } catch (err) {
       const error = err as { code?: string; message?: string }
       if (error.code === 'auth/too-many-requests') {
@@ -83,34 +81,20 @@ export default function VerifyEmail() {
     setIsLoading(true)
 
     try {
-      const user = auth.currentUser
-      if (user) {
-        await user.reload()
-        if (user.emailVerified) {
-          // Update emailVerified status in Firestore
-          const userDocRef = doc(firestore, 'users', user.uid)
-          await updateDoc(userDocRef, {
-            emailVerified: true
-          })
-          
-          // Get user privilege to determine redirect
-          const userDoc = await getDoc(userDocRef)
-          const userData = userDoc.data()
-          const privilege = userData?.privilege ?? 0
-
-          setIsVerified(true)
-          setSuccess('Email verified successfully! Redirecting...')
-          
-          setTimeout(() => {
-            if (privilege >= 2) {
-              router.push('/admin')
-            } else {
-              router.push('/waitlist')
-            }
-          }, 2000)
-        } else {
-          setError('Email not verified yet. Please check your inbox and click the verification link.')
-        }
+      const privilege = await checkEmailVerification();
+      if (privilege !== null) {
+        setIsVerified(true)
+        setSuccess('Email verified successfully! Redirecting...')
+        
+        setTimeout(() => {
+          if (privilege >= 2) {
+            router.push('/admin')
+          } else {
+            router.push('/waitlist')
+          }
+        }, 2000)
+      } else {
+        setError('Email not verified yet. Please check your inbox and click the verification link.')
       }
     } catch (err) {
       const error = err as { message?: string }

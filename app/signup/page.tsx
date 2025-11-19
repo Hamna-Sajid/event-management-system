@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
-import { app, firestore } from '../../firebase'
+import { signUpWithEmail } from '../../lib/firebase_functions/auth'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function SignUp() {
-  const auth = getAuth(app)
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -38,27 +35,7 @@ export default function SignUp() {
     
     setIsLoading(true)
     try {
-      // Create user account
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-      
-      // Update auth profile with display name
-      await updateProfile(userCredential.user, {
-        displayName: formData.fullName
-      })
-      
-      // Store additional user data in Firestore
-      await setDoc(doc(firestore, 'users', userCredential.user.uid), {
-        fullName: formData.fullName,
-        email: formData.email,
-        privilege: 0, // 0: normal user, 1: society head, 2: admin
-        createdAt: new Date().toISOString(),
-        emailVerified: false,
-      })
-      
-      // Send verification email
-      await sendEmailVerification(userCredential.user)
-      
-      // Redirect to email verification page
+      await signUpWithEmail(formData.fullName, formData.email, formData.password);
       router.push('/verify-email')
     } catch (err) {
       const error = err as { message?: string }

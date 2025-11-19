@@ -79,13 +79,15 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
-import { doc, getDoc, setDoc, collection, getDocs, updateDoc } from "firebase/firestore"
+import { signOutUser } from "../../lib/firebase_functions/auth"
+import { doc, getDoc } from "firebase/firestore"
 import { app, firestore } from "../../firebase"
+import { getDashboardData, getHeadDetails, addSociety, removeHead, inviteHead } from "../../lib/firebase_functions/admin"
 import { LogOut, Plus, Trash2, User, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ToastContainer, showToast } from "@/components/ui/toast"
 
-interface Society {
+export interface Society {
   id: string
   name: string
   dateCreated: string
@@ -95,9 +97,17 @@ interface Society {
     COO: string | null
   }
   maxHeads: number
+  description: string,
+  contactEmail: string,
+  socialLinks: {
+    facebook: string,
+    instagram: string,
+    linkedin: string,
+  },
+  events: any[],
 }
 
-interface AdminStats {
+export interface AdminStats {
   totalUsers: number
   totalEvents: number
   totalSocieties: number
@@ -132,36 +142,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     const auth = getAuth(app)
 
-    const loadDashboardData = async () => {
+    const loadDashboard = async () => {
       try {
-        // Load societies
-        const societiesSnapshot = await getDocs(collection(firestore, "societies"))
-        const societiesData: Society[] = []
-
-        societiesSnapshot.forEach((doc) => {
-          const data = doc.data()
-          societiesData.push({
-            id: doc.id,
-            name: data.name || "",
-            dateCreated: data.dateCreated || "",
-            heads: data.heads || { CEO: null, CFO: null, COO: null },
-            maxHeads: data.maxHeads || 3,
-          })
-        })
-
-        setSocieties(societiesData)
-
-        // Load head details
-        await loadHeadDetails(societiesData)
-
-        // Load stats
-        const usersSnapshot = await getDocs(collection(firestore, "users"))
-        setStats({
-          totalUsers: usersSnapshot.size,
-          totalEvents: 0, // TODO: Implement when events collection exists
-          totalSocieties: societiesData.length,
-          weeklyTraffic: 0, // TODO: Implement analytics
-        })
+        const { societies, stats, headDetails } = await getDashboardData();
+        setSocieties(societies);
+        setStats(stats);
+        setHeadDetails(headDetails);
       } catch (error) {
         console.error("Error loading dashboard data:", error)
       }
@@ -185,7 +171,7 @@ export default function AdminDashboard() {
 
         setCurrentUserEmail(user.email || "")
         setIsAuthorized(true)
-        await loadDashboardData()
+        await loadDashboard()
       } catch (error) {
         console.error("Error checking authorization:", error)
         router.push("/signin")
@@ -200,29 +186,7 @@ export default function AdminDashboard() {
 
   const loadHeadDetails = async (societiesData: Society[]) => {
     try {
-      const allHeadIds = new Set<string>()
-
-      // Collect all unique head IDs
-      societiesData.forEach((society) => {
-        Object.values(society.heads).forEach((headId) => {
-          if (headId) allHeadIds.add(headId)
-        })
-      })
-
-      // Fetch user details for all heads
-      const headDetailsMap: { [userId: string]: { name: string; email: string } } = {}
-
-      for (const headId of allHeadIds) {
-        const userDoc = await getDoc(doc(firestore, "users", headId))
-        if (userDoc.exists()) {
-          const userData = userDoc.data()
-          headDetailsMap[headId] = {
-            name: userData.fullName || userData.email?.split("@")[0] || "Unknown",
-            email: userData.email || "",
-          }
-        }
-      }
-
+      const headDetailsMap = await getHeadDetails(societiesData);
       setHeadDetails(headDetailsMap)
     } catch (error) {
       console.error("Error loading head details:", error)
@@ -238,58 +202,13 @@ export default function AdminDashboard() {
 
     setIsCreatingSociety(true)
     try {
-      const societyId = newSocietyName.toLowerCase().replace(/\s+/g, "-")
-
-      // Check if society with this ID already exists
-      const existingSociety = await getDoc(doc(firestore, "societies", societyId))
-      if (existingSociety.exists()) {
-        showToast(`A society with the name "${newSocietyName}" already exists. Please choose a different name.`, 'error')
-        setIsCreatingSociety(false)
-        return
-      }
-
-      const newSociety = {
-        name: newSocietyName,
-        dateCreated: new Date().toISOString(),
-        heads: {
-          CEO: null,
-          CFO: null,
-          COO: null,
-        },
-        maxHeads: 3,
-        description: "",
-        contactEmail: "",
-        socialLinks: {
-          facebook: "",
-          instagram: "",
-          linkedin: "",
-        },
-        events: [],
-        createdBy: currentUserEmail,
-      }
-
-      await setDoc(doc(firestore, "societies", societyId), newSociety)
-
-      setSocieties([
-        ...societies,
-        {
-          id: societyId,
-          name: newSocietyName,
-          dateCreated: new Date().toISOString(),
-          heads: {
-            CEO: null,
-            CFO: null,
-            COO: null,
-          },
-          maxHeads: 3,
-        },
-      ])
-
+      const newSociety = await addSociety(newSocietyName, currentUserEmail);
+      setSocieties([...societies, newSociety]);
       setNewSocietyName("")
       setShowAddSocietyModal(false)
     } catch (error) {
       console.error("Error creating society:", error)
-      showToast("Failed to create society. Please try again.", 'error')
+      showToast((error as Error).message, 'error')
     } finally {
       setIsCreatingSociety(false)
     }
@@ -297,36 +216,13 @@ export default function AdminDashboard() {
 
   const handleRemoveHead = async (societyId: string, role: "CEO" | "CFO" | "COO") => {
     try {
-      const society = societies.find((s) => s.id === societyId)
-      if (!society) return
-
-      const headUserId = society.heads[role]
-      if (!headUserId) return
-
-      const updatedHeads = {
-        ...society.heads,
-        [role]: null,
+      const updatedHeads = await removeHead(societyId, role, societies);
+      if(updatedHeads) {
+        setSocieties(societies.map((soc) => (soc.id === societyId ? { ...soc, heads: updatedHeads } : soc)))
+        if (selectedSociety?.id === societyId) {
+          setSelectedSociety({ ...selectedSociety, heads: updatedHeads })
+        }
       }
-
-      // Update Firestore
-      await updateDoc(doc(firestore, "societies", societyId), {
-        heads: updatedHeads,
-      })
-
-      // Update local state
-      setSocieties(societies.map((soc) => (soc.id === societyId ? { ...soc, heads: updatedHeads } : soc)))
-
-      // Update selected society if modal is open
-      if (selectedSociety?.id === societyId) {
-        setSelectedSociety({ ...selectedSociety, heads: updatedHeads })
-      }
-
-      // Reset user privilege to 0 (normal user)
-      await updateDoc(doc(firestore, "users", headUserId), {
-        privilege: 0,
-        societyRole: null,
-        societyId: null,
-      })
     } catch (error) {
       console.error("Error removing head:", error)
       showToast("Failed to remove head. Please try again.", 'error')
@@ -336,98 +232,30 @@ export default function AdminDashboard() {
   const handleInviteHead = async () => {
     if (!selectedSociety || !newHeadEmail.trim()) return
 
-    // Validate email domain
-    if (!newHeadEmail.endsWith("@khi.iba.edu.pk")) {
-      showToast("Only IBA Karachi email addresses (@khi.iba.edu.pk) are allowed.", 'error')
-      return
-    }
-
-    // Check if role is already taken
-    if (selectedSociety.heads[newHeadRole]) {
-      showToast(`${newHeadRole} role is already assigned. Please choose a different role.`, 'error')
-      return
-    }
-
     setIsInvitingHead(true)
     try {
-      // Find user by email
-      const usersSnapshot = await getDocs(collection(firestore, "users"))
-      const userDoc = usersSnapshot.docs.find((doc) => doc.data().email === newHeadEmail)
-
-      if (!userDoc) {
-        showToast("User not found. They must sign up first with their @khi.iba.edu.pk email address.", 'error')
-        setIsInvitingHead(false)
-        return
-      }
-
-      const userData = userDoc.data()
-
-      // Check if user email is verified
-      if (!userData.emailVerified) {
-        showToast("This user has not verified their email address yet. They must verify their email before being assigned as a society head.", 'error')
-        setIsInvitingHead(false)
-        return
-      }
-
-      // Check if user is already a head of another society
-      if (userData.privilege === 1 && userData.societyId) {
-        const currentSociety = societies.find((s) => s.id === userData.societyId)
-        const currentSocietyName = currentSociety?.name || "another society"
-        showToast(`This user is already a ${userData.societyRole || "head"} of ${currentSocietyName}. A user can only be a head of one society at a time.`, 'error')
-        setIsInvitingHead(false)
-        return
-      }
-
-      // Check if user is already a head in this society
-      const isAlreadyHead = Object.values(selectedSociety.heads).includes(userDoc.id)
-      if (isAlreadyHead) {
-        showToast("This user is already a head in this society.", 'error')
-        setIsInvitingHead(false)
-        return
-      }
-
-      // Update user privilege to 1 (society head)
-      await updateDoc(doc(firestore, "users", userDoc.id), {
-        privilege: 1,
-        societyRole: newHeadRole,
-        societyId: selectedSociety.id,
-      })
-
-      const updatedHeads = {
-        ...selectedSociety.heads,
-        [newHeadRole]: userDoc.id,
-      }
-
-      // Update society in Firestore
-      await updateDoc(doc(firestore, "societies", selectedSociety.id), {
-        heads: updatedHeads,
-      })
-
-      // Update local state
+      const { updatedHeads, headDetails: newHeadDetails, userId } = await inviteHead(selectedSociety, newHeadEmail, newHeadRole, societies);
+      
       setSocieties(
         societies.map((soc) => (soc.id === selectedSociety.id ? { ...soc, heads: updatedHeads } : soc)),
       )
       setSelectedSociety({ ...selectedSociety, heads: updatedHeads })
 
-      // Update head details cache
       setHeadDetails({
         ...headDetails,
-        [userDoc.id]: {
-          name: userData.fullName || newHeadEmail.split("@")[0],
-          email: newHeadEmail,
-        },
+        [userId]: newHeadDetails,
       })
 
       setNewHeadEmail("")
       setNewHeadRole("CEO")
 
       showToast(
-        `Successfully assigned ${userData.fullName || newHeadEmail} as ${newHeadRole} of ${selectedSociety.name}!`,
+        `Successfully assigned ${newHeadDetails.name} as ${newHeadRole} of ${selectedSociety.name}!`,
         'success'
       )
     } catch (error) {
       console.error("Error inviting head:", error)
-      showToast("Failed to assign society head. Please try again.", 'error')
+      showToast((error as Error).message, 'error')
     } finally {
       setIsInvitingHead(false)
     }
@@ -441,8 +269,7 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = async () => {
-    const auth = getAuth(app)
-    await auth.signOut()
+    await signOutUser()
     router.push("/signin")
   }
 

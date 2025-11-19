@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
-import { app, firestore } from '../../firebase'
+import { app } from '../../firebase'
+import { getUserData } from '../../lib/firebase_functions/auth'
 import { CheckCircle2, Mail, Bell, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -24,11 +24,11 @@ export default function WaitlistThankYou() {
       }
 
       try {
-        // Get user data from Firestore
-        const userDoc = await getDoc(doc(firestore, 'users', user.uid))
-        if (userDoc.exists()) {
-          const userData = userDoc.data()
+        const userData = await getUserData(user.uid);
+        if (userData) {
           setUserName(userData.fullName || user.email?.split('@')[0] || 'there')
+        } else {
+          setUserName(user.email?.split('@')[0] || 'there')
         }
       } catch (error) {
         console.error('Error loading user data:', error)
