@@ -47,15 +47,18 @@ Comprehensive tests for the admin dashboard covering:
 - Unauthenticated: redirect to /signin
 - Privilege < 2: redirect to /waitlist
 - Privilege >= 2: dashboard loads
+
 **Society Creation:**
 - Unique names required
 - Society ID: lowercase name with hyphens (e.g., "Tech Society" → "tech-society")
 - Firestore document created with name and ID
+
 **Society Head Assignment:**
 - Email domain: @khi.iba.edu.pk only
 - Email must be verified
 - User can only be head of one society
 - No duplicate roles in same society
+
 **UI Elements:**
 - Dashboard header visible for admin
 - Society creation form rendered
@@ -106,15 +109,18 @@ Comprehensive tests for the password reset functionality covering:
 - Button: "Send Reset Link"
 - Back link: href="/signin"
 - Icons: Mail and ArrowLeft rendered
+
 **Form Behavior:**
 - Valid email: calls sendPasswordResetEmail
 - Success: shows "Password reset email sent", clears input
 - Loading: button disabled, shows "Sending..."
+
 **Error Messages:**
 - "auth/user-not-found": "No user found with this email"
 - "auth/invalid-email": "Invalid email address"
 - "auth/network-request-failed": "Network error"
 - Generic: "Failed to send reset email"
+
 **Email Domain:**
 - Accepts any valid email format
 - No domain restrictions for password reset
@@ -161,24 +167,29 @@ Comprehensive tests for the email verification flow covering:
 **Authentication:**
 - Not signed in: redirect to /signup
 - Signed in: verification page loads
+
 **Email Display:**
 - User email shown: e.g., "test@example.com"
 - Instructions: "A verification link has been sent"
 - Resend button: "Resend Verification Email"
 - Check button: "I've Verified My Email"
+
 **Verification Flow:**
 - Resend: calls sendEmailVerification
 - Check: reloads user, checks emailVerified
 - Success: updates Firestore with emailVerified=true and timestamp
+
 **Routing:**
 - Verified + privilege 0: redirect to /waitlist
 - Verified + privilege 1: redirect to /waitlist
 - Verified + privilege 2: redirect to /admin
 - Already verified on page load: immediate redirect
+
 **Error Messages:**
 - Unverified: "Your email is not verified yet"
 - Resend error: "Failed to send verification email"
 - Update error: Firestore errors handled
+
 **Firestore Updates:**
 - Field: emailVerified = true
 - Field: emailVerifiedAt = ISO timestamp
@@ -368,21 +379,25 @@ Comprehensive tests for role-based access control covering:
 - NORMAL_USER: 0
 - SOCIETY_HEAD: 1
 - ADMIN: 2
+
 **getUserPrivilege:**
 - Existing user with privilege: returns privilege level (0, 1, or 2)
 - Non-existent user: returns 0
 - Missing privilege field: returns 0
 - Error: returns 0 (with console.error)
+
 **updateUserPrivilege:**
 - Updates privilege field to new level
 - Includes privilegeUpdatedAt timestamp (ISO string)
 - Timestamp between before and after update time
 - Throws error on Firestore failure
+
 **Role Checkers:**
 - isNormalUser: true only for privilege 0
 - isSocietyHead: true only for privilege 1
 - isAdmin: true only for privilege 2
 - canManageSociety: true for privilege >= 1 (society head or admin)
+
 **getPrivilegeName:**
 - 0 → "Normal User"
 - 1 → "Society Head"
@@ -424,11 +439,13 @@ Comprehensive tests for Firestore statistics functions covering:
 - Error: 0 (with console.error)
 - Missing count: undefined
 - Collection: 'societies'
+
 **getTotalUsers:**
 - Success: 1000 users
 - Error: 0 (with console.error)
 - Zero users: 0 (valid)
 - Collection: 'users'
+
 **getTotalEvents:**
 - Success: 50 events
 - Error: 0 (with console.error)
