@@ -280,7 +280,18 @@ function generateMarkdown(doc, isTest = false) {
       md += `#### Edge Cases\n\n${doc.edgeCases}\n\n`;
     }
     if (doc.expectedValues) {
-      md += `#### Expected Values\n\n${doc.expectedValues}\n\n`;
+      // Add blank line between sections that start with **heading:**
+      const formattedExpectedValues = doc.expectedValues
+        .split('\n')
+        .map((line, index, array) => {
+          // Add blank line before lines starting with ** (except the first line)
+          if (index > 0 && line.trim().startsWith('**') && array[index - 1].trim() !== '') {
+            return '\n' + line;
+          }
+          return line;
+        })
+        .join('\n');
+      md += `#### Expected Values\n\n${formattedExpectedValues}\n\n`;
     }
   }
 
@@ -403,7 +414,7 @@ Welcome to the API reference for the IBA Event Management System.
   if (config.indexLinks && config.indexLinks.length > 0) {
     indexContent += `\n## Quick Links\n\n`;
     config.indexLinks.forEach(link => {
-      indexContent += `- [${link.title}](${link.link})\n`;
+      indexContent += `- [${link.title}](${link.link}.md)\n`;
     });
   }
 

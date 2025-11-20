@@ -38,7 +38,7 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
       
       - name: Run tests
-        run: npm test
+        run: npm test -- --verbose
       
       - name: Generate documentation
         run: npm run docs
