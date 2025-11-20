@@ -143,3 +143,6 @@ vite.config.ts.timestamp-*
 # Documentation output
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+# pnpm lock file
+pnpm-lock.yaml
