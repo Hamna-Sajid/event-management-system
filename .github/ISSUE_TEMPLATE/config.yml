@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/Hamna-Sajid/event-management-system/discussions
+    about: Ask questions and discuss ideas with the community
