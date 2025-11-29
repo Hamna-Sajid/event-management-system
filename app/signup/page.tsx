@@ -18,6 +18,7 @@ export default function SignUp() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    mobileNumber: '',
     password: '',
     confirmPassword: '',
   })
@@ -50,6 +51,7 @@ export default function SignUp() {
       await setDoc(doc(firestore, 'users', userCredential.user.uid), {
         fullName: formData.fullName,
         email: formData.email,
+        mobileNumber: formData.mobileNumber,
         privilege: 0, // 0: normal user, 1: society head, 2: admin
         createdAt: new Date().toISOString(),
         emailVerified: false,
@@ -120,6 +122,23 @@ export default function SignUp() {
               type="email"
               placeholder="you@example.com"
               value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+            />
+          </div>
+
+          {/* Mobile Number Field */}
+          <div>
+            <label htmlFor="mobileNumber" className="block text-sm font-medium text-white mb-2">
+              Mobile Number
+            </label>
+            <input
+              id="mobileNumber"
+              name="mobileNumber"
+              type="tel"
+              placeholder="+92 300 1234567"
+              value={formData.mobileNumber}
               onChange={handleInputChange}
               required
               className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
