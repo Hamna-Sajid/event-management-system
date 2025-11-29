@@ -12,6 +12,7 @@ Stores information about all registered users in the system.
 #### Fields:
 - `email` (string): User's email address (@khi.iba.edu.pk for students)
 - `fullName` (string): User's full name
+- `mobileNumber` (string): User's mobile phone number
 - `privilege` (number): User's privilege level
   - `0`: Normal user (default)
   - `1`: Society head (CEO/CFO/COO)
@@ -34,6 +35,7 @@ Stores information about all registered users in the system.
 {
   "email": "student@khi.iba.edu.pk",
   "fullName": "John Doe",
+  "mobileNumber": "+92 300 1234567",
   "privilege": 1,
   "emailVerified": true,
   "createdAt": "2024-01-15T10:30:00Z",
