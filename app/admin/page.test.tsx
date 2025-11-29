@@ -107,6 +107,31 @@ jest.mock('@/components/ui/button', () => ({
   ),
 }))
 
+// Mock Select component
+jest.mock('@/components/ui/select', () => ({
+  Select: ({ value, onChange, options, placeholder, className }: {
+    value: string;
+    onChange: (value: string) => void;
+    options: Array<{ value: string; label: string; disabled?: boolean }>;
+    placeholder?: string;
+    className?: string;
+  }) => (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={className}
+      data-testid="select-component"
+    >
+      {placeholder && !value && <option value="">{placeholder}</option>}
+      {options.map((option) => (
+        <option key={option.value} value={option.value} disabled={option.disabled}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  ),
+}))
+
 // Mock Toast
 jest.mock('@/components/ui/toast', () => ({
   ToastContainer: () => <div data-testid="toast-container" />,
