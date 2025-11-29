@@ -7,6 +7,7 @@ import { doc, getDoc, setDoc, collection, getDocs, updateDoc } from "firebase/fi
 import { app, firestore } from "../../firebase"
 import { LogOut, Plus, Trash2, User, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import { ToastContainer, showToast } from "@/components/ui/toast"
 
 interface Society {
@@ -583,21 +584,28 @@ export default function AdminDashboard() {
                 {/* Role Selection */}
                 <div className="mb-3">
                   <label className="text-xs text-[rgba(255,255,255,0.6)] mb-2 block">Select Role</label>
-                  <select
+                  <Select
                     value={newHeadRole}
-                    onChange={(e) => setNewHeadRole(e.target.value as "CEO" | "CFO" | "COO")}
-                    className="w-full px-4 py-2 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white focus:outline-none focus:border-[#d02243] focus:bg-[rgba(255,255,255,0.1)]"
-                  >
-                    <option value="CEO" disabled={selectedSociety.heads.CEO !== null}>
-                      CEO (Chief Executive Officer)
-                    </option>
-                    <option value="CFO" disabled={selectedSociety.heads.CFO !== null}>
-                      CFO (Chief Financial Officer)
-                    </option>
-                    <option value="COO" disabled={selectedSociety.heads.COO !== null}>
-                      COO (Chief Operating Officer)
-                    </option>
-                  </select>
+                    onChange={(value) => setNewHeadRole(value as "CEO" | "CFO" | "COO")}
+                    options={[
+                      {
+                        value: "CEO",
+                        label: "CEO (Chief Executive Officer)",
+                        disabled: selectedSociety.heads.CEO !== null
+                      },
+                      {
+                        value: "CFO",
+                        label: "CFO (Chief Financial Officer)",
+                        disabled: selectedSociety.heads.CFO !== null
+                      },
+                      {
+                        value: "COO",
+                        label: "COO (Chief Operating Officer)",
+                        disabled: selectedSociety.heads.COO !== null
+                      }
+                    ]}
+                    placeholder="Select a role"
+                  />
                 </div>
 
                 {/* Email Input */}
