@@ -41,6 +41,9 @@ export default function SignIn() {
       if (privilege >= 2) {
         // Admin: Route to admin dashboard
         router.push('/admin')
+      } else if (privilege === 1) {
+        // Society Head: Route to default profile society page
+        router.push('/default-profile-society')
       } else {
         // Normal user: Route to waitlist page
         router.push('/waitlist')
