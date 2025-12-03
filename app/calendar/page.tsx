@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, X, Search, Heart, Eye, Star } from "lucide-r
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
-import { collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore"
+import { collection, query, where, orderBy, getDocs } from "firebase/firestore"
 import { firestore } from "@/firebase"
 
 interface CalendarEvent {

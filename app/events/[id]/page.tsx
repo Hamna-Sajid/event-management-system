@@ -5,10 +5,14 @@ import { useParams } from "next/navigation"
 import { doc, getDoc } from "firebase/firestore"
 import { firestore } from "@/firebase"
 
+interface EventData {
+  [key: string]: unknown
+}
+
 export default function EventDetailsPage() {
   const params = useParams()
   const eventId = params.id as string
-  const [eventData, setEventData] = useState<any>(null)
+  const [eventData, setEventData] = useState<EventData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
