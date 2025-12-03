@@ -1,26 +1,83 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
-import { MapPin, Calendar, Users, Share2, Mail, Phone, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
+import { MapPin, Calendar, Users, Share2, Mail, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import CreateEventModal from "./create-event-modal"
 import EditEventModal from "./edit-event-modal"
+
+// Define interfaces locally as per current project convention
+interface Society {
+  name: string;
+  dateCreated: string;
+  heads: {
+    CEO: string | null;
+    CFO: string | null;
+    COO: string | null;
+  };
+  maxHeads: number;
+  description: string;
+  contactEmail: string;
+  socialLinks: {
+    facebook: string;
+    instagram: string;
+    linkedin: string;
+  };
+  events: string[];
+  createdBy: string;
+}
+
+interface Member {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+}
+
+interface EventContent {
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  status: string;
+  metrics: {
+    views: number;
+    likes: number;
+    wishlists: number;
+    shares: number;
+  };
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  status: string;
+  metrics: {
+    views: number;
+    likes: number;
+    wishlists: number;
+    shares: number;
+  };
+}
 
 interface SocietyTabsProps {
   theme: string
   isManagementView?: boolean
-  societyData: any
-  events: any[]
-  members: any[]
-  handleCreateEvent: (eventData: any) => Promise<void>
+  societyData: Society
+  events: Event[]
+  members: Member[]
   handleDeleteEvent: (eventId: string) => Promise<void>
-  handleEditEvent: (eventData: any) => Promise<void>
+  handleEditEvent: (eventData: Event) => Promise<void>
 }
 
 const tabs = ["Overview", "Manage Events", "Members", "About Us"]
 
-export default function SocietyTabs({ theme, isManagementView = false, societyData, events, members, handleCreateEvent, handleDeleteEvent, handleEditEvent }: SocietyTabsProps) {
+export default function SocietyTabs({ theme, isManagementView = false, societyData, events, members, handleDeleteEvent, handleEditEvent }: SocietyTabsProps) {
   const [activeTab, setActiveTab] = useState(isManagementView ? "Manage Events" : "Overview")
 
   return (
@@ -51,7 +108,7 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
 
       <div className="max-w-7xl mx-auto px-6 py-12" style={{ backgroundColor: `var(--bg-${theme})` }}>
         {activeTab === "Overview" && <OverviewTab theme={theme} societyData={societyData} events={events} members={members} />}
-        {activeTab === "Manage Events" && <ManageEventsTab theme={theme} initialEvents={events} handleCreateEvent={handleCreateEvent} handleDeleteEvent={handleDeleteEvent} handleEditEvent={handleEditEvent} />}
+        {activeTab === "Manage Events" && <ManageEventsTab theme={theme} initialEvents={events} handleDeleteEvent={handleDeleteEvent} handleEditEvent={handleEditEvent} />}
         {activeTab === "Members" && <MembersTab theme={theme} members={members} />}
         {activeTab === "About Us" && <AboutUsTab theme={theme} societyData={societyData} />}
       </div>
@@ -59,28 +116,22 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
   )
 }
 
-function ManageEventsTab({ theme, initialEvents, handleCreateEvent, handleDeleteEvent, handleEditEvent }: { theme: string, initialEvents: any[], handleCreateEvent: any, handleDeleteEvent: any, handleEditEvent: any }) {
+function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEvent }: { theme: string, initialEvents: Event[], handleDeleteEvent: (eventId: string) => Promise<void>, handleEditEvent: (eventData: Event) => Promise<void> }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [events, setEvents] = useState(initialEvents)
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) // Cast to Event | null
 
   useEffect(() => {
     setEvents(initialEvents)
   }, [initialEvents])
 
-  const handleCreateModalSubmit = async (eventData) => {
-    await handleCreateEvent(eventData)
-    setIsCreateModalOpen(false)
-  }
-
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: Event) => {
     setSelectedEvent(event)
     setIsEditModalOpen(true)
   }
 
-  const handleEditModalSubmit = async (eventData) => {
+  const handleEditModalSubmit = async (eventData: Event) => {
     await handleEditEvent(eventData)
     setIsEditModalOpen(false)
     setSelectedEvent(null)
@@ -101,25 +152,21 @@ function ManageEventsTab({ theme, initialEvents, handleCreateEvent, handleDelete
 
   return (
     <>
-      <CreateEventModal 
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateModalSubmit}
-        theme={theme}
-      />
       <EditEventModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSubmit={handleEditModalSubmit}
-        event={selectedEvent}
+        event={selectedEvent!}
         theme={theme}
       />
       <div className="space-y-6">
         <div className="flex gap-4 items-center">
-          <Button onClick={() => setIsCreateModalOpen(true)} className="font-semibold flex items-center gap-2" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>
-            <Plus size={20} />
-            Create New Event
-          </Button>
+          <Link href="/create-event">
+            <Button className="font-semibold flex items-center gap-2" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>
+              <Plus size={20} />
+              Create New Event
+            </Button>
+          </Link>
           <div className="flex-1 flex items-center gap-3 px-4 py-2 rounded-lg" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})` }}>
             <Search size={18} style={{ color: `var(--text-secondary-${theme})` }} />
             <input
@@ -141,7 +188,7 @@ function ManageEventsTab({ theme, initialEvents, handleCreateEvent, handleDelete
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Event Title</th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Date & Time</th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Status</th>
-                  <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Registrations</th>
+                  <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Views</th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Actions</th>
                 </tr>
               </thead>
@@ -161,7 +208,7 @@ function ManageEventsTab({ theme, initialEvents, handleCreateEvent, handleDelete
                       </span>
                     </td>
                     <td className="px-6 py-4" style={{ color: `var(--text-secondary-${theme})` }}>
-                      {event.registrations || 0} registered
+                      {event.metrics?.views || 0}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -182,7 +229,7 @@ function ManageEventsTab({ theme, initialEvents, handleCreateEvent, handleDelete
   )
 }
 
-function OverviewTab({ theme, societyData, events, members }: { theme: string, societyData: any, events: any[], members: any[] }) {
+function OverviewTab({ theme, societyData, events, members }: { theme: string, societyData: Society, events: Event[], members: Member[] }) {
   const stats = [
     { label: "Active Members", value: members.length },
     { label: "Events Hosted", value: events.length },
@@ -225,7 +272,6 @@ function OverviewTab({ theme, societyData, events, members }: { theme: string, s
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><Calendar size={16} />{new Date(event.date).toLocaleDateString()}</div>
                 <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><MapPin size={16} />{event.location || 'TBD'}</div>
-                <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><Users size={16} />{event.attendees || 0} expected attendees</div>
               </div>
               <p style={{ color: `var(--text-secondary-${theme})` }} className="mb-4 leading-relaxed">{event.description}</p>
               <Button className="w-full font-semibold" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>Register Now</Button>
@@ -237,7 +283,7 @@ function OverviewTab({ theme, societyData, events, members }: { theme: string, s
   )
 }
 
-function MembersTab({ theme, members }: { theme: string, members: any[] }) {
+function MembersTab({ theme, members }: { theme: string, members: Member[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {members.map((member, idx) => (
@@ -258,7 +304,7 @@ function MembersTab({ theme, members }: { theme: string, members: any[] }) {
   )
 }
 
-function AboutUsTab({ theme, societyData }: { theme: string, societyData: any }) {
+function AboutUsTab({ theme, societyData }: { theme: string, societyData: Society }) {
   return (
     <div className="p-8 rounded-2xl" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})`, color: `var(--text-primary-${theme})` }}>
       <div className="space-y-6 max-w-3xl">

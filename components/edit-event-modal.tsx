@@ -3,16 +3,48 @@
 import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 
+// EventContent and Event interfaces for type safety
+interface EventContent {
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  status: string;
+  metrics: {
+    views: number;
+    likes: number;
+    wishlists: number;
+    shares: number;
+  };
+}
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  status: string;
+  metrics: {
+    views: number;
+    likes: number;
+    wishlists: number;
+    shares: number;
+  };
+}
+
 interface EditEventModalProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (eventData: any) => void
-  event: any
+  onSubmit: (eventData: Event) => void
+  event: Event
   theme: string
 }
 
 export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme }: EditEventModalProps) {
-  const [eventData, setEventData] = useState(event)
+  const [eventData, setEventData] = useState<Event>(event)
 
   useEffect(() => {
     setEventData(event)
