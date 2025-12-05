@@ -70,16 +70,34 @@ describe('SocietyTabs', () => {
     expect(screen.queryByText('Event 2')).not.toBeInTheDocument()
   })
 
-  it('should have correct "View Event" links', () => {
-    render(<SocietyTabs theme="default" societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />)
+  it('should have correct "View Event" links in Overview tab', () => {
+    render(<SocietyTabs theme="default" societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />);
     
-    // In Overview tab
-    const overviewLinks = screen.getAllByRole('link', { name: /view event/i })
-    expect(overviewLinks[0]).toHaveAttribute('href', '/events/1')
+    const overviewLinks = screen.getAllByRole('link', { name: /view event/i });
+    expect(overviewLinks[0]).toHaveAttribute('href', '/events/1');
+  });
 
-    // In Manage Events tab (the eye icon)
-    render(<SocietyTabs theme="default" isManagementView societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />)
-    const manageEventsLinks = screen.getAllByTitle('View Regist-ations')
-    expect(manageEventsLinks[0].closest('a')).toHaveAttribute('href', '/events/1')
-  })
+  it('should have correct "View Event" links in Manage Events tab', async () => {
+    render(<SocietyTabs theme="default" isManagementView societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />);
+    
+    const manageEventsLinks = await screen.findAllByTitle('View Event');
+    expect(manageEventsLinks[0].closest('a')).toHaveAttribute('href', '/events/1');
+  });
+
+  it('should open and close the status dropdown', async () => {
+    const user = userEvent.setup();
+    render(<SocietyTabs theme="default" isManagementView societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />);
+
+    // Open the dropdown
+    await user.click(screen.getByRole('button', { name: 'All Statuses' }));
+
+    // The dropdown should be open
+    expect(screen.getByRole('button', { name: 'Published' })).toBeInTheDocument();
+
+    // Close the dropdown by clicking the main dropdown button again
+    await user.click(screen.getAllByRole('button', { name: 'All Statuses' })[0]);
+
+    // The dropdown should be closed
+    expect(screen.queryByRole('button', { name: 'Published' })).not.toBeInTheDocument();
+  });
 })

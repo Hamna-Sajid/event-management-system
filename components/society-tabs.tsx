@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { MapPin, Calendar, Share2, Mail, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import EditEventModal from "./edit-event-modal"
 
 // Define interfaces locally as per current project convention
@@ -201,7 +202,15 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
   const [searchQuery, setSearchQuery] = useState("")
   const [events, setEvents] = useState(initialEvents)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null) // Cast to Event | null
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState("All") // New state for status filter
+
+  const statusOptions = [
+    { value: "All", label: "All Statuses" },
+    { value: "Published", label: "Published" },
+    { value: "Draft", label: "Draft" },
+    { value: "Concluded", label: "Concluded" },
+  ];
 
   useEffect(() => {
     setEvents(initialEvents)
@@ -228,7 +237,17 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
   }
 
   const filteredEvents = events.filter(
-    (event) => event.title.toLowerCase().includes(searchQuery.toLowerCase()) || new Date(event.date).toLocaleDateString().includes(searchQuery),
+    (event) => {
+      const formattedDate = new Date(event.date).toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+      });
+      const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                            formattedDate.includes(searchQuery);
+      const matchesStatus = selectedStatus === "All" || event.status === selectedStatus;
+      return matchesSearch && matchesStatus;
+    }
   )
 
   return (
@@ -246,11 +265,21 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
             <Plus size={20} />
             Create New Event
           </ThemedButton>
+
+          {/* New Select component for status filter */}
+          <Select
+            value={selectedStatus}
+            onChange={setSelectedStatus}
+            options={statusOptions}
+            placeholder="Filter by Status"
+            className="w-[180px]"
+          />
+
           <div className="flex-1 flex items-center gap-3 px-4 py-2 rounded-lg" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})` }}>
             <Search size={18} style={{ color: `var(--text-secondary-${theme})` }} />
             <input
               type="text"
-              placeholder="Search events by title or date (e.g., DD-MM-YYYY)..."
+              placeholder="Search events by title or date (e.g., MM-DD-YYYY)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 bg-transparent outline-none"
@@ -274,23 +303,23 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
               <tbody>
                 {filteredEvents.map((event, idx) => (
                   <tr key={event.id} style={{ borderBottom: `1px solid var(--border-${theme})`, backgroundColor: idx % 2 === 0 ? "transparent" : `rgba(212, 34, 67, 0.02)` }}>
-                    <td className="px-6 py-4" style={{ color: `var(--text-primary-${theme})` }}><div className="font-semibold">{event.title}</div></td>
-                    <td className="px-6 py-4" style={{ color: `var(--text-secondary-${theme})` }}>
-                      <div className="flex items-center gap-2">
+                    <td className="px-6 py-4" style={{ verticalAlign: "middle", color: `var(--text-primary-${theme})` }}><div className="font-semibold">{event.title}</div></td>
+                    <td className="px-6 py-4" style={{ verticalAlign: "middle", color: `var(--text-secondary-${theme})` }}>
+                      <div className="flex items-center gap-2 flex-nowrap">
                         <Calendar size={16} />
                         {new Date(event.date).toLocaleDateString()} at {event.time}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4" style={{ verticalAlign: "middle" }}>
                       <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: `${getStatusColor(event.status)}20`, color: getStatusColor(event.status), border: `1px solid ${getStatusColor(event.status)}40` }}>
                         {event.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4" style={{ color: `var(--text-secondary-${theme})` }}>
+                    <td className="px-6 py-4" style={{ verticalAlign: "middle", color: `var(--text-secondary-${theme})` }}>
                       {event.metrics?.views || 0}
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
+                    <td className="px-6 py-4" style={{ verticalAlign: "middle" }}>
+                      <div className="flex items-center gap-2 flex-nowrap">
                         <button onClick={() => handleEditClick(event)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="Edit Event"><Edit2 size={16} /></button>
                         <Link href={`/events/${event.id}`}>
                           <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Event"><Eye size={16} /></button>

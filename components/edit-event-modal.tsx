@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
+import { Select } from './ui/select'
 
 // Event interfaces for type safety
 interface Event {
@@ -76,11 +77,16 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme
           </div>
           <div>
             <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Status</label>
-            <select name="status" value={eventData?.status || 'Draft'} onChange={handleChange} className="w-full input-style">
-              <option value="Draft">Draft</option>
-              <option value="Published">Published</option>
-              <option value="Concluded">Concluded</option>
-            </select>
+            <Select
+              value={eventData?.status || 'Draft'}
+              onChange={(value) => setEventData(prev => ({ ...prev, status: value }))}
+              options={[
+                { value: "Draft", label: "Draft" },
+                { value: "Published", label: "Published" },
+                { value: "Concluded", label: "Concluded" },
+              ]}
+              className="w-full input-style"
+            />
           </div>
           <div className="flex justify-end gap-4 pt-4">
             <Button type="button" variant="ghost" onClick={onClose} style={{ color: `var(--text-secondary-${theme})` }}>Cancel</Button>
@@ -90,17 +96,18 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme
       </div>
       <style jsx>{`
         .input-style {
-          background-color: var(--glass-default);
-          border: 1px solid var(--border-default);
-          color: var(--text-primary-default);
+          background-color: var(--glass-${theme});
+          border: 1px solid var(--border-${theme});
+          color: var(--text-primary-${theme});
           border-radius: 0.5rem;
           padding: 0.75rem 1rem;
           width: 100%;
           transition: border-color 0.2s;
+          appearance: none; /* Remove default browser styling for select and date inputs */
         }
         .input-style:focus {
           outline: none;
-          border-color: var(--accent-1-default);
+          border-color: var(--accent-1-${theme});
         }
       `}</style>
     </div>

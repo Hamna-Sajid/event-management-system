@@ -2,8 +2,10 @@ import React from 'react'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import SocietyPage from './page'
 import '@testing-library/jest-dom'
-import { getDoc, getDocs } from 'firebase/firestore'
+import { getDoc, getDocs, deleteDoc, updateDoc, arrayRemove, doc } from 'firebase/firestore'
 import { useParams, useRouter } from 'next/navigation'
+import SocietyHero from '@/components/society-hero'
+import SocietyTabs from '@/components/society-tabs'
 
 // Mock Firebase module
 jest.mock('../../../firebase', () => ({
@@ -14,7 +16,7 @@ jest.mock('../../../firebase', () => ({
 }))
 
 // Mock Firebase auth and firestore functions
-let onAuthStateChangedCallback: ((user: { uid: string } | null) => void) | null = null;
+let onAuthStateChangedCallback: ((user: { uid:string } | null) => void) | null = null;
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(),
   onAuthStateChanged: jest.fn((_auth, callback) => {
@@ -32,6 +34,7 @@ jest.mock('firebase/firestore', () => ({
   where: jest.fn(),
   deleteDoc: jest.fn(),
   updateDoc: jest.fn(),
+  arrayRemove: jest.fn(),
 }))
 
 // Mock Next.js router
@@ -42,106 +45,187 @@ jest.mock('next/navigation', () => ({
 
 // Mock components
 jest.mock('@/components/society-header', () => {
-  const Mock = () => <div data-testid="society-header" />
-  Mock.displayName = 'SocietyHeader'
-  return Mock
+    const Mock = () => <div data-testid="society-header" />
+    Mock.displayName = 'SocietyHeader'
+    return Mock
 })
-jest.mock('@/components/society-hero', () => {
-  const Mock = () => <div data-testid="society-hero" />
-  Mock.displayName = 'SocietyHero'
-  return Mock
-})
-jest.mock('@/components/society-tabs', () => {
-  const Mock = () => <div data-testid="society-tabs" />
-  Mock.displayName = 'SocietyTabs'
-  return Mock
-})
+jest.mock('@/components/society-hero')
+jest.mock('@/components/society-tabs')
+
+
+const mockUseParams = useParams as jest.Mock
+const mockUseRouter = useRouter as jest.Mock
+const mockGetDoc = getDoc as jest.Mock
+const mockGetDocs = getDocs as jest.Mock
+const mockUpdateDoc = updateDoc as jest.Mock
+const mockDeleteDoc = deleteDoc as jest.Mock
+const mockArrayRemove = arrayRemove as jest.Mock
+const mockDoc = doc as jest.Mock
+
+const mockSocietyData = {
+  name: 'Test Society',
+  heads: { CEO: 'head-uid' },
+  events: ['event-to-delete'],
+}
+const mockUserData = {
+    id: "user1",
+    fullName: "Test User",
+    societyRole: "CEO",
+    email: "test@test.com"
+}
+const mockEventData = {
+    id: "event1",
+    title: "Test Event"
+}
 
 describe('SocietyPage', () => {
-  const mockUseParams = useParams as jest.Mock
-  const mockUseRouter = useRouter as jest.Mock
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    onAuthStateChangedCallback = null; // Reset callback
-    mockUseParams.mockReturnValue({ id: '123' }) // Default mock for useParams
+    jest.clearAllMocks();
+    (SocietyHero as jest.Mock).mockImplementation(() => <div data-testid="society-hero" />);
+    (SocietyTabs as jest.Mock).mockImplementation(() => <div data-testid="society-tabs" />);
+    onAuthStateChangedCallback = null;
+    mockUseParams.mockReturnValue({ id: 'society-123' })
     mockUseRouter.mockReturnValue({ push: jest.fn() })
+    
+    // Default happy path mock
+    mockGetDoc.mockResolvedValue({
+      exists: () => true,
+      data: () => mockSocietyData,
+    })
+    mockGetDocs.mockResolvedValue({
+        docs: [
+            { id: "user1", data: () => mockUserData },
+            { id: "event1", data: () => mockEventData },
+        ]
+    })
   })
 
   it('should show loading state initially', () => {
-    (getDoc as jest.Mock).mockResolvedValue({ exists: () => false })
+    mockGetDoc.mockResolvedValue({ exists: () => false })
     render(<SocietyPage />)
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 
   it('should show error if no society ID is provided', async () => {
-    mockUseParams.mockReturnValue({ id: undefined }) // Override for this specific test
+    mockUseParams.mockReturnValue({ id: undefined })
     render(<SocietyPage />)
-    await waitFor(() => {
-      expect(screen.getByText('No society ID provided.')).toBeInTheDocument()
-    })
+    expect(await screen.findByText('No society ID provided.')).toBeInTheDocument()
   })
   
   it('should show error if society is not found', async () => {
-    (getDoc as jest.Mock).mockResolvedValue({ exists: () => false });
-    // Trigger onAuthStateChanged callback after render
+    mockGetDoc.mockResolvedValue({ exists: () => false });
     render(<SocietyPage />)
-    if (onAuthStateChangedCallback) {
-        await act(async () => { // Await the act call
-            onAuthStateChangedCallback!({ uid: 'test-user' })
-        })
-    }
-    await waitFor(() => {
-      expect(screen.getByText('Society not found.')).toBeInTheDocument()
-    })
+    expect(await screen.findByText('Society not found.')).toBeInTheDocument()
   })
 
   it('should render the page with society data', async () => {
-    const mockSocietyData = {
-      name: 'Test Society',
-      heads: { CEO: 'user1' },
-      events: ['event1'],
-    }
-    const mockUserData = {
-        id: "user1",
-        fullName: "Test User",
-        societyRole: "CEO",
-        email: "test@test.com"
-    }
-    const mockEventData = {
-        id: "event1",
-        title: "Test Event"
-    }
-
-    ;(getDoc as jest.Mock).mockImplementationOnce(() => Promise.resolve({
-      exists: () => true,
-      data: () => mockSocietyData,
-    }))
-    .mockImplementationOnce(() => Promise.resolve({
-        exists: () => true,
-        data: () => mockSocietyData,
-    }));
-    ;(getDocs as jest.Mock).mockImplementationOnce(() => Promise.resolve({
-        docs: [
-            { id: "user1", data: () => mockUserData },
-        ]
-    }))
-    .mockImplementationOnce(() => Promise.resolve({
-        docs: [
-            { id: "event1", data: () => mockEventData },
-        ]
-    }));
-    // Trigger onAuthStateChanged callback after render
     render(<SocietyPage />)
-    if (onAuthStateChangedCallback) {
-        await act(async () => { // Await the act call
-            onAuthStateChangedCallback!({ uid: 'user1' })
-        })
-    }
-    await waitFor(() => {
-      expect(screen.getByTestId('society-header')).toBeInTheDocument()
-      expect(screen.getByTestId('society-hero')).toBeInTheDocument()
-      expect(screen.getByTestId('society-tabs')).toBeInTheDocument()
+    expect(await screen.findByTestId('society-header')).toBeInTheDocument()
+    expect(await screen.findByTestId('society-hero')).toBeInTheDocument()
+    expect(await screen.findByTestId('society-tabs')).toBeInTheDocument()
+  })
+
+  describe('Event Handlers', () => {
+    it('handleDeleteEvent should call deleteDoc and updateDoc', async () => {
+      render(<SocietyPage />)
+      await waitFor(() => expect(SocietyTabs as jest.Mock).toHaveBeenCalled())
+
+      // Get the handleDeleteEvent prop from the mocked component
+      const { handleDeleteEvent } = (SocietyTabs as jest.Mock).mock.calls[0][0]
+      
+      const eventId = 'event-to-delete'
+      await act(async () => {
+        await handleDeleteEvent(eventId)
+      })
+
+      // Check firestore calls
+      expect(mockDeleteDoc).toHaveBeenCalledWith(mockDoc(undefined, 'events', eventId))
+      expect(mockUpdateDoc).toHaveBeenCalledWith(
+        mockDoc(undefined, 'societies', 'society-123'),
+        { events: mockArrayRemove(eventId) }
+      )
+    })
+
+    it('handleEditEvent should call updateDoc', async () => {
+      render(<SocietyPage />)
+      await waitFor(() => expect(SocietyTabs as jest.Mock).toHaveBeenCalled())
+
+      const { handleEditEvent } = (SocietyTabs as jest.Mock).mock.calls[0][0]
+
+      const eventToUpdate = { id: 'event-to-edit', title: 'Updated Title' }
+      await act(async () => {
+        await handleEditEvent(eventToUpdate)
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...dataToUpdate } = eventToUpdate;
+      expect(mockUpdateDoc).toHaveBeenCalledWith(
+        mockDoc(undefined, 'events', eventToUpdate.id),
+        dataToUpdate
+      )
     })
   })
+
+  describe('Management View', () => {
+    it('should pass isManagementView=true when user is a society head', async () => {
+        render(<SocietyPage />);
+    
+        await screen.findByTestId('society-hero');
+    
+        act(() => {
+          if (onAuthStateChangedCallback) {
+            onAuthStateChangedCallback({ uid: 'head-uid' });
+          }
+        });
+    
+        await waitFor(() => {
+          const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
+          expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', true);
+
+          const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
+          expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', true);
+        });
+      });
+    
+      it('should pass isManagementView=false when user is not a society head', async () => {
+        render(<SocietyPage />);
+    
+        await screen.findByTestId('society-hero');
+    
+        act(() => {
+          if (onAuthStateChangedCallback) {
+            onAuthStateChangedCallback({ uid: 'not-a-head' });
+          }
+        });
+    
+        await waitFor(() => {
+            const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
+            expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', false);
+  
+            const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
+            expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', false);
+        });
+      });
+    
+      it('should pass isManagementView=false when user is not logged in', async () => {
+        render(<SocietyPage />);
+    
+        await screen.findByTestId('society-hero');
+    
+        act(() => {
+          if (onAuthStateChangedCallback) {
+            onAuthStateChangedCallback(null);
+          }
+        });
+    
+        await waitFor(() => {
+            const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
+            expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', false);
+  
+            const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
+            expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', false);
+        });
+      });
+  });
 })
