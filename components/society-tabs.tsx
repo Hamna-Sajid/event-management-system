@@ -293,7 +293,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
                       <div className="flex items-center gap-2">
                         <button onClick={() => handleEditClick(event)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="Edit Event"><Edit2 size={16} /></button>
                         <Link href={`/events/${event.id}`}>
-                          <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Regist-ations"><Eye size={16} /></button>
+                          <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Event"><Eye size={16} /></button>
                         </Link>
                         <button onClick={() => handleDeleteEvent(event.id)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `rgba(239, 68, 68, 0.1)`, color: "#ef4444", border: `1px solid rgba(239, 68, 68, 0.3)` }} title="Delete Event"><Trash2 size={16} /></button>
                       </div>
