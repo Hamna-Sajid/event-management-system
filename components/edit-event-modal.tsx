@@ -3,22 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from './ui/button'
 
-// EventContent and Event interfaces for type safety
-interface EventContent {
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  status: string;
-  metrics: {
-    views: number;
-    likes: number;
-    wishlists: number;
-    shares: number;
-  };
-}
-
+// Event interfaces for type safety
 interface Event {
   id: string;
   title: string;

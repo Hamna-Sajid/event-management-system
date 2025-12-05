@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MapPin, Calendar, Users, Share2, Mail, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
+import { MapPin, Calendar, Share2, Mail, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import EditEventModal from "./edit-event-modal"
@@ -34,20 +34,6 @@ interface Member {
   email: string;
 }
 
-interface EventContent {
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  status: string;
-  metrics: {
-    views: number;
-    likes: number;
-    wishlists: number;
-    shares: number;
-  };
-}
 
 interface Event {
   id: string;
@@ -77,6 +63,54 @@ interface SocietyTabsProps {
 
 const tabs = ["Overview", "Manage Events", "Members", "About Us"]
 
+/**
+ * @component SocietyTabs
+ * 
+ * @param {object} props
+ * @param {string} props.theme - The theme to apply to the tabs section.
+ * @param {boolean} [props.isManagementView] - Optional flag to show management controls.
+ * @param {Society} props.societyData - The data for the society.
+ * @param {Event[]} props.events - An array of events for the society.
+ * @param {Member[]} props.members - An array of members in the society.
+ * @param {(eventId: string) => Promise<void>} props.handleDeleteEvent - Function to handle event deletion.
+ * @param {(eventData: Event) => Promise<void>} props.handleEditEvent - Function to handle event editing.
+ * 
+ * @remarks
+ * This component displays a set of tabs for a society page, including:
+ * - Overview: A summary of the society's mission, social links, stats, and upcoming events.
+ * - Manage Events: A table of events with search, create, edit, and delete functionality (for management view).
+ * - Members: A list of society members with their roles and contact information.
+ * - About Us: Detailed information about the society.
+ * 
+ * The active tab is set to "Manage Events" by default for management view, and "Overview" otherwise.
+ * 
+ * @example
+ * ```tsx
+ * import SocietyTabs from '@/components/society-tabs'
+ * 
+ * export default function SocietyPage() {
+ *   // ... fetch societyData, events, members
+ *   const handleDeleteEvent = async (eventId) => { ... }
+ *   const handleEditEvent = async (eventData) => { ... }
+ * 
+ *   return (
+ *     <div>
+ *       <SocietyTabs
+ *         theme="default"
+ *         isManagementView={true}
+ *         societyData={societyData}
+ *         events={events}
+ *         members={members}
+ *         handleDeleteEvent={handleDeleteEvent}
+ *         handleEditEvent={handleEditEvent}
+ *       />
+ *     </div>
+ *   )
+ * }
+ * ```
+ * 
+ * @category Components
+ */
 export default function SocietyTabs({ theme, isManagementView = false, societyData, events, members, handleDeleteEvent, handleEditEvent }: SocietyTabsProps) {
   const [activeTab, setActiveTab] = useState(isManagementView ? "Manage Events" : "Overview")
 
@@ -114,6 +148,53 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
       </div>
     </div>
   )
+}
+
+// Helper component for buttons with dynamic hover/active styles
+const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
+  const [isHovered, setIsHovered] = useState(false)
+  const [isActive, setIsActive] = useState(false)
+
+  const baseStyle: React.CSSProperties = {
+    backgroundColor: `var(--accent-1-${theme})`,
+    color: "white",
+    ...buttonStyle
+  }
+
+  const hoverStyle: React.CSSProperties = {
+    backgroundColor: `var(--accent-2-${theme})`,
+  }
+
+  const activeStyle: React.CSSProperties = {
+    backgroundColor: `var(--accent-1-${theme})`, // Or a darker shade
+  }
+
+  const currentStyle = {
+    ...baseStyle,
+    ...(isHovered && hoverStyle),
+    ...(isActive && activeStyle),
+  }
+
+  const commonProps = {
+    className: `font-semibold flex items-center gap-2 transition-all ${className}`,
+    style: currentStyle,
+    onMouseEnter: () => setIsHovered(true),
+    onMouseLeave: () => setIsHovered(false),
+    onMouseDown: () => setIsActive(true),
+    onMouseUp: () => setIsActive(false),
+    onClick: onClick,
+    size: size,
+  }
+
+  if (linkHref) {
+    return (
+      <Link href={linkHref}>
+        <Button {...commonProps}>{children}</Button>
+      </Link>
+    )
+  }
+
+  return <Button {...commonProps}>{children}</Button>
 }
 
 function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEvent }: { theme: string, initialEvents: Event[], handleDeleteEvent: (eventId: string) => Promise<void>, handleEditEvent: (eventData: Event) => Promise<void> }) {
@@ -161,17 +242,15 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
       />
       <div className="space-y-6">
         <div className="flex gap-4 items-center">
-          <Link href="/create-event">
-            <Button className="font-semibold flex items-center gap-2" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>
-              <Plus size={20} />
-              Create New Event
-            </Button>
-          </Link>
+          <ThemedButton linkHref="/create-event" theme={theme}>
+            <Plus size={20} />
+            Create New Event
+          </ThemedButton>
           <div className="flex-1 flex items-center gap-3 px-4 py-2 rounded-lg" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})` }}>
             <Search size={18} style={{ color: `var(--text-secondary-${theme})` }} />
             <input
               type="text"
-              placeholder="Search events by title or date..."
+              placeholder="Search events by title or date (e.g., DD-MM-YYYY)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="flex-1 bg-transparent outline-none"
@@ -213,7 +292,9 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <button onClick={() => handleEditClick(event)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="Edit Event"><Edit2 size={16} /></button>
-                        <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Registrations"><Eye size={16} /></button>
+                        <Link href={`/events/${event.id}`}>
+                          <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Regist-ations"><Eye size={16} /></button>
+                        </Link>
                         <button onClick={() => handleDeleteEvent(event.id)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `rgba(239, 68, 68, 0.1)`, color: "#ef4444", border: `1px solid rgba(239, 68, 68, 0.3)` }} title="Delete Event"><Trash2 size={16} /></button>
                       </div>
                     </td>
@@ -230,6 +311,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
 }
 
 function OverviewTab({ theme, societyData, events, members }: { theme: string, societyData: Society, events: Event[], members: Member[] }) {
+  console.log("OverviewTab events:", events) // Added console.log
   const stats = [
     { label: "Active Members", value: members.length },
     { label: "Events Hosted", value: events.length },
@@ -266,16 +348,18 @@ function OverviewTab({ theme, societyData, events, members }: { theme: string, s
       <div>
         <h2 className="text-3xl font-bold mb-6" style={{ color: `var(--text-primary-${theme})` }}>Upcoming Events</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {events.slice(0, 3).map((event, idx) => (
-            <div key={idx} className="p-6 rounded-2xl" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})`, color: `var(--text-primary-${theme})` }}>
-              <h3 className="text-xl font-bold mb-3" style={{ color: `var(--accent-1-${theme})` }}>{event.title}</h3>
-              <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><Calendar size={16} />{new Date(event.date).toLocaleDateString()}</div>
-                <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><MapPin size={16} />{event.location || 'TBD'}</div>
+          {events.slice(0, 3).map((event) => (
+            <Link href={`/events/${event.id}`} key={event.id}>
+              <div className="p-6 rounded-2xl h-full" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})`, color: `var(--text-primary-${theme})` }}>
+                <h3 className="text-xl font-bold mb-3" style={{ color: `var(--accent-1-${theme})` }}>{event.title}</h3>
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><Calendar size={16} />{new Date(event.date).toLocaleDateString()}</div>
+                  <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><MapPin size={16} />{event.location || 'TBD'}</div>
+                </div>
+                <p style={{ color: `var(--text-secondary-${theme})` }} className="mb-4 leading-relaxed line-clamp-2">{event.description}</p>
+                <Button className="w-full font-semibold" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>View Event</Button>
               </div>
-              <p style={{ color: `var(--text-secondary-${theme})` }} className="mb-4 leading-relaxed">{event.description}</p>
-              <Button className="w-full font-semibold" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>Register Now</Button>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
