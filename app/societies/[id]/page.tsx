@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from "next/navigation"
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { doc, getDoc, collection, getDocs, query, where, updateDoc, arrayRemove, deleteDoc } from "firebase/firestore"
 import { app, firestore } from "../../../firebase"
+import { getUserPrivilege, UserPrivilege } from "@/lib/privileges"
 
 import SocietyHeader from "@/components/society-header"
 import SocietyHero from "@/components/society-hero"
@@ -104,6 +105,7 @@ interface EventContent {
 
 export default function SocietyPage() {
   const params = useParams()
+  const router = useRouter()
   const societyId = params.id as string
   const [societyData, setSocietyData] = useState<Society | null>(null)
   const [events, setEvents] = useState<Event[]>([])
@@ -151,7 +153,14 @@ export default function SocietyPage() {
           if (eventIDs.length > 0) {
             const eventsQuery = query(collection(firestore, 'events'), where('__name__', 'in', eventIDs))
             const eventsSnapshot = await getDocs(eventsQuery)
-            const eventsData = eventsSnapshot.docs.map(d => ({ id: d.id, ...d.data() as EventContent }))
+            const eventsData = eventsSnapshot.docs.map(d => {
+              const eventContent = d.data() as EventContent;
+              return { 
+                id: d.id, 
+                ...eventContent,
+                status: eventContent.status ? eventContent.status.toLowerCase() : eventContent.status
+              };
+            });
             setEvents(eventsData as Event[])
           }
         } else {
@@ -172,20 +181,24 @@ export default function SocietyPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user && societyData) {
-        // Check if the logged-in user is one of the society heads
         const headUIDs = Object.values(societyData.heads).filter(uid => uid)
-        if (headUIDs.includes(user.uid)) {
+        const isHead = headUIDs.includes(user.uid)
+        
+        const privilege = await getUserPrivilege(user.uid)
+        const isAdmin = privilege >= UserPrivilege.ADMIN
+
+        if (isHead || isAdmin) {
           setIsManagementView(true)
         } else {
-          setIsManagementView(false)
+          router.push('/coming-soon')
         }
-      } else {
-        setIsManagementView(false)
+      } else if (societyData) { // If there's society data but no user
+        router.push('/coming-soon')
       }
     })
 
     return () => unsubscribe()
-  }, [auth, societyData])
+  }, [auth, societyData, router])
 
 
 
@@ -230,6 +243,10 @@ export default function SocietyPage() {
   const handleEditEvent = async (eventData: Event) => {
     try {
             const { id, ...dataToUpdate } = eventData;
+            // Convert status to lowercase
+            if (dataToUpdate.status) {
+              dataToUpdate.status = dataToUpdate.status.toLowerCase();
+            }
             const eventDocRef = doc(firestore, 'events', id)
             await updateDoc(eventDocRef, dataToUpdate)
       setEvents(prev => prev.map(e => e.id === id ? eventData : e))

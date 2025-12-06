@@ -5,6 +5,7 @@ import '@testing-library/jest-dom'
 import { getDoc, getDocs, deleteDoc, updateDoc, arrayRemove, doc } from 'firebase/firestore'
 import { useParams, useRouter } from 'next/navigation'
 import SocietyHero from '@/components/society-hero'
+import { getUserPrivilege } from '@/lib/privileges'
 import SocietyTabs from '@/components/society-tabs'
 
 // Mock Firebase module
@@ -38,9 +39,20 @@ jest.mock('firebase/firestore', () => ({
 }))
 
 // Mock Next.js router
+jest.mock('@/lib/privileges', () => ({
+  getUserPrivilege: jest.fn(),
+  UserPrivilege: {
+    NORMAL_USER: 0,
+    SOCIETY_HEAD: 1,
+    ADMIN: 2,
+  },
+}));
+
+// Mock Next.js router
+const mockPush = jest.fn()
 jest.mock('next/navigation', () => ({
   useParams: jest.fn(),
-  useRouter: jest.fn(() => ({ push: jest.fn() })),
+  useRouter: jest.fn(() => ({ push: mockPush })),
 }))
 
 // Mock components
@@ -62,6 +74,7 @@ const mockDeleteDoc = deleteDoc as jest.Mock
 const mockArrayRemove = arrayRemove as jest.Mock
 const mockDoc = doc as jest.Mock
 
+
 const mockSocietyData = {
   name: 'Test Society',
   heads: { CEO: 'head-uid' },
@@ -75,7 +88,8 @@ const mockUserData = {
 }
 const mockEventData = {
     id: "event1",
-    title: "Test Event"
+    title: "Test Event",
+    status: "Published",
 }
 
 describe('SocietyPage', () => {
@@ -86,7 +100,7 @@ describe('SocietyPage', () => {
     (SocietyTabs as jest.Mock).mockImplementation(() => <div data-testid="society-tabs" />);
     onAuthStateChangedCallback = null;
     mockUseParams.mockReturnValue({ id: 'society-123' })
-    mockUseRouter.mockReturnValue({ push: jest.fn() })
+    mockUseRouter.mockReturnValue({ push: mockPush })
     
     // Default happy path mock
     mockGetDoc.mockResolvedValue({
@@ -99,6 +113,8 @@ describe('SocietyPage', () => {
             { id: "event1", data: () => mockEventData },
         ]
     })
+    // Default to normal user for privilege checks
+    ;(getUserPrivilege as jest.Mock).mockResolvedValue(0)
   })
 
   it('should show loading state initially', () => {
@@ -119,16 +135,33 @@ describe('SocietyPage', () => {
     expect(await screen.findByText('Society not found.')).toBeInTheDocument()
   })
 
-  it('should render the page with society data', async () => {
+  it('should render the page with society data for an admin', async () => {
+    ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Admin
     render(<SocietyPage />)
+
+    act(() => {
+      if (onAuthStateChangedCallback) {
+        onAuthStateChangedCallback({ uid: 'admin-uid' });
+      }
+    });
+    
     expect(await screen.findByTestId('society-header')).toBeInTheDocument()
     expect(await screen.findByTestId('society-hero')).toBeInTheDocument()
     expect(await screen.findByTestId('society-tabs')).toBeInTheDocument()
   })
 
   describe('Event Handlers', () => {
+    beforeEach(() => {
+        ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Assume admin for these tests
+        render(<SocietyPage />)
+        act(() => {
+            if (onAuthStateChangedCallback) {
+              onAuthStateChangedCallback({ uid: 'admin-uid' });
+            }
+        });
+    })
+
     it('handleDeleteEvent should call deleteDoc and updateDoc', async () => {
-      render(<SocietyPage />)
       await waitFor(() => expect(SocietyTabs as jest.Mock).toHaveBeenCalled())
 
       // Get the handleDeleteEvent prop from the mocked component
@@ -147,19 +180,19 @@ describe('SocietyPage', () => {
       )
     })
 
-    it('handleEditEvent should call updateDoc', async () => {
-      render(<SocietyPage />)
+    it('handleEditEvent should call updateDoc with lowercase status', async () => {
       await waitFor(() => expect(SocietyTabs as jest.Mock).toHaveBeenCalled())
 
       const { handleEditEvent } = (SocietyTabs as jest.Mock).mock.calls[0][0]
 
-      const eventToUpdate = { id: 'event-to-edit', title: 'Updated Title' }
+      const eventToUpdate = { id: 'event-to-edit', title: 'Updated Title', status: 'PublisheD' }
       await act(async () => {
         await handleEditEvent(eventToUpdate)
       })
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...dataToUpdate } = eventToUpdate;
+      dataToUpdate.status = dataToUpdate.status.toLowerCase(); // a ssert lowercase
       expect(mockUpdateDoc).toHaveBeenCalledWith(
         mockDoc(undefined, 'events', eventToUpdate.id),
         dataToUpdate
@@ -167,8 +200,9 @@ describe('SocietyPage', () => {
     })
   })
 
-  describe('Management View', () => {
+  describe('Management View and Redirects', () => {
     it('should pass isManagementView=true when user is a society head', async () => {
+        ;(getUserPrivilege as jest.Mock).mockResolvedValue(1) // Society Head
         render(<SocietyPage />);
     
         await screen.findByTestId('society-hero');
@@ -185,10 +219,34 @@ describe('SocietyPage', () => {
 
           const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
           expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', true);
+          expect(mockPush).not.toHaveBeenCalled()
         });
       });
     
-      it('should pass isManagementView=false when user is not a society head', async () => {
+      it('should pass isManagementView=true when user is an admin', async () => {
+        ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Admin
+        render(<SocietyPage />);
+    
+        await screen.findByTestId('society-hero');
+    
+        act(() => {
+          if (onAuthStateChangedCallback) {
+            onAuthStateChangedCallback({ uid: 'admin-uid' });
+          }
+        });
+    
+        await waitFor(() => {
+          const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
+          expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', true);
+
+          const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
+          expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', true);
+          expect(mockPush).not.toHaveBeenCalled()
+        });
+      });
+
+      it('should redirect when user is not a society head or admin', async () => {
+        ;(getUserPrivilege as jest.Mock).mockResolvedValue(0) // Normal user
         render(<SocietyPage />);
     
         await screen.findByTestId('society-hero');
@@ -200,15 +258,11 @@ describe('SocietyPage', () => {
         });
     
         await waitFor(() => {
-            const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
-            expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', false);
-  
-            const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
-            expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', false);
+            expect(mockPush).toHaveBeenCalledWith('/coming-soon')
         });
       });
     
-      it('should pass isManagementView=false when user is not logged in', async () => {
+      it('should redirect when user is not logged in', async () => {
         render(<SocietyPage />);
     
         await screen.findByTestId('society-hero');
@@ -220,11 +274,7 @@ describe('SocietyPage', () => {
         });
     
         await waitFor(() => {
-            const lastHeroCallArgs = (SocietyHero as jest.Mock).mock.calls.slice(-1)[0];
-            expect(lastHeroCallArgs[0]).toHaveProperty('isManagementView', false);
-  
-            const lastTabsCallArgs = (SocietyTabs as jest.Mock).mock.calls.slice(-1)[0];
-            expect(lastTabsCallArgs[0]).toHaveProperty('isManagementView', false);
+            expect(mockPush).toHaveBeenCalledWith('/coming-soon')
         });
       });
   });

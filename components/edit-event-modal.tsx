@@ -54,36 +54,37 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme
         <h2 className="text-2xl font-bold mb-6" style={{ color: `var(--text-primary-${theme})` }}>Edit Event</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Event Title</label>
-            <input type="text" name="title" value={eventData?.title || ''} onChange={handleChange} required className="w-full input-style" />
+            <label htmlFor="title" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Event Title</label>
+            <input type="text" id="title" name="title" value={eventData?.title || ''} onChange={handleChange} required className="w-full input-style" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Date</label>
-              <input type="date" name="date" value={eventData?.date || ''} onChange={handleChange} required className="w-full input-style" />
+              <label htmlFor="date" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Date</label>
+              <input type="date" id="date" name="date" value={eventData?.date || ''} onChange={handleChange} required className="w-full input-style" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Time</label>
-              <input type="time" name="time" value={eventData?.time || ''} onChange={handleChange} required className="w-full input-style" />
+              <label htmlFor="time" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Time</label>
+              <input type="time" id="time" name="time" value={eventData?.time || ''} onChange={handleChange} required className="w-full input-style" />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Location</label>
-            <input type="text" name="location" value={eventData?.location || ''} onChange={handleChange} required className="w-full input-style" />
+            <label htmlFor="location" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Location</label>
+            <input type="text" id="location" name="location" value={eventData?.location || ''} onChange={handleChange} required className="w-full input-style" />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Description</label>
-            <textarea name="description" value={eventData?.description || ''} onChange={handleChange} required rows={4} className="w-full input-style"></textarea>
+            <label htmlFor="description" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Description</label>
+            <textarea id="description" name="description" value={eventData?.description || ''} onChange={handleChange} required rows={4} className="w-full input-style"></textarea>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Status</label>
+            <label htmlFor="status" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Status</label>
             <Select
-              value={eventData?.status || 'Draft'}
+              id="status"
+              value={eventData?.status || 'draft'}
               onChange={(value) => setEventData(prev => ({ ...prev, status: value }))}
               options={[
-                { value: "Draft", label: "Draft" },
-                { value: "Published", label: "Published" },
-                { value: "Concluded", label: "Concluded" },
+                { value: "draft", label: "draft" },
+                { value: "published", label: "published" },
+                { value: "concluded", label: "concluded" },
               ]}
               className="w-full input-style"
             />

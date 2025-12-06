@@ -207,9 +207,9 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
 
   const statusOptions = [
     { value: "All", label: "All Statuses" },
-    { value: "Published", label: "Published" },
-    { value: "Draft", label: "Draft" },
-    { value: "Concluded", label: "Concluded" },
+    { value: "published", label: "Published" },
+    { value: "draft", label: "Draft" },
+    { value: "concluded",label: "Concluded" },
   ];
 
   useEffect(() => {
@@ -228,10 +228,10 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
   }
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Published": return "#10b981"
-      case "Draft": return "#6b7280"
-      case "Concluded": return "#8b5cf6"
+    switch (status.toLowerCase()) {
+      case "published": return "#10b981"
+      case "draft": return "#6b7280"
+      case "concluded": return "#8b5cf6"
       default: return `var(--accent-1-${theme})`
     }
   }
@@ -245,7 +245,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
       });
       const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             formattedDate.includes(searchQuery);
-      const matchesStatus = selectedStatus === "All" || event.status === selectedStatus;
+      const matchesStatus = selectedStatus === "All" || event.status.toLowerCase() === selectedStatus.toLowerCase();
       return matchesSearch && matchesStatus;
     }
   )
