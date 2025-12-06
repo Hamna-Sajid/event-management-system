@@ -234,6 +234,104 @@ Tests for the promotional call-to-action section covering:
 - Button text length > 0
 - At least 1 heading for screen readers
 
+### DeleteConfirmModal
+
+**File**: `components\events\delete-confirm-modal.test.tsx`
+
+Test suite for DeleteConfirmModal component
+
+Comprehensive tests covering:
+- Modal rendering and visibility
+- Confirmation and cancellation actions
+- Backdrop click prevention
+- Display of item name and type
+
+#### Test Coverage
+
+- **Rendering**: Modal displays correctly with all elements
+- **User Actions**: Confirm and cancel button functionality
+- **Props**: Item name and type customization
+
+#### Edge Cases
+
+- Modal closed by default when isOpen=false
+- Cannot close modal by clicking backdrop
+- Default item type is "item"
+
+### EditableIcon
+
+**File**: `components\events\editable-icon.test.tsx`
+
+Test suite for EditableIcon component
+
+Comprehensive tests covering:
+- Icon rendering
+- Click event handling
+- Accessibility attributes
+
+#### Test Coverage
+
+- **Rendering**: Icon displays correctly
+- **Interaction**: Click handler is called
+- **Accessibility**: Title attribute is present
+
+#### Edge Cases
+
+- Multiple clicks trigger onClick multiple times
+- Icon is accessible via keyboard
+
+### EventHeader
+
+**File**: `components\events\event-header.test.tsx`
+
+Test suite for EventHeader component
+
+Comprehensive tests covering:
+- Header rendering with authentication states
+- Favorite toggle functionality
+- Share button interaction
+- Navigation elements
+- ProfileMenu integration
+
+#### Test Coverage
+
+- **Authentication**: Renders correctly for authenticated and unauthenticated users
+- **Favorite Button**: Toggle state and callback
+- **Navigation**: Back button and authentication buttons
+- **Profile Menu**: Shows for authenticated users
+
+#### Edge Cases
+
+- User is null (unauthenticated)
+- User is authenticated
+- Favorite state changes
+
+### ImageUploadModal
+
+**File**: `components\events\image-upload-modal.test.tsx`
+
+Test suite for ImageUploadModal component
+
+Comprehensive tests covering:
+- Modal rendering and visibility
+- File drag-and-drop functionality
+- File input selection
+- Upload progress states
+- File size display
+
+#### Test Coverage
+
+- **Rendering**: Modal displays with upload UI
+- **File Selection**: Browse button and file input
+- **Drag and Drop**: Drag states and file drop
+- **Upload States**: Loading state during upload
+
+#### Edge Cases
+
+- Modal closed by default when isOpen=false
+- Upload progress disables interactions
+- Custom title and maxSizeKB props
+
 ### Footer
 
 **File**: `components\footer.test.tsx`
@@ -268,36 +366,43 @@ Test suite for Header navigation component
 
 Comprehensive tests for the site header/navigation bar covering:
 - Semantic HTML structure (header element)
-- Brand logo rendering
-- Search button functionality
+- Brand logo rendering and navigation
+- Search button functionality (disabled state)
 - Login button rendering and navigation
 - Sign up button rendering and navigation
+- Profile menu for authenticated users
 - Navigation behavior with Next.js router
 - Button states and accessibility
+- Firebase authentication integration
 
 #### Test Coverage
 
 - **Structure Tests**: Validates header element exists
 - **Content Tests**: Ensures logo and buttons render
-- **Navigation Tests**: Verifies router.push calls for login/signup
+- **Navigation Tests**: Verifies router.push calls for login/signup/home
 - **Interactive Tests**: Confirms button clicks trigger navigation
-- **Accessibility Tests**: Checks all buttons are enabled
+- **Accessibility Tests**: Checks action buttons are enabled, search is disabled
+- **Authentication Tests**: Validates login/signup vs ProfileMenu display
 
 #### Edge Cases
 
-- Multiple buttons (search, login, sign up) - minimum 3
+- Disabled search button with "Coming soon" tooltip
+- Authenticated vs unauthenticated UI states
+- Multiple buttons with different states
 - User interaction with userEvent for realistic testing
-- Mocked Next.js router for navigation testing
+- Mocked Firebase auth and Next.js router
 - Text matching with case-insensitive search
 
 #### Expected Values
 
 - 1 header element
-- At least 3 buttons (search + login + sign up)
+- At least 3 buttons (search + login + sign up) when not authenticated
 - Login button navigates to: /signin
 - Sign up button navigates to: /signup
-- All buttons enabled
-- Logo/brand section rendered as span elements
+- Logo navigates to: /
+- Search button is disabled
+- ProfileMenu shown when user is authenticated
+- Login/signup buttons hidden when authenticated
 
 ### Hero
 
@@ -338,6 +443,114 @@ Comprehensive tests for the Hero section component covering:
 - Minimum 2 buttons (Join Waitlist + Already have account)
 - Links: /signup and /signin
 - All buttons enabled by default
+
+### ProfileMenu
+
+**File**: `components\profile-menu.test.tsx`
+
+Test suite for ProfileMenu component
+
+Comprehensive tests covering:
+- Authentication state handling
+- Menu rendering and visibility
+- Role-based menu items (Normal User, Society Head, Admin)
+- Navigation functionality
+- Logout functionality
+- Click-outside to close behavior
+
+#### Test Coverage
+
+- **Authentication**: Renders only for authenticated users
+- **Role-Based Display**: Different menu items based on user privilege
+- **Navigation**: Profile, Dashboard, Society, Calendar links
+- **Logout**: Sign out functionality
+
+#### Edge Cases
+
+- User is null (should not render)
+- Normal user (basic menu items)
+- Society Head (shows My Society link)
+- Admin (shows Dashboard link)
+- Menu closes when clicking outside
+
+### Event Formatters
+
+**File**: `lib\events\formatters.test.ts`
+
+Test suite for event formatting utilities
+
+Comprehensive tests covering:
+- Date formatting (single dates)
+- Time formatting
+- Venue formatting with various inputs
+- Date range formatting (single-day and multi-day)
+
+#### Test Coverage
+
+- **formatDate**: Converts date strings to readable format
+- **formatTime**: Time string handling
+- **formatVenue**: Venue details assembly with fallbacks
+- **formatDateRange**: Smart date range formatting
+
+#### Edge Cases
+
+- Missing venue details (fallback to TBA)
+- Same start and end dates (single date display)
+- Partial venue information
+
+#### Expected Values
+
+**formatDate:**
+- '2024-01-15': 'January 15, 2024'
+
+**formatVenue:**
+- Complete details: 'Building, Room'
+- Missing details: 'TBA' or fallback value
+
+**formatDateRange:**
+- Same dates: Single date display
+- Different dates: 'Date1 - Date2'
+
+### Event Validation
+
+**File**: `lib\events\validation.test.ts`
+
+Test suite for event file validation utilities
+
+Comprehensive tests covering:
+- Image file validation (type and size)
+- Document file validation (type and size)
+- File size formatting
+- Validation constants
+
+#### Test Coverage
+
+- **validateImageFile**: Type and size checks for images
+- **validateDocumentFile**: Type and size checks for documents
+- **formatFileSize**: Byte to human-readable conversion
+- **Constants**: MAX_IMAGE_SIZE, MAX_DOCUMENT_SIZE, ALLOWED_TYPES
+
+#### Edge Cases
+
+- Files at exact size limits
+- Files exceeding size limits
+- Invalid file types
+- Various file sizes (bytes, KB, MB)
+
+#### Expected Values
+
+**Image Validation:**
+- Valid types: JPEG, PNG, GIF, WebP
+- Max size: 512KB
+
+**Document Validation:**
+- Valid types: PDF, DOC, DOCX, PPT, PPTX
+- Max size: 10MB
+
+**File Size Formatting:**
+- 500 bytes: "500 B"
+- 2048 bytes: "2.0 KB"
+- 5242880 bytes: "5.0 MB"
 
 ### Privileges
 
