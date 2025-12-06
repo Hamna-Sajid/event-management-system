@@ -8,7 +8,33 @@ import { getAuth, signOut } from "firebase/auth"
 import { app } from "../firebase"
 import { useRouter } from "next/navigation"
 
-// Helper component for outline buttons with dynamic hover/active styles
+/**
+ * @component ThemedOutlineButton
+ * 
+ * A themed button with an outline style that can function as a link or a button.
+ * 
+ * @param {object} props
+ * @param {React.ReactNode} props.children - The content to render inside the button.
+ * @param {() => void} [props.onClick] - Optional click handler.
+ * @param {string} [props.linkHref] - Optional URL. If provided, the button acts as a link.
+ * @param {string} [props.className] - Additional CSS classes.
+ * @param {React.CSSProperties} [props.buttonStyle] - Inline styles.
+ * @param {"default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg"} [props.size] - The button size.
+ * @param {string} props.theme - The theme to apply.
+ * 
+ * @remarks
+ * This button's colors for text, background, and border are determined by CSS variables
+ * derived from the `theme` prop. It also features dynamic hover and active styles.
+ * 
+ * @example
+ * ```tsx
+ * // As a link
+ * <ThemedOutlineButton linkHref="/profile" theme="default">Profile</ThemedOutlineButton>
+ * 
+ * // As a button
+ * <ThemedOutlineButton onClick={() => console.log('Clicked!')} theme="default">Click Me</ThemedOutlineButton>
+ * ```
+ */
 const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
@@ -60,22 +86,26 @@ const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", butt
   )
 }
 
+/**
+ * Props for the {@link SocietyHeader} component.
+ */
 interface SocietyHeaderProps {
+  /** The theme to apply to the header, used for styling. */
   theme: string
 }
 
 /**
  * @component SocietyHeader
  * 
- * @param {object} props
- * @param {string} props.theme - The theme to apply to the header.
+ * A sticky header component for society pages, featuring navigation and logout functionality.
  * 
  * @remarks
- * This component displays a society-specific header with:
- * - Logo and society name
- * - Navigation links (Dashboard, My Profile, Bell, Logout)
- * - Themed buttons with dynamic hover/active styles
- * - Glass morphism styling with backdrop blur
+ * This component displays the society's logo and name, along with navigation buttons for
+ * "Dashboard" and "My Profile", a notification bell, and a "Logout" button. The header
+ * uses a glass morphism effect (backdrop blur) and is themed using CSS variables.
+ * 
+ * The logout button handles Firebase authentication sign-out and redirects the user to the
+ * home page.
  * 
  * @example
  * ```tsx
@@ -90,8 +120,6 @@ interface SocietyHeaderProps {
  *   )
  * }
  * ```
- * 
- * @category Components
  */
 export default function SocietyHeader({ theme }: SocietyHeaderProps) {
   const router = useRouter()

@@ -6,14 +6,46 @@ import { Settings } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+/**
+ * Props for the {@link SocietyHero} component.
+ */
 interface SocietyHeroProps {
-  societyName: string
-  theme: string
-  isManagementView?: boolean
-  societyId: string
+  /** The name of the society. */
+  societyName: string;
+  /** The theme to apply for styling. */
+  theme: string;
+  /** Optional flag to enable management controls. */
+  isManagementView?: boolean;
+  /** The ID of the society, used for navigation or actions. */
+  societyId: string;
 }
 
-// Helper component for buttons with dynamic hover/active styles
+/**
+ * @component ThemedButton
+ * 
+ * A themed button that can function as a link or a standard button, with dynamic hover/active styles.
+ * 
+ * @param {object} props
+ * @param {React.ReactNode} props.children - The content to render inside the button.
+ * @param {() => void} [props.onClick] - Optional click handler.
+ * @param {string} [props.linkHref] - Optional URL. If provided, the button acts as a link.
+ * @param {string} [props.className] - Additional CSS classes.
+ * @param {React.CSSProperties} [props.buttonStyle] - Inline styles.
+ * @param {"default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg"} [props.size] - The button size.
+ * @param {boolean} [props.disabled] - Whether the button is disabled.
+ * @param {string} [props.title] - Tooltip text for the button.
+ * @param {string} props.theme - The theme to apply.
+ * 
+ * @remarks
+ * This component's background color changes on hover and active states. It's styled using CSS
+ * variables derived from the `theme` prop. It's a local helper component within `SocietyHero`.
+ * 
+ * @example
+ * ```tsx
+ * // As a disabled button
+ * <ThemedButton theme="default" disabled={true}>Follow</ThemedButton>
+ * ```
+ */
 const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, disabled, title, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", disabled?: boolean, title?: string, theme: string }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
@@ -65,19 +97,16 @@ const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle
 /**
  * @component SocietyHero
  * 
- * @param {object} props
- * @param {string} props.societyName - The name of the society.
- * @param {string} props.theme - The theme to apply to the hero section.
- * @param {boolean} [props.isManagementView] - Optional flag to show management controls.
- * @param {string} props.societyId - The ID of the society.
+ * Displays a hero section for a society page, including the society's logo,
+ * name, and primary actions.
  * 
  * @remarks
- * This component displays a hero section for a society page with:
- * - Society logo (first letter of the name)
- * - Society name
- * - A brief description that changes based on whether the user is in management view.
- * - A primary action button ("Edit Profile" for management, "Follow Society" for others)
- * - An "Edit Society Profile" button for management view.
+ * This component adapts its content based on the `isManagementView` prop.
+ * - In management view, it shows an "Edit Profile" button and a settings icon
+ *   that currently navigates to a "coming soon" page.
+ * - In the public view, it displays a disabled "Follow Society" button.
+ * 
+ * The society logo is generated from the first letter of the society's name.
  * 
  * @example
  * ```tsx
@@ -86,14 +115,17 @@ const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle
  * export default function SocietyPage() {
  *   return (
  *     <div>
- *       <SocietyHero societyName="Test Society" theme="default" isManagementView={true} societyId="123" />
+ *       <SocietyHero 
+ *         societyName="Tech Club"
+ *         theme="default"
+ *         isManagementView={true}
+ *         societyId="tech-club-123"
+ *       />
  *       // ... rest of the page
  *     </div>
  *   )
  * }
  * ```
- * 
- * @category Components
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function SocietyHero({ societyName, theme, isManagementView = false, societyId }: SocietyHeroProps) {

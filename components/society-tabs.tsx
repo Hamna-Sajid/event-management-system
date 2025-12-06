@@ -7,58 +7,107 @@ import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
 import EditEventModal from "./edit-event-modal"
 
-// Define interfaces locally as per current project convention
+/**
+ * @interface Society
+ * Represents the structure of a society document in Firestore.
+ */
 interface Society {
+  /** The name of the society. */
   name: string;
+  /** The date the society was created. */
   dateCreated: string;
+  /**
+   * A map of head roles (CEO, CFO, COO) to user UIDs.
+   * Can be null if the position is vacant.
+   */
   heads: {
     CEO: string | null;
     CFO: string | null;
     COO: string | null;
   };
+  /** The maximum number of heads the society can have. */
   maxHeads: number;
+  /** A brief description of the society. */
   description: string;
+  /** The official contact email for the society. */
   contactEmail: string;
+  /** A map of social media profile links. */
   socialLinks: {
     facebook: string;
     instagram: string;
     linkedin: string;
   };
+  /** An array of event IDs associated with the society. */
   events: string[];
+  /** The UID of the user who created the society. */
   createdBy: string;
 }
 
+/**
+ * @interface Member
+ * Represents a member of a society, typically a head.
+ */
 interface Member {
+  /** The user's unique ID. */
   id: string;
+  /** The full name of the member. */
   name: string;
+  /** The role of the member within the society. */
   role: string;
+  /** The email address of the member. */
   email: string;
 }
 
 
+/**
+ * @interface Event
+ * Represents the structure of an event, including its content and metadata.
+ */
 interface Event {
+  /** The unique identifier for the event. */
   id: string;
+  /** The title of the event. */
   title: string;
+  /** The date of the event. */
   date: string;
+  /** The time of the event. */
   time: string;
+  /** The location of the event. */
   location: string;
+  /** A detailed description of the event. */
   description: string;
+  /** The current status of the event (e.g., 'published', 'draft'). */
   status: string;
+  /** Engagement metrics for the event. */
   metrics: {
+    /** Number of views. */
     views: number;
+    /** Number of likes. */
     likes: number;
+    /** Number of times added to wishlist. */
     wishlists: number;
+    /** Number of shares. */
     shares: number;
   };
 }
 
+/**
+ * Props for the {@link SocietyTabs} component.
+ */
 interface SocietyTabsProps {
+  /** The theme to apply to the tabs section (e.g., "default"). */
   theme: string
+  /** Optional flag to enable/disable management controls and set initial active tab. */
   isManagementView?: boolean
+  /** The data object for the current society. */
   societyData: Society
+  /** An array of event objects belonging to the society. */
   events: Event[]
+  /** An array of member objects associated with the society. */
   members: Member[]
+  /** Callback function to handle event deletion. */
   handleDeleteEvent: (eventId: string) => Promise<void>
+  /** Callback function to handle event editing. */
   handleEditEvent: (eventData: Event) => Promise<void>
 }
 
@@ -67,33 +116,26 @@ const tabs = ["Overview", "Manage Events", "Members", "About Us"]
 /**
  * @component SocietyTabs
  * 
- * @param {object} props
- * @param {string} props.theme - The theme to apply to the tabs section.
- * @param {boolean} [props.isManagementView] - Optional flag to show management controls.
- * @param {Society} props.societyData - The data for the society.
- * @param {Event[]} props.events - An array of events for the society.
- * @param {Member[]} props.members - An array of members in the society.
- * @param {(eventId: string) => Promise<void>} props.handleDeleteEvent - Function to handle event deletion.
- * @param {(eventData: Event) => Promise<void>} props.handleEditEvent - Function to handle event editing.
+ * Displays a tabbed interface for a society page, allowing users to navigate
+ * between different sections like Overview, Manage Events, Members, and About Us.
  * 
  * @remarks
- * This component displays a set of tabs for a society page, including:
- * - Overview: A summary of the society's mission, social links, stats, and upcoming events.
- * - Manage Events: A table of events with search, create, edit, and delete functionality (for management view).
- * - Members: A list of society members with their roles and contact information.
- * - About Us: Detailed information about the society.
+ * This component dynamically renders content based on the active tab and
+ * `isManagementView` prop.
+ * - **Overview**: Shows society's mission, social links, key statistics, and upcoming events.
+ * - **Manage Events**: (Only in management view) Provides an interface to search, create,
+ *   edit, and delete events.
+ * - **Members**: Lists the society's members with their roles and contact info.
+ * - **About Us**: Displays detailed information about the society.
  * 
- * The active tab is set to "Manage Events" by default for management view, and "Overview" otherwise.
+ * The initial active tab is "Manage Events" if `isManagementView` is true, otherwise it's "Overview".
  * 
  * @example
  * ```tsx
  * import SocietyTabs from '@/components/society-tabs'
+ * // Assume societyData, events, members, handleDeleteEvent, handleEditEvent are defined
  * 
  * export default function SocietyPage() {
- *   // ... fetch societyData, events, members
- *   const handleDeleteEvent = async (eventId) => { ... }
- *   const handleEditEvent = async (eventData) => { ... }
- * 
  *   return (
  *     <div>
  *       <SocietyTabs
@@ -109,8 +151,6 @@ const tabs = ["Overview", "Manage Events", "Members", "About Us"]
  *   )
  * }
  * ```
- * 
- * @category Components
  */
 export default function SocietyTabs({ theme, isManagementView = false, societyData, events, members, handleDeleteEvent, handleEditEvent }: SocietyTabsProps) {
   const [activeTab, setActiveTab] = useState(isManagementView ? "Manage Events" : "Overview")
@@ -151,7 +191,35 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
   )
 }
 
-// Helper component for buttons with dynamic hover/active styles
+/**
+ * @component ThemedButton
+ * 
+ * A customizable button component that applies dynamic hover/active styles based on a theme.
+ * It can function as a link or a standard button.
+ * 
+ * @param {object} props
+ * @param {React.ReactNode} props.children - The content to be rendered inside the button.
+ * @param {() => void} [props.onClick] - Optional click handler for the button.
+ * @param {string} [props.linkHref] - Optional URL for the button to act as a link.
+ * @param {string} [props.className] - Optional additional CSS classes.
+ * @param {React.CSSProperties} [props.buttonStyle] - Optional inline styles for the button.
+ * @param {"default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg"} [props.size] - Optional size of the button.
+ * @param {string} props.theme - The theme to apply (e.g., "default").
+ * 
+ * @remarks
+ * If `linkHref` is provided, the button acts as a Next.js Link.
+ * Otherwise, it acts as a standard button with an `onClick` handler.
+ * Styles change on hover and active states using CSS variables derived from the `theme` prop.
+ * 
+ * @example
+ * ```tsx
+ * // As a link
+ * <ThemedButton linkHref="/dashboard" theme="default">Go to Dashboard</ThemedButton>
+ * 
+ * // As a button with an action
+ * <ThemedButton onClick={() => alert('Clicked!')} theme="default" size="lg">Click Me</ThemedButton>
+ * ```
+ */
 const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
@@ -198,6 +266,24 @@ const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle
   return <Button {...commonProps}>{children}</Button>
 }
 
+/**
+ * @component ManageEventsTab
+ * 
+ * Displays an interface for managing a society's events, including search, filter,
+ * create, edit, and delete functionalities. This tab is primarily for authorized users.
+ * 
+ * @param {object} props
+ * @param {string} props.theme - The theme to apply for styling.
+ * @param {Event[]} props.initialEvents - The initial list of events to display.
+ * @param {(eventId: string) => Promise<void>} props.handleDeleteEvent - Callback to delete an event.
+ * @param {(eventData: Event) => Promise<void>} props.handleEditEvent - Callback to edit an event.
+ * 
+ * @remarks
+ * - Allows searching events by title or date.
+ * - Filters events by status (Published, Draft, Concluded, All).
+ * - Provides buttons to create new events, and edit/view/delete existing events.
+ * - Uses `EditEventModal` for event editing.
+ */
 function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEvent }: { theme: string, initialEvents: Event[], handleDeleteEvent: (eventId: string) => Promise<void>, handleEditEvent: (eventData: Event) => Promise<void> }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [events, setEvents] = useState(initialEvents)
@@ -339,8 +425,26 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
   )
 }
 
+/**
+ * @component OverviewTab
+ * 
+ * Displays an overview of the society, including its mission, social media links,
+ * key statistics, and a preview of upcoming events.
+ * 
+ * @param {object} props
+ * @param {string} props.theme - The theme to apply for styling.
+ * @param {Society} props.societyData - The data object for the current society.
+ * @param {Event[]} props.events - An array of events for the society.
+ * @param {Member[]} props.members - An array of members in the society.
+ * 
+ * @remarks
+ * - The mission section shows the `societyData.description`.
+ * - "Connect With Us" section displays social media links (Instagram, Facebook, LinkedIn)
+ *   and contact email from `societyData.socialLinks` and `societyData.contactEmail`.
+ * - Statistics include active members, events hosted, and founded year.
+ * - "Upcoming Events" section displays up to 3 upcoming events, with links to their detail pages.
+ */
 function OverviewTab({ theme, societyData, events, members }: { theme: string, societyData: Society, events: Event[], members: Member[] }) {
-  console.log("OverviewTab events:", events) // Added console.log
   const stats = [
     { label: "Active Members", value: members.length },
     { label: "Events Hosted", value: events.length },
@@ -396,6 +500,19 @@ function OverviewTab({ theme, societyData, events, members }: { theme: string, s
   )
 }
 
+/**
+ * @component MembersTab
+ * 
+ * Displays a list of members for the society, typically showing society heads.
+ * 
+ * @param {object} props
+ * @param {string} props.theme - The theme to apply for styling.
+ * @param {Member[]} props.members - An array of member objects to display.
+ * 
+ * @remarks
+ * Each member card shows their name, role, and email, with an avatar displaying
+ * the first letter of their name.
+ */
 function MembersTab({ theme, members }: { theme: string, members: Member[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -417,6 +534,19 @@ function MembersTab({ theme, members }: { theme: string, members: Member[] }) {
   )
 }
 
+/**
+ * @component AboutUsTab
+ * 
+ * Displays detailed information about the society, including its description and contact information.
+ * 
+ * @param {object} props
+ * @param {string} props.theme - The theme to apply for styling.
+ * @param {Society} props.societyData - The data object for the current society.
+ * 
+ * @remarks
+ * - Shows the society's `description` under "About Our Society".
+ * - Displays the `contactEmail` under "Contact Information".
+ */
 function AboutUsTab({ theme, societyData }: { theme: string, societyData: Society }) {
   return (
     <div className="p-8 rounded-2xl" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})`, color: `var(--text-primary-${theme})` }}>
