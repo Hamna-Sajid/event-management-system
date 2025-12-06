@@ -3,10 +3,13 @@
 import { Bell, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useState } from "react" // Import useState
+import { useState } from "react"
+import { getAuth, signOut } from "firebase/auth"
+import { app } from "../firebase"
+import { useRouter } from "next/navigation"
 
 // Helper component for outline buttons with dynamic hover/active styles
-const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
+const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isActive, setIsActive] = useState(false)
 
@@ -38,15 +41,22 @@ const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", butt
     onMouseLeave: () => setIsHovered(false),
     onMouseDown: () => setIsActive(true),
     onMouseUp: () => setIsActive(false),
-    onClick: onClick,
     size: size,
     variant: "outline" as const, // Ensure variant is outline
   }
 
+  if (linkHref) {
+    return (
+      <Button {...commonProps} asChild>
+        <Link href={linkHref}>{children}</Link>
+      </Button>
+    )
+  }
+
   return (
-    <Link href={linkHref}>
-      <Button {...commonProps}>{children}</Button>
-    </Link>
+    <Button {...commonProps} onClick={onClick}>
+      {children}
+    </Button>
   )
 }
 
@@ -84,6 +94,19 @@ interface SocietyHeaderProps {
  * @category Components
  */
 export default function SocietyHeader({ theme }: SocietyHeaderProps) {
+  const router = useRouter()
+  const auth = getAuth(app)
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth)
+      router.push('/')
+    } catch (error) {
+      console.error("Error signing out: ", error)
+      // Optionally, show a toast or message to the user
+    }
+  }
+
   return (
     <header
       className="sticky top-0 z-50 backdrop-blur-md border-b"
@@ -124,7 +147,7 @@ export default function SocietyHeader({ theme }: SocietyHeaderProps) {
             <span className="sr-only">Bell</span>
           </ThemedOutlineButton>
 
-          <ThemedOutlineButton linkHref="/landing-page" theme={theme}>
+          <ThemedOutlineButton onClick={handleLogout} theme={theme}>
             <LogOut size={18} className="mr-2" />
             <span className="hidden sm:inline">Logout</span>
           </ThemedOutlineButton>

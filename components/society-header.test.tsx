@@ -1,22 +1,25 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SocietyHeader from './society-header'
 import '@testing-library/jest-dom'
 import { useRouter } from 'next/navigation'
+import { getAuth, signOut } from 'firebase/auth'
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }))
 
-// Mock next/link
-jest.mock('next/link', () => {
-  const MockLink = ({ children, href, 'aria-label': ariaLabel }: { children: React.ReactNode, href: string, 'aria-label'?: string }) => {
-    return <a href={href} aria-label={ariaLabel}>{children}</a>
-  }
-  MockLink.displayName = 'Link'
-  return MockLink
-})
+// Mock Firebase auth
+jest.mock('firebase/auth', () => ({
+  getAuth: jest.fn(),
+  signOut: jest.fn(() => Promise.resolve()),
+}))
+
+// Mock app from firebase
+jest.mock('../firebase', () => ({
+    app: {},
+}))
 
 describe('SocietyHeader', () => {
   const mockPush = jest.fn()
@@ -26,6 +29,7 @@ describe('SocietyHeader', () => {
     ;(useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     })
+    ;(getAuth as jest.Mock).mockReturnValue({}) // Mock getAuth to return a dummy auth object
   })
 
   it('should render Dashboard link with correct href', () => {
@@ -46,9 +50,27 @@ describe('SocietyHeader', () => {
     expect(bellLink).toHaveAttribute('href', '/coming-soon')
   })
 
-  it('should render Logout link with correct href', () => {
+  it('should call signOut and redirect to "/" when logout button is clicked', async () => {
     render(<SocietyHeader theme="default" />)
-    const logoutLink = screen.getByRole('link', { name: /logout/i })
-    expect(logoutLink).toHaveAttribute('href', '/landing-page')
+    
+    // The logout button is now a button, not a link
+    const logoutButton = screen.getByRole('button', { name: /logout/i })
+    expect(logoutButton).toBeInTheDocument()
+
+    // The old test checked for a link, so we make sure that's gone.
+    const logoutLink = screen.queryByRole('link', { name: /logout/i })
+    expect(logoutLink).not.toBeInTheDocument()
+    
+    // Click the button
+    fireEvent.click(logoutButton)
+    
+    // Wait for promises to resolve
+    await waitFor(() => {
+      // Check that signOut was called
+      expect(signOut).toHaveBeenCalled()
+      
+      // Check that router.push was called with the correct path
+      expect(mockPush).toHaveBeenCalledWith('/')
+    })
   })
 })
