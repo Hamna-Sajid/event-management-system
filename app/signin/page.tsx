@@ -41,6 +41,15 @@ export default function SignIn() {
       if (privilege >= 2) {
         // Admin: Route to admin dashboard
         router.push('/admin')
+      } else if (privilege === 1) {
+        // Society Head: Route to their society page
+        const societyId = userData?.societyId
+        if (societyId) {
+          router.push(`/societies/${societyId}`)
+        } else {
+          // Fallback if societyId is missing, though it should exist for privilege 1
+          router.push('/waitlist') 
+        }
       } else {
         // Normal user: Route to waitlist page
         router.push('/waitlist')

@@ -125,6 +125,48 @@ Comprehensive tests for the password reset functionality covering:
 - Accepts any valid email format
 - No domain restrictions for password reset
 
+### SocietyPage
+
+**File**: `app\societies\[id]\page.test.tsx`
+
+Test suite for the main society page located at `app/societies/[id]/page.tsx`.
+
+This suite tests the behavior of the SocietyPage component, focusing on data fetching,
+rendering logic, role-based access control, and event management handlers.
+Mocks are used for:
+- Firebase services (`firestore`, `auth`) to simulate database interactions and user authentication.
+- Next.js navigation (`useParams`, `useRouter`) to control URL parameters and routing.
+- Child components (`SocietyHeader`, `SocietyHero`, `SocietyTabs`) to isolate the page component.
+- Library functions (`getUserPrivilege`) to simulate user permission checks.
+
+#### Test Coverage
+
+- **Rendering**: Covers initial loading state, error states (no ID, society not found), and successful data rendering.
+- **Authorization**: Ensures the `isManagementView` prop is correctly passed based on user privilege (Admin/Society Head).
+- **Redirects**: Verifies that unauthorized users (normal users or unauthenticated visitors) are redirected away from the page.
+- **Event Handlers**: Confirms that `handleDeleteEvent` and `handleEditEvent` correctly call the appropriate Firestore functions with the right parameters.
+
+#### Edge Cases
+
+- URL does not contain a society ID.
+- The requested society ID does not exist in Firestore.
+- A user is not logged in when viewing the page.
+- A logged-in user does not have Admin or Society Head privileges.
+
+#### Expected Values
+
+**Authorization & Redirects:**
+- User Privilege >= 2 (Admin): `isManagementView` is true, no redirect.
+- User is a Society Head: `isManagementView` is true, no redirect.
+- User Privilege < 2 (Normal User): Redirect to `/coming-soon`.
+- No authenticated user: Redirect to `/coming-soon`.
+
+**Event Deletion:**
+- `handleDeleteEvent('event-id')` calls `deleteDoc` with the event's path and `updateDoc` to remove the ID from the society's event list.
+
+**Event Editing:**
+- `handleEditEvent({...})` calls `updateDoc` with the event's path and ensures the `status` field is lowercased.
+
 ### VerifyEmail
 
 **File**: `app\verify-email\page.test.tsx`
