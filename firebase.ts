@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const storage = getStorage(app);
+const auth = getAuth(app);
 
 let analytics: ReturnType<typeof getAnalytics> | null = null;
 
@@ -27,4 +29,4 @@ if (typeof window !== "undefined") {
     });
 }
 
-export { app, firestore, storage, analytics };
+export { app, firestore, storage, analytics, auth };

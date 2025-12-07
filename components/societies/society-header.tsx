@@ -1,12 +1,7 @@
 "use client"
 
-import { Bell, LogOut, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useState } from "react"
-import { getAuth, signOut } from "firebase/auth"
-import { app } from "../../firebase"
-import { useRouter } from "next/navigation"
+import { ProfileMenu } from "@/components/profile-menu"
 
 /**
  * @component ThemedOutlineButton
@@ -15,11 +10,7 @@ import { useRouter } from "next/navigation"
  * 
  * @param {object} props
  * @param {React.ReactNode} props.children - The content to render inside the button.
- * @param {() => void} [props.onClick] - Optional click handler.
- * @param {string} [props.linkHref] - Optional URL. If provided, the button acts as a link.
- * @param {string} [props.className] - Additional CSS classes.
- * @param {React.CSSProperties} [props.buttonStyle] - Inline styles.
- * @param {"default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg"} [props.size] - The button size.
+ * @param {string} props.linkHref - URL for the button to act as a link.
  * @param {string} props.theme - The theme to apply.
  * 
  * @remarks
@@ -30,59 +21,20 @@ import { useRouter } from "next/navigation"
  * ```tsx
  * // As a link
  * <ThemedOutlineButton linkHref="/profile" theme="default">Profile</ThemedOutlineButton>
- * 
- * // As a button
- * <ThemedOutlineButton onClick={() => console.log('Clicked!')} theme="default">Click Me</ThemedOutlineButton>
  * ```
  */
-const ThemedOutlineButton = ({ children, onClick, linkHref, className = "", buttonStyle = {}, size, theme }: { children: React.ReactNode, onClick?: () => void, linkHref?: string, className?: string, buttonStyle?: React.CSSProperties, size?: "default" | "sm" | "lg" | "icon" | "icon-sm" | "icon-lg", theme: string }) => {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isActive, setIsActive] = useState(false)
-
-  const baseStyle: React.CSSProperties = {
-    color: `var(--text-primary-${theme})`,
-    ...buttonStyle
-  }
-
-  const hoverStyle: React.CSSProperties = {
-    backgroundColor: `var(--accent-1-${theme})`,
-    color: "white",
-  }
-
-  const activeStyle: React.CSSProperties = {
-    backgroundColor: `var(--accent-2-${theme})`,
-    color: "white",
-  }
-
-  const currentStyle = {
-    ...baseStyle,
-    ...(isHovered && hoverStyle),
-    ...(isActive && activeStyle),
-  }
-
-  const commonProps = {
-    className: `transition-all ${className}`,
-    style: currentStyle,
-    onMouseEnter: () => setIsHovered(true),
-    onMouseLeave: () => setIsHovered(false),
-    onMouseDown: () => setIsActive(true),
-    onMouseUp: () => setIsActive(false),
-    size: size,
-    variant: "outline" as const, // Ensure variant is outline
-  }
-
-  if (linkHref) {
-    return (
-      <Button {...commonProps} asChild>
-        <Link href={linkHref}>{children}</Link>
-      </Button>
-    )
-  }
-
+const ThemedOutlineButton = ({ children, linkHref, theme }: { children: React.ReactNode, linkHref: string, theme: string }) => {
   return (
-    <Button {...commonProps} onClick={onClick}>
+    <Link
+      href={linkHref}
+      className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-[var(--accent-1-default)] hover:text-white"
+      style={{
+        color: `var(--text-primary-${theme})`,
+        borderColor: `var(--border-${theme})`,
+      }}
+    >
       {children}
-    </Button>
+    </Link>
   )
 }
 
@@ -97,15 +49,14 @@ interface SocietyHeaderProps {
 /**
  * @component SocietyHeader
  * 
- * A sticky header component for society pages, featuring navigation and logout functionality.
+ * A sticky header component for society pages, featuring navigation and profile menu.
  * 
  * @remarks
- * This component displays the society's logo and name, along with navigation buttons for
- * "Dashboard" and "My Profile", a notification bell, and a "Logout" button. The header
+ * This component displays the society's logo and name, along with a navigation button for
+ * "Dashboard" and the ProfileMenu component for user account management. The header
  * uses a glass morphism effect (backdrop blur) and is themed using CSS variables.
  * 
- * The logout button handles Firebase authentication sign-out and redirects the user to the
- * home page.
+ * The ProfileMenu component handles authentication state, role-based navigation, and logout.
  * 
  * @example
  * ```tsx
@@ -122,19 +73,6 @@ interface SocietyHeaderProps {
  * ```
  */
 export default function SocietyHeader({ theme }: SocietyHeaderProps) {
-  const router = useRouter()
-  const auth = getAuth(app)
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth)
-      router.push('/')
-    } catch (error) {
-      console.error("Error signing out: ", error)
-      // Optionally, show a toast or message to the user
-    }
-  }
-
   return (
     <header
       className="sticky top-0 z-50 backdrop-blur-md border-b"
@@ -165,20 +103,7 @@ export default function SocietyHeader({ theme }: SocietyHeaderProps) {
             Dashboard
           </ThemedOutlineButton>
 
-          <ThemedOutlineButton linkHref="/coming-soon" theme={theme}>
-            <User size={18} className="mr-2" />
-            <span className="hidden sm:inline">My Profile</span>
-          </ThemedOutlineButton>
-
-          <ThemedOutlineButton linkHref="/coming-soon" size="icon" theme={theme}>
-            <Bell size={20} aria-hidden="true" />
-            <span className="sr-only">Bell</span>
-          </ThemedOutlineButton>
-
-          <ThemedOutlineButton onClick={handleLogout} theme={theme}>
-            <LogOut size={18} className="mr-2" />
-            <span className="hidden sm:inline">Logout</span>
-          </ThemedOutlineButton>
+          <ProfileMenu />
         </div>
       </div>
     </header>

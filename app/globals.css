@@ -167,6 +167,31 @@
   animation: slide-in-right 0.3s ease-out;
 }
 
+/* Custom scrollbar for all elements */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(208, 34, 67, 0.3) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(208, 34, 67, 0.3);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(208, 34, 67, 0.5);
+}
+
 /* Custom scrollbar for calendar days */
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;

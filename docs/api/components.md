@@ -40,6 +40,130 @@ export default function LandingPage() {
 }
 ```
 
+### DeleteConfirmModal
+
+**File**: `components\events\delete-confirm-modal.tsx`
+
+Confirmation dialog for destructive delete operations
+
+This component displays a modal dialog to confirm deletion of items:
+- Warning icon with red accent color
+- Item name and type display
+- Destructive action confirmation
+- Cannot be dismissed by clicking backdrop
+Design features:
+- Centered layout with glassmorphism styling
+- Red color scheme for destructive action warning
+- Dual-action buttons (delete/cancel)
+- Prevents accidental clicks outside modal
+
+#### Example
+
+With custom item type:
+```tsx
+<DeleteConfirmModal
+  isOpen={deleteModalOpen}
+  onClose={closeModal}
+  onConfirm={deleteDocument}
+  itemName="Resume.pdf"
+  itemType="document"
+/>
+```
+
+### EditableIcon
+
+**File**: `components\events\editable-icon.tsx`
+
+Small edit button icon for inline editing functionality
+
+This component displays a pencil icon button for triggering edit mode:
+- Compact 6x6 circular button
+- Glassmorphism styling with hover effects
+- Red accent color matching app theme
+- Includes accessible title attribute
+Commonly used inline next to editable content like event titles,
+descriptions, or other user-editable fields.
+
+#### Example
+
+With state management:
+```tsx
+const [isEditing, setIsEditing] = useState(false)
+
+<div>
+  {isEditing ? (
+    <input value={text} onChange={e => setText(e.target.value)} />
+  ) : (
+    <>
+      <span>{text}</span>
+      <EditableIcon onClick={() => setIsEditing(true)} />
+    </>
+  )}
+</div>
+```
+
+### EventHeader
+
+**File**: `components\events\event-header.tsx`
+
+Sticky navigation header for event detail pages
+
+This component provides the main navigation and action bar for event pages:
+- Sticky positioning at top of viewport
+- Back navigation to home page
+- Favorite/unfavorite toggle button
+- Share functionality
+- Authentication-aware UI (login/signup or profile menu)
+Design features:
+- Glassmorphism backdrop blur effect
+- Responsive layout (hides text on mobile for some buttons)
+- Interactive icons with hover states
+- Integrates with Firebase authentication
+
+#### Example
+
+With unauthenticated user:
+```tsx
+<EventHeader
+  isFavorited={false}
+  onToggleFavorite={() => showToast('Please sign in to favorite events', 'error')}
+  onShare={handleShare}
+  currentUser={null}
+/>
+```
+
+### ImageUploadModal
+
+**File**: `components\events\image-upload-modal.tsx`
+
+Modal dialog for uploading images with drag-and-drop support
+
+This component provides a user-friendly image upload interface:
+- Drag-and-drop functionality for easy file selection
+- Traditional file browser option
+- Visual feedback during upload (loading spinner)
+- Drag state indication with color changes
+- File size limit display and enforcement
+Features:
+- Drag-over visual feedback (red border and background)
+- Async upload handling with loading state
+- Accept only image file types
+- Configurable title and max file size
+- Small modal size optimized for upload UI
+
+#### Example
+
+With custom settings:
+```tsx
+<ImageUploadModal
+  isOpen={uploadModalOpen}
+  onClose={closeUploadModal}
+  onUpload={handleImageUpload}
+  title="Upload Event Poster"
+  maxSizeKB={1024}
+/>
+```
+
 ### Footer
 
 **File**: `components\footer.tsx`
@@ -82,8 +206,8 @@ Navigation header with authentication controls
 This component provides the main navigation header with:
 - IEMS logo with brand colors
 - Search button (desktop only)
-- Login button with navigation
-- Sign Up button with navigation
+- Login/Sign Up buttons for guests
+- Profile menu for authenticated users
 - Sticky positioning at top of viewport
 - Backdrop blur effect with semi-transparent background
 Features:
@@ -91,10 +215,12 @@ Features:
 - Responsive design (hides text on mobile, shows icons)
 - Glass morphism styling
 - Brand identity with gradient logo
+- Profile dropdown menu with role-based navigation
 Navigation behavior:
 - Login button → /signin
 - Sign Up button → /signup
-- Search button → (placeholder, no action yet)
+- Profile menu shows: Dashboard, Calendar, Logout
+- Dashboard links vary by role (Admin → /admin, Society Head → /societies/{id}, User → /dashboard)
 
 #### Example
 
@@ -142,6 +268,37 @@ export default function LandingPage() {
     </>
   )
 }
+```
+
+### ProfileMenu
+
+**File**: `components\profile-menu.tsx`
+
+User profile dropdown menu with role-based navigation options
+
+This component provides authenticated user navigation and account management:
+- Displays user avatar button in header
+- Shows dropdown menu with contextual options based on user role
+- Integrates with Firebase authentication
+- Fetches and displays user privilege level
+- Provides logout functionality
+Role-based menu items:
+- **All users**: Profile, Calendar, Logout
+- **Society Heads**: Additionally shows "My Society" link
+- **Admins**: Additionally shows "Dashboard" link
+Features:
+- Click outside to close dropdown
+- Smooth transitions and animations
+- Glassmorphism styling
+- Real-time auth state synchronization
+- Displays user email and role label
+
+#### Example
+
+The component handles all auth state internally:
+```tsx
+// No props needed - auth state managed internally
+<ProfileMenu />
 ```
 
 ### EditEventModal
@@ -200,22 +357,18 @@ derived from the `theme` prop. It also features dynamic hover and active styles.
 ```tsx
 // As a link
 <ThemedOutlineButton linkHref="/profile" theme="default">Profile</ThemedOutlineButton>
-
-// As a button
-<ThemedOutlineButton onClick={() => console.log('Clicked!')} theme="default">Click Me</ThemedOutlineButton>
 ```
 
 ### SocietyHeader
 
 **File**: `components\societies\society-header.tsx`
 
-A sticky header component for society pages, featuring navigation and logout functionality.
+A sticky header component for society pages, featuring navigation and profile menu.
 
-This component displays the society's logo and name, along with navigation buttons for
-"Dashboard" and "My Profile", a notification bell, and a "Logout" button. The header
+This component displays the society's logo and name, along with a navigation button for
+"Dashboard" and the ProfileMenu component for user account management. The header
 uses a glass morphism effect (backdrop blur) and is themed using CSS variables.
-The logout button handles Firebase authentication sign-out and redirects the user to the
-home page.
+The ProfileMenu component handles authentication state, role-based navigation, and logout.
 
 #### Example
 

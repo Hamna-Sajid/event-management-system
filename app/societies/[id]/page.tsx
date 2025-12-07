@@ -124,39 +124,23 @@ export default function SocietyPage() {
    * 3. Updates the local state to remove the event from the UI instantly.
    */
   const handleDeleteEvent = async (eventId: string) => {
-
     if (!societyId) return
 
     try {
-
       // Delete from events collection
-
       await deleteDoc(doc(firestore, 'events', eventId))
-
       
-
       // Remove event id from society's events array
-
       const societyDocRef = doc(firestore, 'societies', societyId)
-
       await updateDoc(societyDocRef, {
-
         events: arrayRemove(eventId)
-
       })
 
-
-
       // Update local state
-
       setEvents(prev => prev.filter(event => event.id !== eventId))
-
     } catch (err) {
-
       console.error("Error deleting event:", err)
-
     }
-
   }
 
 
@@ -174,106 +158,63 @@ export default function SocietyPage() {
    */
   const handleEditEvent = async (eventData: Event) => {
     try {
-            const { id, ...dataToUpdate } = eventData;
-            // Convert status to lowercase
-            if (dataToUpdate.status) {
-              dataToUpdate.status = dataToUpdate.status.toLowerCase();
-            }
-            const eventDocRef = doc(firestore, 'events', id)
-            await updateDoc(eventDocRef, dataToUpdate)
+      const { id, ...dataToUpdate } = eventData;
+      // Convert status to lowercase
+      if (dataToUpdate.status) {
+        dataToUpdate.status = dataToUpdate.status.toLowerCase();
+      }
+      const eventDocRef = doc(firestore, 'events', id)
+      await updateDoc(eventDocRef, dataToUpdate)
       setEvents(prev => prev.map(e => e.id === id ? eventData : e))
     } catch (err) {
       console.error("Error updating event:", err)
     }
   }
 
-
-
   const themeStyles = `
-
     :root {
-
       --bg-default: #110205;
-
       --bg-secondary-default: #2b070e;
-
       --header-bg-default: rgba(17, 2, 5, 0.8);
-
       --glass-default: rgba(212, 34, 67, 0.1);
-
       --border-default: rgba(212, 34, 67, 0.2);
-
       --accent-1-default: #d02243;
-
       --accent-2-default: #aa1c37;
-
       --text-primary-default: #ffffff;
-
       --text-secondary-default: #b0b0b0;
-
     }
-
   `
 
-
-
   if (isLoading) {
-
     return <div className="min-h-screen bg-[#110205] flex items-center justify-center text-white">Loading...</div>
-
   }
-
-
 
   if (error) {
-
     return <div className="min-h-screen bg-[#110205] flex items-center justify-center text-red-400 p-8 text-center">{error}</div>
-
   }
 
-
-
   return (
-
     <div style={{ backgroundColor: "var(--bg-default)" }}>
-
       <style>{themeStyles}</style>
-
       <SocietyHeader theme="default" />
-
       {societyData && (
-
         <>
-
-                    <SocietyHero 
-
-                                            societyName={societyData.name} 
-
-                                            theme="default" 
-
-                                            isManagementView={isManagementView}
-
-                                            societyId={societyId}
-
-                    />
-
-          <SocietyTabs
-
-            theme="default"
-
+          <SocietyHero 
+            societyName={societyData.name} 
+            theme="default" 
             isManagementView={isManagementView}
-
+            societyId={societyId}
+          />
+          <SocietyTabs
+            theme="default"
+            isManagementView={isManagementView}
             societyData={societyData}
-
             events={events}
-
             members={members}
-
             handleDeleteEvent={handleDeleteEvent}
-
             handleEditEvent={handleEditEvent}
-
-          />        </>
+          />
+        </>
       )}
     </div>
   )

@@ -3,31 +3,91 @@
 import { useState, useRef, useEffect } from "react"
 import { ChevronDown } from "lucide-react"
 
+/**
+ * Represents a single option in the select dropdown.
+ */
 interface SelectOption {
+  /** The internal value of the option */
   value: string
+  /** Display text shown to the user */
   label: string
+  /** If true, option is disabled and cannot be selected */
   disabled?: boolean
 }
 
+/**
+ * Props for the Select component.
+ */
 interface SelectProps {
-
-  id?: string;
-
-  value: string;
-
-  onChange: (value: string) => void;
-
-  options: SelectOption[];
-
-  placeholder?: string;
-
-  className?: string;
-
+  /** Currently selected value */
+  value: string
+  /** Callback fired when selection changes */
+  onChange: (value: string) => void
+  /** Array of options to display in dropdown */
+  options: SelectOption[]
+  /** Placeholder text when no option is selected */
+  placeholder?: string
+  /** Additional CSS classes to apply to container */
+  className?: string
+  /** ID for the select button (for label association) */
+  id?: string
 }
 
-
-
-export function Select({ id, value, onChange, options, placeholder = "Select an option", className = "" }: SelectProps) {
+/**
+ * @component Select
+ * 
+ * Custom dropdown select component with keyboard navigation
+ * 
+ * @remarks
+ * This component provides a styled select dropdown:
+ * - Custom design matching app theme (replaces native select)
+ * - Click-outside detection to close dropdown
+ * - Disabled option support
+ * - Animated chevron icon
+ * - Hover and focus states
+ * - Glassmorphism styling
+ * 
+ * Features:
+ * - Automatically closes when clicking outside
+ * - Disabled options are grayed out and non-clickable
+ * - Visual feedback for selected option
+ * - Dropdown positioning with z-index management
+ * 
+ * @example
+ * Basic usage:
+ * ```tsx
+ * const [venue, setVenue] = useState('')
+ * const venueOptions = [
+ *   { value: 'aman', label: 'Aman Tower' },
+ *   { value: 'tabba', label: 'Tabba Academic Block' },
+ *   { value: 'city', label: 'City Campus' }
+ * ]
+ * 
+ * <Select
+ *   value={venue}
+ *   onChange={setVenue}
+ *   options={venueOptions}
+ *   placeholder="Select venue"
+ * />
+ * ```
+ * 
+ * @example
+ * With disabled options:
+ * ```tsx
+ * const statusOptions = [
+ *   { value: 'draft', label: 'Draft' },
+ *   { value: 'published', label: 'Published' },
+ *   { value: 'archived', label: 'Archived', disabled: true }
+ * ]
+ * 
+ * <Select
+ *   value={status}
+ *   onChange={setStatus}
+ *   options={statusOptions}
+ * />
+ * ```
+ */
+export function Select({ value, onChange, options, placeholder = "Select an option", className = "", id }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
 
@@ -52,8 +112,8 @@ export function Select({ id, value, onChange, options, placeholder = "Select an 
   return (
     <div ref={selectRef} className={`relative ${className}`}>
       <button
-        id={id}
         type="button"
+        id={id}
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-2 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white focus:outline-none focus:border-[#d02243] focus:bg-[rgba(255,255,255,0.1)] flex items-center justify-between hover:bg-[rgba(255,255,255,0.1)] transition-colors"
       >
