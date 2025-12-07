@@ -8,11 +8,7 @@ import { Select } from "@/components/ui/select";
 import { showToast } from "@/components/ui/toast";
 
 // Define the option interface for Select component
-interface SelectOption {
-  value: string;
-  label: string;
-  disabled?: boolean;
-}
+
 
 interface FormData {
   name: string;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { app, firestore } from "../../firebase";
 import { LogOut, CalendarPlus } from "lucide-react";
@@ -17,6 +17,26 @@ interface Society {
   name: string;
 }
 
+interface EventFormData {
+  name: string;
+  description: string;
+  eventType: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+  registrationLink?: string;
+  tags?: string;
+  subEvents?: Array<{
+    name: string;
+    description: string;
+    startDate: string;
+    location: string;
+    registrationLink?: string;
+  }>;
+}
+
+
+
 export default function CreateEventPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +50,7 @@ export default function CreateEventPage() {
   useEffect(() => {
     const auth = getAuth(app);
 
-    const checkAuthorization = async (user: any) => {
+    const checkAuthorization = async (user: User) => {
       try {
         // Get user privilege and society info first
         const userDoc = await getDoc(doc(firestore, "users", user.uid));
@@ -105,7 +125,7 @@ export default function CreateEventPage() {
     return () => unsubscribe();
   }, [router]);
 
-  const handleCreateEvent = async (eventData: any) => {
+  const handleCreateEvent = async (eventData: EventFormData) => {
     try {
       // Convert date strings to Date objects and extract time
       const startDate = new Date(eventData.startDate);
@@ -122,7 +142,9 @@ export default function CreateEventPage() {
       }
 
       // Process tags - split by comma and trim whitespace
-      const tags = eventData.tags ? eventData.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag) : [];
+      const tags = eventData.tags 
+        ? eventData.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag) 
+        : [];
 
       // Create the main event using the new schema
       const eventId = await createEvent({

@@ -148,24 +148,3 @@ export function Select({ value, onChange, options, placeholder = "Select an opti
     </div>
   )
 }
-
-// Additional components to handle the Radix UI style API
-export function SelectTrigger({ children, className = "" }: any) {
-  // This is a placeholder to match the Radix UI pattern
-  return <div className={className}>{children}</div>;
-}
-
-export function SelectValue({ placeholder = "Select an option" }: any) {
-  // This is a placeholder to match the Radix UI pattern
-  return <>{placeholder}</>;
-}
-
-export function SelectContent({ children, className = "" }: any) {
-  // This is a placeholder to match the Radix UI pattern
-  return <div className={className}>{children}</div>;
-}
-
-export function SelectItem({ children, value, disabled = false }: any) {
-  // This is a placeholder to match the Radix UI pattern
-  return <div>{children}</div>;
-}
