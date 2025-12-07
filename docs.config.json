@@ -6,7 +6,15 @@
       "title": "Library Functions",
       "description": "Utility functions for privileges, statistics, and more",
       "include": ["lib/**/*.{ts,tsx}"],
-      "exclude": ["lib/**/*.test.{ts,tsx}", "lib/utils.ts"],
+      "exclude": ["lib/**/*.test.{ts,tsx}", "lib/utils.ts", "lib/**/types.ts"],
+      "isTest": false
+    },
+    {
+      "name": "interfaces.md",
+      "title": "Interfaces",
+      "description": "TypeScript interfaces and type definitions",
+      "include": ["lib/**/types.ts"],
+      "exclude": ["lib/**/*.test.{ts,tsx}"],
       "isTest": false
     },
     {

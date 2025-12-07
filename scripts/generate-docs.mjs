@@ -52,6 +52,12 @@ function extractGroupName(content, filePath) {
     return componentMatch[1].trim();
   }
   
+  // Check for @interface tag
+  const interfaceMatch = jsdoc.match(/@interface\s+(.+)/);
+  if (interfaceMatch) {
+    return interfaceMatch[1].trim();
+  }
+  
   // Check for @file tag
   const fileMatch = jsdoc.match(/@file\s+(.+)/);
   if (fileMatch) {
@@ -59,7 +65,7 @@ function extractGroupName(content, filePath) {
   }
   
   // Fallback to filename
-  console.log(`   ! Using filename as heading for ${filePath}: No @library, @testSuite, @component, or @file tag found`);
+  console.log(`   ! Using filename as heading for ${filePath}: No @library, @testSuite, @component, @interface, or @file tag found`);
   return path.basename(filePath);
 }
 
@@ -130,9 +136,9 @@ function parseJSDocBlock(jsdoc, filePath) {
       return;
     }
 
-    // Extract function/component/testSuite name from tag
-    if (line.toLowerCase().startsWith('@function') || line.toLowerCase().startsWith('@component') || line.toLowerCase().startsWith('@testsuite')) {
-      doc.functionName = line.replace(/@(function|component|testSuite|Function|Component|TestSuite)/i, '').trim();
+    // Extract function/component/testSuite/interface name from tag
+    if (line.toLowerCase().startsWith('@function') || line.toLowerCase().startsWith('@component') || line.toLowerCase().startsWith('@testsuite') || line.toLowerCase().startsWith('@interface')) {
+      doc.functionName = line.replace(/@(function|component|testSuite|interface|Function|Component|TestSuite|Interface)/i, '').trim();
       currentSection = 'description';
       currentContent = '';
       return;

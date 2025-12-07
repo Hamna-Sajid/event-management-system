@@ -10,18 +10,28 @@ interface SelectOption {
 }
 
 interface SelectProps {
-  value: string
-  onChange: (value: string) => void
-  options: SelectOption[]
-  placeholder?: string
-  className?: string
+
+  id?: string;
+
+  value: string;
+
+  onChange: (value: string) => void;
+
+  options: SelectOption[];
+
+  placeholder?: string;
+
+  className?: string;
+
 }
 
-export function Select({ value, onChange, options, placeholder = "Select an option", className = "" }: SelectProps) {
+
+
+export function Select({ id, value, onChange, options, placeholder = "Select an option", className = "" }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
 
-  const selectedOption = options.find(option => option.value === value)
+  const selectedOption = options.find(option => option.value.toLowerCase() === value.toLowerCase())
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -42,6 +52,7 @@ export function Select({ value, onChange, options, placeholder = "Select an opti
   return (
     <div ref={selectRef} className={`relative ${className}`}>
       <button
+        id={id}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-2 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white focus:outline-none focus:border-[#d02243] focus:bg-[rgba(255,255,255,0.1)] flex items-center justify-between hover:bg-[rgba(255,255,255,0.1)] transition-colors"
