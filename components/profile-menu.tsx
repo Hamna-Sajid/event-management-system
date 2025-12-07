@@ -50,6 +50,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { createPortal } from "react-dom"
 import { useRouter } from "next/navigation"
 import { onAuthStateChanged, signOut, User as FirebaseUser } from "firebase/auth"
 import { doc, getDoc } from "firebase/firestore"
@@ -93,7 +94,7 @@ function ProfileMenuItem({ icon: Icon, label, onClick }: ProfileMenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-[rgba(0, 255, 106, 0.05)] rounded-lg transition-colors cursor-pointer"
+      className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-[rgba(208,34,67,0.2)] rounded-lg transition-colors cursor-pointer"
     >
       <Icon size={18} />
       <span>{label}</span>
@@ -151,7 +152,9 @@ export function ProfileMenu() {
   const [userPrivilege, setUserPrivilege] = useState<number>(UserPrivilege.NORMAL_USER)
   const [societyId, setSocietyId] = useState<string | null>(null)
   const [showMenu, setShowMenu] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 })
   const menuRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -172,9 +175,25 @@ export function ProfileMenu() {
     return () => unsubscribe()
   }, [])
 
+  // Update dropdown position when menu opens
+  useEffect(() => {
+    if (showMenu && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right
+      })
+    }
+  }, [showMenu])
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (
+        menuRef.current && 
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
         setShowMenu(false)
       }
     }
@@ -244,47 +263,64 @@ export function ProfileMenu() {
     }
   ]
 
-  return (
-    <div className="relative" ref={menuRef}>
-      <button
-        onClick={() => setShowMenu(!showMenu)}
-        className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d02243] to-[#aa1c37] flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
-        aria-label="Profile menu"
-      >
-        <User size={20} className="text-white" />
-      </button>
+  const dropdownContent = showMenu && currentUser ? (
+    <div 
+      ref={menuRef}
+      className="fixed w-64 rounded-xl shadow-2xl overflow-hidden z-[9999]"
+      style={{ 
+        top: `${dropdownPosition.top}px`,
+        right: `${dropdownPosition.right}px`,
+        background: 'rgba(17, 2, 5, 0.7)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        willChange: 'backdrop-filter'
+      }}
+    >
+      <div className="p-4 border-b border-[rgba(255,255,255,0.1)]">
+        <p className="text-white text-sm font-medium truncate">
+          {currentUser.email}
+        </p>
+        <p className="text-[rgba(255,255,255,0.6)] text-xs mt-1">
+          {getRoleLabel()}
+        </p>
+      </div>
 
-      {showMenu && (
-        <div className="absolute right-0 mt-2 w-64 glass rounded-xl shadow-2xl overflow-hidden z-50" style={{ opacity: 1 }}>
-          <div className="p-4 border-b border-[rgba(40, 243, 0, 0.1)]">
-            <p className="text-white text-sm font-medium truncate">
-              {currentUser.email}
-            </p>
-            <p className="text-[rgba(255,255,255,0.6)] text-xs mt-1">
-              {getRoleLabel()}
-            </p>
-          </div>
-
-          <div className="p-2">
-            {menuItems
-              .filter(item => item.show)
-              .map((item, index) => (
-                <ProfileMenuItem
-                  key={index}
-                  icon={item.icon}
-                  label={item.label}
-                  onClick={() => {
-                    if (item.onClick) {
-                      item.onClick()
-                    } else if (item.path) {
-                      handleNavigation(item.path)
-                    }
-                  }}
-                />
-              ))}
-          </div>
-        </div>
-      )}
+      <div className="p-2">
+        {menuItems
+          .filter(item => item.show)
+          .map((item, index) => (
+            <ProfileMenuItem
+              key={index}
+              icon={item.icon}
+              label={item.label}
+              onClick={() => {
+                if (item.onClick) {
+                  item.onClick()
+                } else if (item.path) {
+                  handleNavigation(item.path)
+                }
+              }}
+            />
+          ))}
+      </div>
     </div>
+  ) : null
+
+  return (
+    <>
+      <div className="relative">
+        <button
+          ref={buttonRef}
+          onClick={() => setShowMenu(!showMenu)}
+          className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d02243] to-[#aa1c37] flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
+          aria-label="Profile menu"
+        >
+          <User size={20} className="text-white" />
+        </button>
+      </div>
+      
+      {typeof window !== 'undefined' && createPortal(dropdownContent, document.body)}
+    </>
   )
 }
