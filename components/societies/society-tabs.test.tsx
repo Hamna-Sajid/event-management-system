@@ -98,7 +98,7 @@ describe('SocietyTabs', () => {
   it('should have correct "View Event" links in Overview tab', () => {
     render(<SocietyTabs theme="default" societyData={mockSocietyData} events={mockEvents} members={mockMembers} handleDeleteEvent={mockHandleDeleteEvent} handleEditEvent={mockHandleEditEvent} />);
     
-    const overviewLinks = screen.getAllByRole('link', { name: /view event/i });
+    const overviewLinks = screen.getAllByRole('link', { name: /Event 1|Event 2/i });
     expect(overviewLinks[0]).toHaveAttribute('href', '/events/1');
   });
 

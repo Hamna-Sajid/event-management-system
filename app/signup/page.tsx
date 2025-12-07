@@ -71,17 +71,17 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Central Glassmorphic Card */}
       <div className="w-full max-w-md glass rounded-xl p-8 space-y-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center gap-4">
-          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center">
             <span className="text-white font-bold text-2xl">IE</span>
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Create Your IEMS Account</h1>
-            <p className="text-[rgba(255,255,255,0.6)]">Join the community and discover events</p>
+            <p className="text-muted-foreground">Join the community and discover events</p>
           </div>
         </div>
 
@@ -96,7 +96,7 @@ export default function SignUp() {
 
           {/* Full Name Field */}
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-2">
               Full Name
             </label>
             <input
@@ -107,13 +107,13 @@ export default function SignUp() {
               value={formData.fullName}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
             />
           </div>
 
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
               Email Address
             </label>
             <input
@@ -124,13 +124,13 @@ export default function SignUp() {
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
             />
           </div>
 
           {/* Mobile Number Field */}
           <div>
-            <label htmlFor="mobileNumber" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="mobileNumber" className="block text-sm font-medium text-foreground mb-2">
               Mobile Number
             </label>
             <input
@@ -141,13 +141,13 @@ export default function SignUp() {
               value={formData.mobileNumber}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
             />
           </div>
 
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
               Password
             </label>
             <div className="relative">
@@ -159,12 +159,12 @@ export default function SignUp() {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+                className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(255,255,255,0.5)] hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -173,7 +173,7 @@ export default function SignUp() {
 
           {/* Confirm Password Field */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
               Confirm Password
             </label>
             <div className="relative">
@@ -185,12 +185,12 @@ export default function SignUp() {
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+                className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(255,255,255,0.5)] hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -201,15 +201,15 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[#d02243] hover:bg-[#aa1c37] disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200 mt-6"
+            className="w-full py-2.5 px-4 glow-button disabled:opacity-50 rounded-lg transition-colors duration-200 mt-6"
           >
             {isLoading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
 
         {/* Context Note */}
-        <div className="rounded-lg bg-[rgba(208,34,67,0.1)] border border-[rgba(208,34,67,0.2)] p-3">
-          <p className="text-xs text-[rgba(255,255,255,0.6)]">
+        <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
+          <p className="text-xs text-muted-foreground">
             Tip: You can upgrade to an IBA email on your profile page later to unlock additional features and exclusive events.
           </p>
         </div>
@@ -218,7 +218,7 @@ export default function SignUp() {
         <div className="text-center">
           <p className="text-[rgba(255,255,255,0.6)]">
             Already have an account?{' '}
-            <Link href="/signin" className="text-[#d02243] hover:text-[#aa1c37] font-semibold transition-colors">
+            <Link href="/signin" className="text-primary hover:text-secondary font-semibold transition-colors">
               Sign In
             </Link>
           </p>

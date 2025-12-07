@@ -270,6 +270,17 @@ export default function LandingPage() {
 }
 ```
 
+### LoadingScreen
+
+**File**: `components\loading-screen.tsx`
+
+Reusable loading screen with animated blobs and spinner
+
+Full-screen loading overlay with:
+- Animated gradient blobs matching hero design
+- Rotating spinner with gradient colors
+- "Loading..." text with bouncing dots
+
 ### ProfileMenu
 
 **File**: `components\profile-menu.tsx`
@@ -339,24 +350,6 @@ const handleEditSubmit = (updatedEvent: Event) => {
   event={selectedEvent}
   theme="blue"
 />
-```
-
-## ThemedOutlineButton
-
-### ThemedOutlineButton
-
-**File**: `components\societies\society-header.tsx`
-
-A themed button with an outline style that can function as a link or a button.
-
-This button's colors for text, background, and border are determined by CSS variables
-derived from the `theme` prop. It also features dynamic hover and active styles.
-
-#### Example
-
-```tsx
-// As a link
-<ThemedOutlineButton linkHref="/profile" theme="default">Profile</ThemedOutlineButton>
 ```
 
 ### SocietyHeader

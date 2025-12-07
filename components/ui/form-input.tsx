@@ -76,14 +76,14 @@ export function FormInput({
   className = "",
   ...props 
 }: FormInputProps) {
-  const baseClasses = "w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243] transition-colors"
+  const baseClasses = "w-full bg-input border border-border rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring transition-colors"
   
   const Element = textarea ? "textarea" : "input"
 
   return (
     <div className="space-y-2">
       {label && (
-        <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] block">
+        <label className="text-sm font-semibold text-foreground/80 block">
           {label}
         </label>
       )}
@@ -93,7 +93,7 @@ export function FormInput({
         {...props}
       />
       {error && (
-        <p className="text-[#d02243] text-sm">{error}</p>
+        <p className="text-destructive text-sm">{error}</p>
       )}
     </div>
   )

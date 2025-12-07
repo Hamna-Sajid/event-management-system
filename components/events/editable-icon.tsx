@@ -96,7 +96,7 @@ export function EditableIcon({ onClick }: EditableIconProps) {
       className="inline-flex items-center justify-center w-6 h-6 rounded-full glass glass-hover ml-2 cursor-pointer"
       title="Edit"
     >
-      <Pencil size={14} className="text-[#d02243]" />
+      <Pencil size={14} className="text-primary" />
     </button>
   )
 }

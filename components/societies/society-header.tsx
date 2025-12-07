@@ -1,50 +1,6 @@
 "use client"
 
-import Link from "next/link"
 import { ProfileMenu } from "@/components/profile-menu"
-
-/**
- * @component ThemedOutlineButton
- * 
- * A themed button with an outline style that can function as a link or a button.
- * 
- * @param {object} props
- * @param {React.ReactNode} props.children - The content to render inside the button.
- * @param {string} props.linkHref - URL for the button to act as a link.
- * @param {string} props.theme - The theme to apply.
- * 
- * @remarks
- * This button's colors for text, background, and border are determined by CSS variables
- * derived from the `theme` prop. It also features dynamic hover and active styles.
- * 
- * @example
- * ```tsx
- * // As a link
- * <ThemedOutlineButton linkHref="/profile" theme="default">Profile</ThemedOutlineButton>
- * ```
- */
-const ThemedOutlineButton = ({ children, linkHref, theme }: { children: React.ReactNode, linkHref: string, theme: string }) => {
-  return (
-    <Link
-      href={linkHref}
-      className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg border transition-colors hover:bg-[var(--accent-1-default)] hover:text-white"
-      style={{
-        color: `var(--text-primary-${theme})`,
-        borderColor: `var(--border-${theme})`,
-      }}
-    >
-      {children}
-    </Link>
-  )
-}
-
-/**
- * Props for the {@link SocietyHeader} component.
- */
-interface SocietyHeaderProps {
-  /** The theme to apply to the header, used for styling. */
-  theme: string
-}
 
 /**
  * @component SocietyHeader
@@ -72,6 +28,14 @@ interface SocietyHeaderProps {
  * }
  * ```
  */
+
+/**
+ * Props for the {@link SocietyHeader} component.
+ */
+interface SocietyHeaderProps {
+  /** The theme to apply to the header, used for styling. */
+  theme: string
+}
 export default function SocietyHeader({ theme }: SocietyHeaderProps) {
   return (
     <header
@@ -99,10 +63,6 @@ export default function SocietyHeader({ theme }: SocietyHeaderProps) {
 
         {/* Right side - Navigation */}
         <div className="flex items-center gap-3">
-          <ThemedOutlineButton linkHref="/coming-soon" theme={theme}>
-            Dashboard
-          </ThemedOutlineButton>
-
           <ProfileMenu />
         </div>
       </div>

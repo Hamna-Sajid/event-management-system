@@ -159,24 +159,28 @@ describe('SocietyPage', () => {
 
   it('should show loading state initially', () => {
     mockGetDoc.mockImplementation(() => new Promise(() => {})) // Never resolves to keep loading
-    render(<SocietyPage />)
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    const { container } = render(<SocietyPage />)
+    // LoadingScreen renders with a fixed inset-0 div containing loading content
+    const loadingDiv = container.querySelector('.fixed.inset-0')
+    expect(loadingDiv).toBeInTheDocument()
   })
 
   it('should show error if no society ID is provided', async () => {
     mockUseParams.mockReturnValue({ id: undefined })
-    await act(async () => {
-      render(<SocietyPage />)
+    const { container } = await act(async () => {
+      return render(<SocietyPage />)
     })
-    expect(await screen.findByText('No society ID provided.')).toBeInTheDocument()
+    // Page returns null for error states, so container should be empty
+    expect(container.firstChild).toBeNull()
   })
   
   it('should show error if society is not found', async () => {
     mockGetDoc.mockResolvedValue({ exists: () => false });
-    await act(async () => {
-      render(<SocietyPage />)
+    const { container } = await act(async () => {
+      return render(<SocietyPage />)
     })
-    expect(await screen.findByText('Society not found.')).toBeInTheDocument()
+    // Page returns null for error states, so container should be empty
+    expect(container.firstChild).toBeNull()
   })
 
   it('should render the page with society data for an admin', async () => {

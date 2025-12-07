@@ -94,7 +94,7 @@ function ProfileMenuItem({ icon: Icon, label, onClick }: ProfileMenuItemProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-[rgba(208,34,67,0.2)] rounded-lg transition-colors cursor-pointer"
+      className="w-full flex items-center gap-3 px-4 py-3 text-foreground hover:bg-accent/20 rounded-lg transition-colors cursor-pointer"
     >
       <Icon size={18} />
       <span>{label}</span>
@@ -266,22 +266,17 @@ export function ProfileMenu() {
   const dropdownContent = showMenu && currentUser ? (
     <div 
       ref={menuRef}
-      className="fixed w-64 rounded-xl shadow-2xl overflow-hidden z-[9999]"
+      className="fixed w-64 rounded-xl shadow-2xl overflow-hidden z-[9999] glass"
       style={{ 
         top: `${dropdownPosition.top}px`,
-        right: `${dropdownPosition.right}px`,
-        background: 'rgba(17, 2, 5, 0.7)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        border: '1px solid rgba(255, 255, 255, 0.15)',
-        willChange: 'backdrop-filter'
+        right: `${dropdownPosition.right}px`
       }}
     >
-      <div className="p-4 border-b border-[rgba(255,255,255,0.1)]">
-        <p className="text-white text-sm font-medium truncate">
+      <div className="p-4 border-b border-border">
+        <p className="text-foreground text-sm font-medium truncate">
           {currentUser.email}
         </p>
-        <p className="text-[rgba(255,255,255,0.6)] text-xs mt-1">
+        <p className="text-muted-foreground text-xs mt-1">
           {getRoleLabel()}
         </p>
       </div>
@@ -313,7 +308,7 @@ export function ProfileMenu() {
         <button
           ref={buttonRef}
           onClick={() => setShowMenu(!showMenu)}
-          className="w-10 h-10 rounded-full bg-gradient-to-br from-[#d02243] to-[#aa1c37] flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
+          className="w-10 h-10 rounded-full bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center hover:scale-105 transition-transform cursor-pointer"
           aria-label="Profile menu"
         >
           <User size={20} className="text-white" />

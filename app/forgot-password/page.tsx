@@ -38,17 +38,17 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Central Glassmorphic Card */}
       <div className="w-full max-w-md glass rounded-xl p-8 space-y-8">
         {/* Logo and Title */}
         <div className="flex flex-col items-center gap-4">
-          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center">
             <Mail className="text-white" size={24} />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Reset Password</h1>
-            <p className="text-[rgba(255,255,255,0.6)]">
+            <p className="text-muted-foreground">
               Enter your email and we&apos;ll send you a link to reset your password
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2.5 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d02243] focus:ring-1 focus:ring-[#d02243] transition-all"
+              className="w-full px-4 py-2.5 rounded-lg bg-input border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring transition-all"
             />
           </div>
 
@@ -96,7 +96,7 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[#d02243] hover:bg-[#aa1c37] disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200"
+            className="w-full py-2.5 px-4 glow-button disabled:opacity-50 rounded-lg transition-colors duration-200"
           >
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </button>
@@ -106,7 +106,7 @@ export default function ForgotPassword() {
         <div className="text-center">
           <Link
             href="/signin"
-            className="inline-flex items-center gap-2 text-[rgba(255,255,255,0.6)] hover:text-white transition-colors text-sm"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-white transition-colors text-sm"
           >
             <ArrowLeft size={16} />
             Back to Sign In

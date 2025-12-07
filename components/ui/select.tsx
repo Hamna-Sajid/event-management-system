@@ -115,19 +115,19 @@ export function Select({ value, onChange, options, placeholder = "Select an opti
         type="button"
         id={id}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white focus:outline-none focus:border-[#d02243] focus:bg-[rgba(255,255,255,0.1)] flex items-center justify-between hover:bg-[rgba(255,255,255,0.1)] transition-colors"
+        className="w-full px-4 py-2 rounded-lg bg-input border border-border text-foreground focus:outline-none focus:border-ring focus:bg-input/80 flex items-center justify-between hover:bg-input/80 transition-colors"
       >
-        <span className={selectedOption ? "text-white" : "text-[rgba(255,255,255,0.5)]"}>
+        <span className={selectedOption ? "text-foreground" : "text-muted-foreground"}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
           size={16}
-          className={`text-[rgba(255,255,255,0.6)] transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 w-full mt-1 bg-[#110205] border border-[rgba(255,255,255,0.15)] rounded-lg shadow-lg backdrop-blur-md">
+        <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-lg shadow-lg backdrop-blur-md">
           {options.map((option) => (
             <button
               key={option.value}
@@ -136,8 +136,8 @@ export function Select({ value, onChange, options, placeholder = "Select an opti
               onClick={() => !option.disabled && handleSelect(option.value)}
               className={`w-full px-4 py-2 text-left transition-colors first:rounded-t-lg last:rounded-b-lg ${
                 option.disabled
-                  ? 'text-[rgba(255,255,255,0.3)] cursor-not-allowed'
-                  : 'text-[rgba(255,255,255,0.8)] hover:text-[#d02243] hover:bg-[rgba(208,34,67,0.1)]'
+                  ? 'text-muted-foreground cursor-not-allowed'
+                  : 'text-foreground hover:text-primary hover:bg-accent/10'
               }`}
             >
               {option.label}

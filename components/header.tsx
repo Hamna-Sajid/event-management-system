@@ -66,11 +66,11 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[rgba(17,2,5,0.8)] border-[rgba(255,255,255,0.1)]">
+    <header className="fixed top-0 w-full z-50 backdrop-blur-xl bg-gradient-to-b from-black/40 to-transparent border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push("/")}>
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center">
             <span className="text-white font-bold text-lg">IE</span>
           </div>
           <span className="text-white font-semibold text-lg hidden sm:inline">IEMS</span>
@@ -78,13 +78,15 @@ export default function Header() {
 
         {/* Right side - Search, Profile Menu or Login/Sign Up */}
         <div className="flex items-center gap-3">
-          <button 
-            className="p-2 rounded-lg glass hidden sm:flex items-center justify-center opacity-50 cursor-not-allowed"
-            disabled
-            title="Coming soon"
-          >
-            <Search size={20} className="text-[rgba(255,255,255,0.7)]" />
-          </button>
+          <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md bg-white/5 border border-white/10 hover:border-white/20 transition opacity-50 cursor-not-allowed" title="Coming soon">
+            <Search className="w-4 h-4 text-white/50" />
+            <input
+              type="text"
+              placeholder="Search events..."
+              className="bg-transparent text-white text-sm placeholder-white/40 focus:outline-none w-32"
+              disabled
+            />
+          </div>
 
           {currentUser ? (
             <ProfileMenu />
@@ -92,7 +94,7 @@ export default function Header() {
             <>
               <Button
                 variant="ghost"
-                className="text-[rgba(255,255,255,0.8)] hover:text-white hover:bg-[rgba(255,255,255,0.1)]"
+                className="text-muted-foreground hover:text-white hover:bg-accent"
                 onClick={() => router.push('/signin')}
               >
                 <LogIn size={18} className="mr-2" />
@@ -100,7 +102,7 @@ export default function Header() {
               </Button>
 
               <Button 
-                className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold"
+                className="glow-button"
                 onClick={() => router.push('/signup')}
               >
                 <UserPlus size={18} className="mr-2" />

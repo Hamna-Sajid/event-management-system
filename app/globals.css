@@ -4,90 +4,82 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Primary brand colors - Deep reds */
-  --primary: #d02243;
-  --primary-accent: #aa1c37;
-  --primary-dark: #84162b;
-
-  /* Background colors - Very dark */
-  --background: #110205;
-  --background-secondary: #2b070e;
-
-  /* Neutral/Glass effect */
-  --glass-light: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.8);
-  --text-muted: rgba(255, 255, 255, 0.6);
-
-  /* Semantic tokens */
-  --foreground: #ffffff;
-  --card: rgba(255, 255, 255, 0.05);
-  --card-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #d02243;
-  --radius: 0.625rem;
-
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Premium glassmorphism color palette with dark background and vibrant accents */
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.5 0.3 264);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.6 0.25 320);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.6 0.28 328);
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.5 0.3 264);
+  --chart-1: oklch(0.6 0.28 264);
+  --chart-2: oklch(0.5 0.3 328);
+  --chart-3: oklch(0.55 0.25 150);
+  --chart-4: oklch(0.65 0.2 60);
+  --chart-5: oklch(0.6 0.22 30);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.5 0.3 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.6 0.25 320);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.5 0.3 264);
+  /* Add custom colors for glassmorphism accents */
+  --electric-blue: oklch(0.55 0.3 264);
+  --magenta: oklch(0.5 0.3 328);
+  --emerald: oklch(0.6 0.25 150);
 }
 
 .dark {
-  --background: #110205;
-  --foreground: #ffffff;
-  --card: rgba(255, 255, 255, 0.05);
-  --card-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.08);
-  --ring: #d02243;
-
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.5 0.3 264);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.6 0.25 320);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.25 0 0);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.6 0.28 328);
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.15 0 0);
+  --ring: oklch(0.5 0.3 264);
+  --chart-1: oklch(0.6 0.28 264);
+  --chart-2: oklch(0.5 0.3 328);
+  --chart-3: oklch(0.55 0.25 150);
+  --chart-4: oklch(0.65 0.2 60);
+  --chart-5: oklch(0.6 0.22 30);
+  --sidebar: oklch(0.12 0 0);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.5 0.3 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.6 0.25 320);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.5 0.3 264);
+  --electric-blue: oklch(0.55 0.3 264);
+  --magenta: oklch(0.5 0.3 328);
+  --emerald: oklch(0.6 0.25 150);
 }
 
 @theme inline {
@@ -124,6 +116,15 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  /* Add custom accent colors for glassmorphism */
+  --color-electric-blue: var(--electric-blue);
+  --color-magenta: var(--magenta);
+  --color-emerald: var(--emerald);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 }
 
 @layer base {
@@ -135,7 +136,27 @@
   }
 }
 
-/* Glassmorphism utilities */
+/* Custom gradient utilities for glassmorphism */
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-xl bg-white/10 border border-white/20;
+  }
+
+  .glass-hover {
+    @apply hover:border-electric-blue/50 hover:shadow-lg hover:shadow-magenta/20 transition-all;
+  }
+
+  .glow-button {
+    @apply bg-gradient-to-r from-electric-blue to-magenta text-white font-semibold hover:shadow-lg hover:shadow-magenta/40 transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .bg-gradient-premium {
+    @apply bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950;
+  }
+}
+
+/* Glassmorphism utilities (legacy) */
+/* Glassmorphism utilities (legacy) */
 .glass {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -149,6 +170,26 @@
 .glass-hover:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Blob animation for hero background */
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(60px, -80px) scale(1.15);
+  }
+  50% {
+    transform: translate(-80px, 60px) scale(0.85);
+  }
+  75% {
+    transform: translate(80px, 80px) scale(1.1);
+  }
+}
+
+.animate-blob {
+  animation: blob 20s infinite ease-in-out;
 }
 
 /* Toast slide-in animation */
@@ -167,10 +208,10 @@
   animation: slide-in-right 0.3s ease-out;
 }
 
-/* Custom scrollbar for all elements */
+/* Custom scrollbar with new color scheme */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(208, 34, 67, 0.3) transparent;
+  scrollbar-color: var(--primary) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -179,17 +220,17 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--muted);
   border-radius: 4px;
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(208, 34, 67, 0.3);
+  background: var(--primary);
   border-radius: 4px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(208, 34, 67, 0.5);
+  background: var(--secondary);
 }
 
 /* Custom scrollbar for calendar days */
@@ -202,12 +243,12 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(208, 34, 67, 0.3);
+  background: var(--primary);
   border-radius: 2px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(208, 34, 67, 0.5);
+  background: var(--secondary);
 }
 
 .scrollbar-track-transparent::-webkit-scrollbar-track {

@@ -13,11 +13,12 @@ import { showToast } from "@/components/ui/toast"
 import { EventHeader } from "@/components/events/event-header"
 import { DeleteConfirmModal } from "@/components/events/delete-confirm-modal"
 import { ImageUploadModal } from "@/components/events/image-upload-modal"
+import LoadingScreen from "@/components/loading-screen"
 import { EditableIcon } from "@/components/events/editable-icon"
 import { validateImageFile, validateDocumentFile } from "@/lib/events/validation"
 import { formatVenue } from "@/lib/events/formatters"
 import Image from "next/image"
-import Link from "next/link"
+
 
 interface EventData {
   id: string
@@ -124,7 +125,7 @@ function EditModal({
       <div className="glass rounded-2xl p-8 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-white">Edit {title}</h3>
-          <button onClick={onClose} className="text-[rgba(255,255,255,0.6)] hover:text-white cursor-pointer transition-colors">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -133,25 +134,25 @@ function EditModal({
           <textarea
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243] min-h-32"
+            className="w-full bg-input border border-border rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring min-h-32"
           />
         ) : (
           <input
             type={type}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+            className="w-full bg-input border border-border rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring"
           />
         )}
 
         <div className="flex gap-3 mt-6">
-          <Button onClick={onSave} className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold">
+          <Button onClick={onSave} className="flex-1 glow-button">
             Save
           </Button>
           <Button
             onClick={onClose}
             variant="outline"
-            className="flex-1 border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+            className="flex-1 border-border text-foreground hover:bg-accent bg-transparent"
           >
             Cancel
           </Button>
@@ -211,9 +212,9 @@ function ModuleDetailModal({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={handleBackdropClick}>
       <div className="glass rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="sticky top-0 flex items-center justify-between p-6 border-[rgba(255,255,255,0.1)] bg-[rgba((255,255,255,0.05)]">
+        <div className="sticky top-0 flex items-center justify-between p-6 border-border bg-card/50">
           <h2 className="text-2xl font-bold text-white">{canEdit ? 'Edit Module' : module.title}</h2>
-          <button onClick={onClose} className="text-[rgba(255,255,255,0.6)] hover:text-white cursor-pointer">
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground cursor-pointer">
             <X size={24} />
           </button>
         </div>
@@ -221,20 +222,20 @@ function ModuleDetailModal({
         <div className="p-6 space-y-6">
           {/* Cover Image */}
           <div>
-            <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">
+            <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">
               Cover Image
             </label>
-            <div className="relative h-64 rounded-lg overflow-hidden bg-[rgba(255,255,255,0.05)] flex items-center justify-center group">
+            <div className="relative h-64 rounded-lg overflow-hidden bg-card flex items-center justify-center group">
               {module.coverImage && module.coverImage !== "/placeholder.png" ? (
                 <Image src={module.coverImage} alt={module.title} fill className="object-cover" />
               ) : (
-                <Upload size={48} className="text-[rgba(255,255,255,0.3)]" />
+                <Upload size={48} className="text-muted-foreground" />
               )}
               {canEdit && (
                 <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
                   <Upload size={32} className="text-white mb-2" />
                   <p className="text-white text-sm">Click to upload</p>
-                  <p className="text-[rgba(255,255,255,0.7)] text-xs mt-1">Max: 512KB</p>
+                  <p className="text-muted-foreground text-xs mt-1">Max: 512KB</p>
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -252,13 +253,13 @@ function ModuleDetailModal({
 
           {/* Title */}
           <div>
-            <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Title</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Title</label>
             {canEdit ? (
               <input
                 type="text"
                 value={editedModule.title}
                 onChange={(e) => setEditedModule({ ...editedModule, title: e.target.value })}
-                className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring"
               />
             ) : (
               <p className="text-white font-semibold text-lg">{module.title}</p>
@@ -267,18 +268,18 @@ function ModuleDetailModal({
 
           {/* Time */}
           <div>
-            <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Time</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Time</label>
             {canEdit ? (
               <input
                 type="text"
                 value={editedModule.time}
                 onChange={(e) => setEditedModule({ ...editedModule, time: e.target.value })}
-                className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring"
                 placeholder="e.g., 10:00 AM - 12:00 PM"
               />
             ) : (
               <div className="flex items-center gap-2 text-white">
-                <Clock size={18} className="text-[#d02243]" />
+                <Clock size={18} className="text-primary" />
                 <span>{module.time} {module.duration && `(${module.duration})`}</span>
               </div>
             )}
@@ -287,13 +288,13 @@ function ModuleDetailModal({
           {/* Duration */}
           {(canEdit || module.duration) && (
             <div>
-              <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Duration</label>
+              <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Duration</label>
               {canEdit ? (
                 <input
                   type="text"
                   value={editedModule.duration || ''}
                   onChange={(e) => setEditedModule({ ...editedModule, duration: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring"
                   placeholder="e.g., 2 hours"
                 />
               ) : (
@@ -304,17 +305,17 @@ function ModuleDetailModal({
 
           {/* Price */}
           <div>
-            <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Price</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Price</label>
             {canEdit ? (
               <input
                 type="text"
                 value={editedModule.price}
                 onChange={(e) => setEditedModule({ ...editedModule, price: e.target.value })}
-                className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring"
               />
             ) : (
               <div className="flex items-center gap-2 text-white font-semibold">
-                <DollarSign size={18} className="text-[#d02243]" />
+                <DollarSign size={18} className="text-primary" />
                 <span>{module.price}</span>
               </div>
             )}
@@ -323,18 +324,18 @@ function ModuleDetailModal({
           {/* Venue */}
           {(canEdit || module.venue) && (
             <div>
-              <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Venue</label>
+              <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Venue</label>
               {canEdit ? (
                 <input
                   type="text"
                   value={editedModule.venue || ''}
                   onChange={(e) => setEditedModule({ ...editedModule, venue: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring"
                   placeholder="Enter venue"
                 />
               ) : (
                 <div className="flex items-center gap-2 text-white">
-                  <MapPin size={18} className="text-[#d02243]" />
+                  <MapPin size={18} className="text-primary" />
                   <span>{module.venue}</span>
                 </div>
               )}
@@ -343,23 +344,23 @@ function ModuleDetailModal({
 
           {/* Description */}
           <div>
-            <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Description</label>
+            <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Description</label>
             {canEdit ? (
               <textarea
                 value={editedModule.description}
                 onChange={(e) => setEditedModule({ ...editedModule, description: e.target.value })}
-                className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243] min-h-32"
+                className="w-full bg-input border border-border rounded-lg p-3 text-foreground focus:outline-none focus:border-ring min-h-32"
                 placeholder="Module description..."
               />
             ) : (
-              <p className="text-[rgba(255,255,255,0.8)] leading-relaxed">{module.description}</p>
+              <p className="text-muted-foreground leading-relaxed">{module.description}</p>
             )}
           </div>
 
           {/* Documents */}
           {(module.documents.length > 0 || canEdit) && (
             <div>
-              <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">
+              <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">
                 Attached Document {module.documents.length > 0 && `(1/1)`}
               </label>
               <div className="space-y-2">
@@ -369,10 +370,10 @@ function ModuleDetailModal({
                       href={module.documents[0].url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors flex-1"
+                      className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-accent transition-colors flex-1"
                     >
-                      <Download size={18} className="text-[#d02243]" />
-                      <span className="text-[rgba(255,255,255,0.8)] font-medium flex-1">{module.documents[0].name}</span>
+                      <Download size={18} className="text-primary" />
+                      <span className="text-muted-foreground font-medium flex-1">{module.documents[0].name}</span>
                     </a>
                     {canEdit && (
                       <button
@@ -392,7 +393,7 @@ function ModuleDetailModal({
                             showToast("Failed to remove document. Please try again.", "error")
                           }
                         }}
-                        className="p-3 glass rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors text-[#d02243] hover:text-[#aa1c37] cursor-pointer"
+                        className="p-3 glass rounded-lg hover:bg-accent transition-colors text-destructive hover:text-destructive/80 cursor-pointer"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -400,10 +401,10 @@ function ModuleDetailModal({
                   </div>
                 ) : null}
                 {canEdit && module.documents.length === 0 && (
-                  <label className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors cursor-pointer">
-                    <Upload size={18} className="text-[#d02243]" />
-                    <span className="text-[rgba(255,255,255,0.8)] flex-1">Upload Document</span>
-                    <span className="text-[rgba(255,255,255,0.5)] text-xs">Max: 10MB</span>
+                  <label className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                    <Upload size={18} className="text-primary" />
+                    <span className="text-muted-foreground flex-1">Upload Document</span>
+                    <span className="text-muted-foreground/70 text-xs">Max: 10MB</span>
                     <input
                       type="file"
                       accept=".pdf,.doc,.docx,.ppt,.pptx"
@@ -417,10 +418,10 @@ function ModuleDetailModal({
                   </label>
                 )}
                 {canEdit && module.documents.length > 0 && (
-                  <label className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-[rgba(255,255,255,0.1)] transition-colors cursor-pointer">
-                    <Upload size={18} className="text-[#d02243]" />
-                    <span className="text-[rgba(255,255,255,0.8)] flex-1">Replace Document</span>
-                    <span className="text-[rgba(255,255,255,0.5)] text-xs">Max: 10MB</span>
+                  <label className="flex items-center gap-3 p-3 glass rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                    <Upload size={18} className="text-primary" />
+                    <span className="text-muted-foreground flex-1">Replace Document</span>
+                    <span className="text-muted-foreground/70 text-xs">Max: 10MB</span>
                     <input
                       type="file"
                       accept=".pdf,.doc,.docx,.ppt,.pptx"
@@ -439,17 +440,17 @@ function ModuleDetailModal({
 
           {/* Actions */}
           {canEdit && (
-            <div className="flex gap-3 pt-4 border-t border-[rgba(255,255,255,0.1)]">
+            <div className="flex gap-3 pt-4 border-t border-border">
               <Button
                 onClick={handleSave}
-                className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold"
+                className="flex-1 glow-button"
               >
                 Save Changes
               </Button>
               <Button
                 onClick={onClose}
                 variant="outline"
-                className="border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+                className="border-border text-foreground hover:bg-accent bg-transparent"
               >
                 Cancel
               </Button>
@@ -560,12 +561,8 @@ export default function EventDetailPage() {
   // Check if user can edit this event
   useEffect(() => {
     if (eventData && currentUser) {
-      // Admin can edit everything
-      if (userPrivilege === UserPrivilege.ADMIN) {
-        setCanEdit(true)
-      }
-      // Society head can edit only their society's events
-      else if (
+      // Only society heads of THIS society can edit
+      if (
         userPrivilege === UserPrivilege.SOCIETY_HEAD &&
         userSocietyId &&
         userSocietyId === eventData.societyId
@@ -1228,24 +1225,11 @@ export default function EventDetailPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
-        <div className="text-white text-xl">Loading event...</div>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (error || !eventData) {
-    return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-white text-2xl mb-4">Error: {error || "Event not found"}</h1>
-          <Link href="/dashboard" className="text-[#d02243] hover:text-[#aa1c37]">
-            Return to Dashboard
-          </Link>
-        </div>
-      </div>
-    )
+    return null
   }
 
   // Format venue details
@@ -1268,7 +1252,7 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#110205]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <EventHeader
         isFavorited={isFavorited}
@@ -1286,8 +1270,8 @@ export default function EventDetailPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#110205] via-[rgba(17,2,5,0.6)] to-transparent"></div>
-        <div className="absolute inset-0 backdrop-blur-sm border border-[rgba(255,255,255,0.1)]"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+        <div className="absolute inset-0 backdrop-blur-sm border border-border"></div>
 
         {canEdit && (
           <button
@@ -1295,13 +1279,13 @@ export default function EventDetailPage() {
             className="absolute top-6 right-6 glass glass-hover rounded-full p-3 z-10 group-hover:scale-110 transition-transform cursor-pointer"
             title="Change cover image"
           >
-            <Upload size={20} className="text-[#d02243]" />
+            <Upload size={20} className="text-primary" />
           </button>
         )}
 
         <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-12">
           <div className="max-w-7xl mx-auto w-full">
-            <p className="text-[#d02243] font-semibold mb-3">{eventData.societyName}</p>
+            <p className="text-primary font-semibold mb-3">{eventData.societyName}</p>
             <div className="flex items-center gap-3">
               <h1 className="text-4xl sm:text-5xl font-bold text-white max-w-3xl">{eventData.title}</h1>
               {canEdit && <EditableIcon onClick={() => openEditModal("title", eventData.title)} />}
@@ -1310,7 +1294,7 @@ export default function EventDetailPage() {
         </div>
       </section>
 
-      <div className="sticky top-16 z-30 backdrop-blur-md bg-[rgba(17,2,5,0.8)] border-b border-[rgba(255,255,255,0.1)]">
+      <div className="sticky top-16 z-30 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 flex gap-8 overflow-x-auto">
           {tabs.map((tab) => (
             <button
@@ -1318,8 +1302,8 @@ export default function EventDetailPage() {
               onClick={() => setActiveTab(tab.toLowerCase())}
               className="py-4 px-2 font-semibold border-b-2 transition-all whitespace-nowrap cursor-pointer"
               style={{
-                color: activeTab === tab.toLowerCase() ? "#d02243" : "rgba(255,255,255,0.7)",
-                borderColor: activeTab === tab.toLowerCase() ? "#d02243" : "transparent",
+                color: activeTab === tab.toLowerCase() ? "oklch(0.55 0.3 264)" : "var(--muted-foreground)",
+                borderColor: activeTab === tab.toLowerCase() ? "oklch(0.55 0.3 264)" : "transparent",
               }}
             >
               {tab}
@@ -1343,7 +1327,7 @@ export default function EventDetailPage() {
                   </div>
                   <div className="prose prose-invert max-w-none">
                     {eventData.description.split("\n\n").map((paragraph, idx) => (
-                      <p key={idx} className="text-[rgba(255,255,255,0.8)] leading-relaxed mb-4">
+                      <p key={idx} className="text-muted-foreground leading-relaxed mb-4">
                         {paragraph}
                       </p>
                     ))}
@@ -1362,7 +1346,7 @@ export default function EventDetailPage() {
                       {eventData.tags && eventData.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="px-4 py-2 bg-[rgba(208,34,67,0.2)] text-[#d02243] rounded-full text-sm font-semibold flex items-center gap-2"
+                          className="px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-semibold flex items-center gap-2"
                         >
                           {tag}
                           {editingTags && (
@@ -1376,7 +1360,7 @@ export default function EventDetailPage() {
                                 setEventData({ ...eventData, tags: updatedTags })
                                 showToast("Tag removed successfully!", "success")
                               }}
-                              className="hover:text-[#aa1c37] transition-colors cursor-pointer"
+                              className="hover:text-secondary transition-colors cursor-pointer"
                             >
                               <X size={14} />
                             </button>
@@ -1384,7 +1368,7 @@ export default function EventDetailPage() {
                         </span>
                       ))}
                       {eventData.tags?.length === 0 && !editingTags && (
-                        <p className="text-[rgba(255,255,255,0.5)] text-sm">No tags added yet</p>
+                        <p className="text-muted-foreground text-sm">No tags added yet</p>
                       )}
                     </div>
                     {editingTags && (
@@ -1410,7 +1394,7 @@ export default function EventDetailPage() {
                               }
                             }}
                             placeholder="Enter tag name..."
-                            className="flex-1 bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                            className="flex-1 bg-input border border-border rounded-lg p-3 text-foreground placeholder-muted-foreground focus:outline-none focus:border-ring"
                           />
                           <Button
                             onClick={async () => {
@@ -1425,7 +1409,7 @@ export default function EventDetailPage() {
                                 showToast("Tag added successfully!", "success")
                               }
                             }}
-                            className="bg-[#d02243] hover:bg-[#aa1c37] text-white"
+                            className="glow-button"
                           >
                             <Plus size={18} />
                           </Button>
@@ -1436,7 +1420,7 @@ export default function EventDetailPage() {
                             setNewTag("")
                           }}
                           variant="outline"
-                          className="w-full border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+                          className="w-full border-border text-foreground hover:bg-accent bg-transparent"
                         >
                           Done Editing
                         </Button>
@@ -1461,13 +1445,13 @@ export default function EventDetailPage() {
                         </div>
                       ))}
                       {canEdit && (
-                        <label className="relative h-40 rounded-lg border-2 border-dashed border-[rgba(255,255,255,0.2)] hover:border-[#d02243] bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.08)] flex items-center justify-center cursor-pointer transition-all group">
+                        <label className="relative h-40 rounded-lg border-2 border-dashed border-border hover:border-primary bg-card hover:bg-card/80 flex items-center justify-center cursor-pointer transition-all group">
                           <div className="text-center">
-                            <Upload size={32} className="text-[rgba(255,255,255,0.3)] group-hover:text-[#d02243] mx-auto mb-2 transition-colors" />
-                            <span className="text-xs text-[rgba(255,255,255,0.5)] group-hover:text-[rgba(255,255,255,0.7)] transition-colors block mb-1">
+                            <Upload size={32} className="text-muted-foreground group-hover:text-primary mx-auto mb-2 transition-colors" />
+                            <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors block mb-1">
                               Add Image
                             </span>
-                            <span className="text-[10px] text-[rgba(255,255,255,0.4)]">Max: 512KB</span>
+                            <span className="text-[10px] text-muted-foreground/70">Max: 512KB</span>
                           </div>
                           <input
                             type="file"
@@ -1494,7 +1478,7 @@ export default function EventDetailPage() {
                   {canEdit && (
                     <Button
                       onClick={() => setShowAddModuleModal(true)}
-                      className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold flex items-center gap-2 cursor-pointer"
+                      className="glow-button text-white font-semibold flex items-center gap-2 cursor-pointer"
                     >
                       <Plus size={18} />
                       Add New Module
@@ -1507,7 +1491,7 @@ export default function EventDetailPage() {
                       <div
                         key={module.id}
                         onClick={() => setSelectedModule(module)}
-                        className="glass rounded-lg overflow-hidden hover:bg-[rgba(255,255,255,0.1)] transition-all cursor-pointer group"
+                        className="glass rounded-lg overflow-hidden hover:bg-accent transition-all cursor-pointer group"
                       >
                         {/* Module Image */}
                         {module.coverImage && module.coverImage !== "/placeholder.png" ? (
@@ -1520,22 +1504,22 @@ export default function EventDetailPage() {
                             />
                           </div>
                         ) : (
-                          <div className="h-40 bg-[rgba(255,255,255,0.05)] flex items-center justify-center">
-                            <Upload size={32} className="text-[rgba(255,255,255,0.3)]" />
+                          <div className="h-40 bg-card flex items-center justify-center">
+                            <Upload size={32} className="text-muted-foreground" />
                           </div>
                         )}
                         
                         <div className="p-4">
-                          <h3 className="font-semibold text-white mb-2 group-hover:text-[#d02243] transition-colors">
+                          <h3 className="font-semibold text-white mb-2 group-hover:text-primary transition-colors">
                             {module.title}
                           </h3>
-                          <div className="space-y-2 text-sm text-[rgba(255,255,255,0.7)]">
+                          <div className="space-y-2 text-sm text-muted-foreground">
                             <div className="flex items-center gap-2">
-                              <Clock size={14} className="text-[#d02243]" />
+                              <Clock size={14} className="text-primary" />
                               <span>{module.time}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <DollarSign size={14} className="text-[#d02243]" />
+                              <DollarSign size={14} className="text-primary" />
                               <span className="font-semibold text-white">{module.price}</span>
                             </div>
                           </div>
@@ -1557,7 +1541,7 @@ export default function EventDetailPage() {
                   </div>
                 ) : (
                   <div className="glass rounded-lg p-8 text-center">
-                    <p className="text-[rgba(255,255,255,0.7)]">
+                    <p className="text-muted-foreground">
                       {canEdit ? "Click 'Add New Module' to create your first module." : "No modules available for this event."}
                     </p>
                   </div>
@@ -1572,7 +1556,7 @@ export default function EventDetailPage() {
                   {canEdit && (
                     <Button
                       onClick={() => setShowAddSpeakerModal(true)}
-                      className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold flex items-center gap-2 cursor-pointer"
+                      className="glow-button text-white font-semibold flex items-center gap-2 cursor-pointer"
                     >
                       <Plus size={18} />
                       Add Speaker
@@ -1585,7 +1569,7 @@ export default function EventDetailPage() {
                       <div
                         key={speaker.id}
                         onClick={() => setSelectedSpeaker(speaker)}
-                        className="glass rounded-lg p-6 flex gap-4 relative group hover:bg-[rgba(255,255,255,0.1)] transition-all cursor-pointer"
+                        className="glass rounded-lg p-6 flex gap-4 relative group hover:bg-accent transition-all cursor-pointer"
                       >
                         <div className="relative w-20 h-20">
                           <Image
@@ -1615,7 +1599,7 @@ export default function EventDetailPage() {
                         </div>
                         <div className="flex-1">
                           <h4 className="font-semibold text-white mb-1">{speaker.name}</h4>
-                          <p className="text-sm text-[rgba(255,255,255,0.7)]">{speaker.title}</p>
+                          <p className="text-sm text-muted-foreground">{speaker.title}</p>
                         </div>
                         {canEdit && (
                           <button
@@ -1623,7 +1607,7 @@ export default function EventDetailPage() {
                               e.stopPropagation()
                               deleteSpeaker(speaker.id, speaker.name)
                             }}
-                            className="absolute top-2 right-2 p-2 rounded-lg glass glass-hover text-[#d02243] hover:text-[#aa1c37] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            className="absolute top-2 right-2 p-2 rounded-lg glass glass-hover text-destructive hover:text-destructive/80 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                           >
                             <Trash2 size={16} />
                           </button>
@@ -1633,7 +1617,7 @@ export default function EventDetailPage() {
                   </div>
                 ) : (
                   <div className="glass rounded-lg p-8 text-center">
-                    <p className="text-[rgba(255,255,255,0.7)]">No speakers information available.</p>
+                    <p className="text-muted-foreground">No speakers information available.</p>
                   </div>
                 )}
               </div>
@@ -1645,12 +1629,12 @@ export default function EventDetailPage() {
                 <h2 className="text-2xl font-bold text-white mb-6">Contact Information</h2>
                 <div className="glass rounded-lg p-8 space-y-6">
                   <div>
-                    <p className="text-sm text-[rgba(255,255,255,0.6)] mb-2">Society</p>
-                    <p className="text-[#d02243] font-semibold text-lg">{eventData.societyName}</p>
+                    <p className="text-sm text-muted-foreground mb-2">Society</p>
+                    <p className="text-primary font-semibold text-lg">{eventData.societyName}</p>
                   </div>
                   {eventData.venueDetails?.address && (
                     <div>
-                      <p className="text-sm text-[rgba(255,255,255,0.6)] mb-2">Address</p>
+                      <p className="text-sm text-muted-foreground mb-2">Address</p>
                       <div className="flex items-center justify-between">
                         <p className="text-white font-semibold flex-1">{eventData.venueDetails.address}</p>
                         {canEdit && <EditableIcon onClick={() => openEditModal("address", eventData.venueDetails?.address || "")} />}
@@ -1659,13 +1643,13 @@ export default function EventDetailPage() {
                   )}
                   {eventData.venueDetails?.mapLink && (
                     <div>
-                      <p className="text-sm text-[rgba(255,255,255,0.6)] mb-2">Map Link</p>
+                      <p className="text-sm text-muted-foreground mb-2">Map Link</p>
                       <div className="flex items-center justify-between">
                         <a
                           href={eventData.venueDetails.mapLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#d02243] hover:text-[#aa1c37] font-semibold text-sm flex items-center gap-2 flex-1 cursor-pointer"
+                          className="text-primary hover:text-secondary font-semibold text-sm flex items-center gap-2 flex-1 cursor-pointer"
                         >
                           <MapPin size={16} />
                           View on Map
@@ -1683,10 +1667,10 @@ export default function EventDetailPage() {
           <div className="lg:col-span-1">
             <div className="glass rounded-2xl p-8 sticky top-40 space-y-6">
               <div>
-                <p className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2">Venue</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Venue</p>
                 <div className="flex items-start gap-3 justify-between">
                   <div className="flex items-start gap-3 flex-1">
-                    <MapPin size={20} className="text-[#d02243] flex-shrink-0 mt-1" />
+                    <MapPin size={20} className="text-primary flex-shrink-0 mt-1" />
                     <p className="text-white font-semibold">{venueDisplay}</p>
                   </div>
                   {canEdit && <EditableIcon onClick={() => openEditModal("venue", venueDisplay)} />}
@@ -1694,18 +1678,18 @@ export default function EventDetailPage() {
               </div>
 
               <div>
-                <p className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2">Date & Time</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Date & Time</p>
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <Calendar size={20} className="text-[#d02243]" />
+                      <Calendar size={20} className="text-primary" />
                       <p className="text-white font-semibold">{eventData.startDate}</p>
                     </div>
                     {canEdit && <EditableIcon onClick={() => openEditModal("date", eventData.startDate)} />}
                   </div>
                   <div className="flex items-center gap-3 justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <Clock size={20} className="text-[#d02243]" />
+                      <Clock size={20} className="text-primary" />
                       <p className="text-white font-semibold">
                         {eventData.startTime} - {eventData.endTime}
                       </p>
@@ -1716,7 +1700,7 @@ export default function EventDetailPage() {
               </div>
 
               <div>
-                <p className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2">Event Type</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Event Type</p>
                 <div className="flex items-center gap-3">
                   <p className="text-white font-semibold capitalize">{eventData.eventType}</p>
                 </div>
@@ -1724,13 +1708,13 @@ export default function EventDetailPage() {
 
               {canEdit && eventData.registrationLink && (
                 <div>
-                  <p className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2">Registration</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Registration</p>
                   <div className="flex items-start gap-3 justify-between">
                     <a
                       href={eventData.registrationLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#d02243] hover:text-[#aa1c37] font-semibold text-sm truncate flex-1"
+                      className="text-primary hover:text-secondary font-semibold text-sm truncate flex-1"
                     >
                       {eventData.registrationLink}
                     </a>
@@ -1741,15 +1725,15 @@ export default function EventDetailPage() {
 
               {eventData.metrics && (
                 <div>
-                  <p className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2">Engagement</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">Engagement</p>
                   <div className="flex items-center gap-3">
-                    <Users size={20} className="text-[#d02243]" />
+                    <Users size={20} className="text-primary" />
                     <p className="text-white font-semibold">{eventData.metrics.views || 0} views</p>
                   </div>
                 </div>
               )}
 
-              <div className="pt-4 border-t border-[rgba(255,255,255,0.1)]">
+              <div className="pt-4 border-t border-border">
                 {eventData.status === "published" && eventData.registrationLink && (
                   <a
                     href={eventData.registrationLink}
@@ -1757,13 +1741,13 @@ export default function EventDetailPage() {
                     rel="noopener noreferrer"
                     className="w-full block"
                   >
-                    <Button className="w-full bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-lg cursor-pointer">
+                    <Button className="w-full glow-button text-white font-semibold py-6 text-lg cursor-pointer">
                       Register Now
                     </Button>
                   </a>
                 )}
                 {eventData.status === "completed" && (
-                  <Button className="w-full bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.15)] text-white font-semibold py-6 text-lg cursor-pointer">
+                  <Button className="w-full bg-accent hover:bg-accent/80 text-white font-semibold py-6 text-lg cursor-pointer">
                     View Feedback
                   </Button>
                 )}
@@ -1808,7 +1792,7 @@ export default function EventDetailPage() {
           <div className="glass rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-white">Speaker Information</h3>
-              <button onClick={() => setSelectedSpeaker(null)} className="text-[rgba(255,255,255,0.6)] hover:text-white cursor-pointer">
+              <button onClick={() => setSelectedSpeaker(null)} className="text-muted-foreground hover:text-white cursor-pointer">
                 <X size={24} />
               </button>
             </div>
@@ -1844,13 +1828,13 @@ export default function EventDetailPage() {
 
               {/* Name */}
               <div>
-                <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Name</label>
+                <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Name</label>
                 {canEdit ? (
                   <input
                     type="text"
                     value={selectedSpeaker.name}
                     onChange={(e) => setSelectedSpeaker({ ...selectedSpeaker, name: e.target.value })}
-                    className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                    className="w-full bg-input border border-border rounded-lg p-3 text-white focus:outline-none focus:border-ring"
                   />
                 ) : (
                   <p className="text-white font-semibold text-lg">{selectedSpeaker.name}</p>
@@ -1859,13 +1843,13 @@ export default function EventDetailPage() {
 
               {/* Title */}
               <div>
-                <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Title/Position</label>
+                <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Title/Position</label>
                 {canEdit ? (
                   <input
                     type="text"
                     value={selectedSpeaker.title}
                     onChange={(e) => setSelectedSpeaker({ ...selectedSpeaker, title: e.target.value })}
-                    className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                    className="w-full bg-input border border-border rounded-lg p-3 text-white focus:outline-none focus:border-ring"
                   />
                 ) : (
                   <p className="text-white">{selectedSpeaker.title}</p>
@@ -1874,33 +1858,33 @@ export default function EventDetailPage() {
 
               {/* Bio */}
               <div>
-                <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Biography</label>
+                <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Biography</label>
                 {canEdit ? (
                   <textarea
                     value={selectedSpeaker.bio || ""}
                     onChange={(e) => setSelectedSpeaker({ ...selectedSpeaker, bio: e.target.value })}
-                    className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243] min-h-32"
+                    className="w-full bg-input border border-border rounded-lg p-3 text-white focus:outline-none focus:border-ring min-h-32"
                     placeholder="Add speaker biography..."
                   />
                 ) : (
-                  <p className="text-[rgba(255,255,255,0.8)]">{selectedSpeaker.bio || "No biography available."}</p>
+                  <p className="text-muted-foreground">{selectedSpeaker.bio || "No biography available."}</p>
                 )}
               </div>
 
               {/* Email */}
               {(canEdit || selectedSpeaker.email) && (
                 <div>
-                  <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">Email</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Email</label>
                   {canEdit ? (
                     <input
                       type="email"
                       value={selectedSpeaker.email || ""}
                       onChange={(e) => setSelectedSpeaker({ ...selectedSpeaker, email: e.target.value })}
-                      className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                      className="w-full bg-input border border-border rounded-lg p-3 text-white focus:outline-none focus:border-ring"
                       placeholder="speaker@example.com"
                     />
                   ) : (
-                    <a href={`mailto:${selectedSpeaker.email}`} className="text-[#d02243] hover:text-[#aa1c37]">{selectedSpeaker.email}</a>
+                    <a href={`mailto:${selectedSpeaker.email}`} className="text-primary hover:text-secondary">{selectedSpeaker.email}</a>
                   )}
                 </div>
               )}
@@ -1908,24 +1892,24 @@ export default function EventDetailPage() {
               {/* LinkedIn */}
               {(canEdit || selectedSpeaker.linkedin) && (
                 <div>
-                  <label className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase mb-2 block">LinkedIn</label>
+                  <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">LinkedIn</label>
                   {canEdit ? (
                     <input
                       type="url"
                       value={selectedSpeaker.linkedin || ""}
                       onChange={(e) => setSelectedSpeaker({ ...selectedSpeaker, linkedin: e.target.value })}
-                      className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white focus:outline-none focus:border-[#d02243]"
+                      className="w-full bg-input border border-border rounded-lg p-3 text-white focus:outline-none focus:border-ring"
                       placeholder="https://linkedin.com/in/username"
                     />
                   ) : (
-                    <a href={selectedSpeaker.linkedin} target="_blank" rel="noopener noreferrer" className="text-[#d02243] hover:text-[#aa1c37]">{selectedSpeaker.linkedin}</a>
+                    <a href={selectedSpeaker.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary">{selectedSpeaker.linkedin}</a>
                   )}
                 </div>
               )}
 
               {/* Actions */}
               {canEdit && (
-                <div className="flex gap-3 pt-4 border-t border-[rgba(255,255,255,0.1)]">
+                <div className="flex gap-3 pt-4 border-t border-border">
                   <Button
                     onClick={async () => {
                       try {
@@ -1945,14 +1929,14 @@ export default function EventDetailPage() {
                         showToast("Failed to update speaker information.", "error")
                       }
                     }}
-                    className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold"
+                    className="flex-1 glow-button text-white font-semibold"
                   >
                     Save Changes
                   </Button>
                   <Button
                     onClick={() => setSelectedSpeaker(null)}
                     variant="outline"
-                    className="border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+                    className="border-border text-white hover:bg-accent bg-transparent"
                   >
                     Cancel
                   </Button>
@@ -1969,100 +1953,100 @@ export default function EventDetailPage() {
           <div className="glass rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-white">Add New Module</h3>
-              <button onClick={() => setShowAddModuleModal(false)} className="text-[rgba(255,255,255,0.6)] hover:text-white cursor-pointer">
+              <button onClick={() => setShowAddModuleModal(false)} className="text-muted-foreground hover:text-white cursor-pointer">
                 <X size={24} />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
-                  Title <span className="text-[#d02243]">*</span>
+                <label className="text-sm font-semibold text-foreground mb-2 block">
+                  Title <span className="text-primary">*</span>
                 </label>
                 <input
                   type="text"
                   value={newModuleData.title}
                   onChange={(e) => setNewModuleData({ ...newModuleData, title: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="e.g., Opening Keynote"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   Description
                 </label>
                 <textarea
                   value={newModuleData.description}
                   onChange={(e) => setNewModuleData({ ...newModuleData, description: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243] min-h-24"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring min-h-24"
                   placeholder="Describe what this module covers..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
-                    Time <span className="text-[#d02243]">*</span>
+                  <label className="text-sm font-semibold text-foreground mb-2 block">
+                    Time <span className="text-primary">*</span>
                   </label>
                   <input
                     type="text"
                     value={newModuleData.time}
                     onChange={(e) => setNewModuleData({ ...newModuleData, time: e.target.value })}
-                    className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                    className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                     placeholder="e.g., 2:00 PM - 3:00 PM"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                  <label className="text-sm font-semibold text-foreground mb-2 block">
                     Duration
                   </label>
                   <input
                     type="text"
                     value={newModuleData.duration}
                     onChange={(e) => setNewModuleData({ ...newModuleData, duration: e.target.value })}
-                    className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                    className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                     placeholder="e.g., 1 hour"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   Venue
                 </label>
                 <input
                   type="text"
                   value={newModuleData.venue}
                   onChange={(e) => setNewModuleData({ ...newModuleData, venue: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="Leave empty to use event venue"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   Price
                 </label>
                 <input
                   type="text"
                   value={newModuleData.price}
                   onChange={(e) => setNewModuleData({ ...newModuleData, price: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="e.g., Free or PKR 500"
                 />
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
-              <Button onClick={handleAddModule} className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold">
+              <Button onClick={handleAddModule} className="flex-1 glow-button text-white font-semibold">
                 Add Module
               </Button>
               <Button
                 onClick={() => setShowAddModuleModal(false)}
                 variant="outline"
-                className="flex-1 border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+                className="flex-1 border-border text-white hover:bg-accent bg-transparent"
               >
                 Cancel
               </Button>
@@ -2077,85 +2061,85 @@ export default function EventDetailPage() {
           <div className="glass rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-white">Add New Speaker</h3>
-              <button onClick={() => setShowAddSpeakerModal(false)} className="text-[rgba(255,255,255,0.6)] hover:text-white cursor-pointer">
+              <button onClick={() => setShowAddSpeakerModal(false)} className="text-muted-foreground hover:text-white cursor-pointer">
                 <X size={24} />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
-                  Name <span className="text-[#d02243]">*</span>
+                <label className="text-sm font-semibold text-foreground mb-2 block">
+                  Name <span className="text-primary">*</span>
                 </label>
                 <input
                   type="text"
                   value={newSpeakerData.name}
                   onChange={(e) => setNewSpeakerData({ ...newSpeakerData, name: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="e.g., Dr. Sarah Chen"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
-                  Title/Position <span className="text-[#d02243]">*</span>
+                <label className="text-sm font-semibold text-foreground mb-2 block">
+                  Title/Position <span className="text-primary">*</span>
                 </label>
                 <input
                   type="text"
                   value={newSpeakerData.title}
                   onChange={(e) => setNewSpeakerData({ ...newSpeakerData, title: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="e.g., AI Research Lead, Tech Corp"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   Bio
                 </label>
                 <textarea
                   value={newSpeakerData.bio}
                   onChange={(e) => setNewSpeakerData({ ...newSpeakerData, bio: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243] min-h-24"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring min-h-24"
                   placeholder="Brief biography of the speaker..."
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   Email
                 </label>
                 <input
                   type="email"
                   value={newSpeakerData.email}
                   onChange={(e) => setNewSpeakerData({ ...newSpeakerData, email: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="speaker@example.com"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-[rgba(255,255,255,0.8)] mb-2 block">
+                <label className="text-sm font-semibold text-foreground mb-2 block">
                   LinkedIn Profile
                 </label>
                 <input
                   type="url"
                   value={newSpeakerData.linkedin}
                   onChange={(e) => setNewSpeakerData({ ...newSpeakerData, linkedin: e.target.value })}
-                  className="w-full bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg p-3 text-white placeholder-[rgba(255,255,255,0.5)] focus:outline-none focus:border-[#d02243]"
+                  className="w-full bg-input border border-border rounded-lg p-3 text-white placeholder-muted-foreground focus:outline-none focus:border-ring"
                   placeholder="https://linkedin.com/in/username"
                 />
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
-              <Button onClick={handleAddSpeaker} className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold">
+              <Button onClick={handleAddSpeaker} className="flex-1 glow-button text-white font-semibold">
                 Add Speaker
               </Button>
               <Button
                 onClick={() => setShowAddSpeakerModal(false)}
                 variant="outline"
-                className="flex-1 border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+                className="flex-1 border-border text-white hover:bg-accent bg-transparent"
               >
                 Cancel
               </Button>

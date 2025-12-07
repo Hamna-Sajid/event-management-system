@@ -74,34 +74,34 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="p-8 rounded-2xl w-full max-w-lg" style={{ backgroundColor: `var(--bg-secondary-${theme})`, border: `1px solid var(--border-${theme})` }}>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="glass rounded-2xl p-8 w-full max-w-lg border border-border">
         <h2 className="text-2xl font-bold mb-6" style={{ color: `var(--text-primary-${theme})` }}>Edit Event</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Event Title</label>
+            <label htmlFor="title" className="block text-sm font-medium mb-1 text-muted-foreground">Event Title</label>
             <input type="text" id="title" name="title" value={eventData?.title || ''} onChange={handleChange} required className="w-full input-style" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="date" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Date</label>
+              <label htmlFor="date" className="block text-sm font-medium mb-1 text-muted-foreground">Date</label>
               <input type="date" id="date" name="date" value={eventData?.date || ''} onChange={handleChange} required className="w-full input-style" />
             </div>
             <div>
-              <label htmlFor="time" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Time</label>
+              <label htmlFor="time" className="block text-sm font-medium mb-1 text-muted-foreground">Time</label>
               <input type="time" id="time" name="time" value={eventData?.time || ''} onChange={handleChange} required className="w-full input-style" />
             </div>
           </div>
           <div>
-            <label htmlFor="location" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Location</label>
+            <label htmlFor="location" className="block text-sm font-medium mb-1 text-muted-foreground">Location</label>
             <input type="text" id="location" name="location" value={eventData?.location || ''} onChange={handleChange} required className="w-full input-style" />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Description</label>
+            <label htmlFor="description" className="block text-sm font-medium mb-1 text-muted-foreground">Description</label>
             <textarea id="description" name="description" value={eventData?.description || ''} onChange={handleChange} required rows={4} className="w-full input-style"></textarea>
           </div>
           <div>
-            <label htmlFor="status" className="block text-sm font-medium mb-1" style={{ color: `var(--text-secondary-${theme})` }}>Status</label>
+            <label htmlFor="status" className="block text-sm font-medium mb-1 text-muted-foreground">Status</label>
             <Select
               id="status"
               value={eventData?.status || 'draft'}
@@ -115,25 +115,28 @@ export default function EditEventModal({ isOpen, onClose, onSubmit, event, theme
             />
           </div>
           <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="ghost" onClick={onClose} style={{ color: `var(--text-secondary-${theme})` }}>Cancel</Button>
-            <Button type="submit" style={{ backgroundColor: `var(--accent-1-${theme})`, color: 'white' }}>Save Changes</Button>
+            <Button type="button" variant="ghost" onClick={onClose} className="text-muted-foreground hover:text-white">Cancel</Button>
+            <Button type="submit" className="glow-button text-white font-semibold">Save Changes</Button>
           </div>
         </form>
       </div>
       <style jsx>{`
         .input-style {
-          background-color: var(--glass-${theme});
-          border: 1px solid var(--border-${theme});
-          color: var(--text-primary-${theme});
+          background-color: hsl(var(--input));
+          border: 1px solid hsl(var(--border));
+          color: white;
           border-radius: 0.5rem;
           padding: 0.75rem 1rem;
           width: 100%;
           transition: border-color 0.2s;
-          appearance: none; /* Remove default browser styling for select and date inputs */
+          appearance: none;
+        }
+        .input-style::placeholder {
+          color: hsl(var(--muted-foreground));
         }
         .input-style:focus {
           outline: none;
-          border-color: var(--accent-1-${theme});
+          border-color: hsl(var(--ring));
         }
       `}</style>
     </div>

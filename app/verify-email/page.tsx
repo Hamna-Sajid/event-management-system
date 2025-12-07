@@ -122,7 +122,7 @@ export default function VerifyEmail() {
 
   if (isVerified) {
     return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-md glass rounded-xl p-8 space-y-6">
           <div className="flex flex-col items-center gap-4">
             <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
@@ -130,7 +130,7 @@ export default function VerifyEmail() {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold text-white mb-2">Email Verified!</h1>
-              <p className="text-[rgba(255,255,255,0.6)]">
+              <p className="text-muted-foreground">
                 Redirecting you...
               </p>
             </div>
@@ -141,16 +141,16 @@ export default function VerifyEmail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md glass rounded-xl p-8 space-y-6">
         {/* Logo and Title */}
         <div className="flex flex-col items-center gap-4">
-          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+          <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center">
             <Mail className="text-white" size={24} />
           </div>
           <div className="text-center">
             <h1 className="text-2xl font-bold text-white mb-2">Verify Your Email</h1>
-            <p className="text-[rgba(255,255,255,0.6)] text-sm">
+            <p className="text-muted-foreground text-sm">
               We&apos;ve sent a verification email to
             </p>
             <p className="text-white font-medium mt-1">{userEmail}</p>
@@ -158,18 +158,18 @@ export default function VerifyEmail() {
         </div>
 
         {/* Instructions */}
-        <div className="rounded-lg bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] p-4">
-          <ol className="space-y-2 text-sm text-[rgba(255,255,255,0.8)]">
+        <div className="rounded-lg bg-card border border-border p-4">
+          <ol className="space-y-2 text-sm text-muted-foreground">
             <li className="flex gap-2">
-              <span className="text-[#d02243] font-bold">1.</span>
+              <span className="text-primary font-bold">1.</span>
               <span>Check your email inbox (and spam folder)</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-[#d02243] font-bold">2.</span>
+              <span className="text-primary font-bold">2.</span>
               <span>Click the verification link in the email</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-[#d02243] font-bold">3.</span>
+              <span className="text-primary font-bold">3.</span>
               <span>Return to this page and click &quot;I&apos;ve Verified My Email&quot;</span>
             </li>
           </ol>
@@ -196,7 +196,7 @@ export default function VerifyEmail() {
           <button
             onClick={handleCheckVerification}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[#d02243] hover:bg-[#aa1c37] disabled:opacity-50 text-white font-semibold rounded-lg transition-colors duration-200"
+            className="w-full py-2.5 px-4 glow-button disabled:opacity-50 rounded-lg transition-colors duration-200"
           >
             {isLoading ? 'Checking...' : "I've Verified My Email"}
           </button>
@@ -204,7 +204,7 @@ export default function VerifyEmail() {
           <button
             onClick={handleResendEmail}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[rgba(255,255,255,0.08)] hover:bg-[rgba(255,255,255,0.12)] border border-[rgba(255,255,255,0.15)] disabled:opacity-50 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 bg-input hover:bg-input/80 border border-border disabled:opacity-50 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <RefreshCw size={16} />
             {isLoading ? 'Sending...' : 'Resend Verification Email'}
@@ -213,7 +213,7 @@ export default function VerifyEmail() {
 
         {/* Help Text */}
         <div className="text-center">
-          <p className="text-xs text-[rgba(255,255,255,0.5)]">
+          <p className="text-xs text-muted-foreground/80">
             Didn&apos;t receive the email? Check your spam folder or click resend.
           </p>
         </div>

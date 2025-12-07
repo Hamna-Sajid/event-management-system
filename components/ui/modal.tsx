@@ -116,7 +116,7 @@ export function Modal({
             <h3 className="text-xl font-bold text-white">{title}</h3>
             <button 
               onClick={onClose} 
-              className="text-[rgba(255,255,255,0.6)] hover:text-white transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               <X size={24} />
             </button>

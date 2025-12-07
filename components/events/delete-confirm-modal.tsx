@@ -106,11 +106,11 @@ export function DeleteConfirmModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} closeOnBackdrop={false}>
       <div className="text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-[rgba(208,34,67,0.1)] flex items-center justify-center mx-auto">
-          <Trash2 size={32} className="text-[#d02243]" />
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+          <Trash2 size={32} className="text-destructive" />
         </div>
         <h3 className="text-2xl font-bold text-white">Confirm Delete</h3>
-        <p className="text-[rgba(255,255,255,0.8)]">
+        <p className="text-muted-foreground">
           Are you sure you want to delete{" "}
           <span className="font-semibold text-white">{itemName}</span>?
           <br />
@@ -119,14 +119,14 @@ export function DeleteConfirmModal({
         <div className="flex gap-3 pt-4">
           <Button
             onClick={onConfirm}
-            className="flex-1 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold"
+            className="flex-1 glow-button"
           >
             Delete {itemType}
           </Button>
           <Button
             onClick={onClose}
             variant="outline"
-            className="flex-1 border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+            className="flex-1 border-border text-white hover:bg-accent bg-transparent"
           >
             Cancel
           </Button>
