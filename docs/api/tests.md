@@ -125,6 +125,48 @@ Comprehensive tests for the password reset functionality covering:
 - Accepts any valid email format
 - No domain restrictions for password reset
 
+### SocietyPage
+
+**File**: `app\societies\[id]\page.test.tsx`
+
+Test suite for the main society page located at `app/societies/[id]/page.tsx`.
+
+This suite tests the behavior of the SocietyPage component, focusing on data fetching,
+rendering logic, role-based access control, and event management handlers.
+Mocks are used for:
+- Firebase services (`firestore`, `auth`) to simulate database interactions and user authentication.
+- Next.js navigation (`useParams`, `useRouter`) to control URL parameters and routing.
+- Child components (`SocietyHeader`, `SocietyHero`, `SocietyTabs`) to isolate the page component.
+- Library functions (`getUserPrivilege`) to simulate user permission checks.
+
+#### Test Coverage
+
+- **Rendering**: Covers initial loading state, error states (no ID, society not found), and successful data rendering.
+- **Authorization**: Ensures the `isManagementView` prop is correctly passed based on user privilege (Admin/Society Head).
+- **Redirects**: Verifies that unauthorized users (normal users or unauthenticated visitors) are redirected away from the page.
+- **Event Handlers**: Confirms that `handleDeleteEvent` and `handleEditEvent` correctly call the appropriate Firestore functions with the right parameters.
+
+#### Edge Cases
+
+- URL does not contain a society ID.
+- The requested society ID does not exist in Firestore.
+- A user is not logged in when viewing the page.
+- A logged-in user does not have Admin or Society Head privileges.
+
+#### Expected Values
+
+**Authorization & Redirects:**
+- User Privilege >= 2 (Admin): `isManagementView` is true, no redirect.
+- User is a Society Head: `isManagementView` is true, no redirect.
+- User Privilege < 2 (Normal User): Redirect to `/coming-soon`.
+- No authenticated user: Redirect to `/coming-soon`.
+
+**Event Deletion:**
+- `handleDeleteEvent('event-id')` calls `deleteDoc` with the event's path and `updateDoc` to remove the ID from the society's event list.
+
+**Event Editing:**
+- `handleEditEvent({...})` calls `updateDoc` with the event's path and ensures the `status` field is lowercased.
+
 ### VerifyEmail
 
 **File**: `app\verify-email\page.test.tsx`
@@ -473,6 +515,97 @@ Comprehensive tests covering:
 - Admin (shows Dashboard link)
 - Menu closes when clicking outside
 
+### EditEventModal
+
+**File**: `components\societies\edit-event-modal.test.tsx`
+
+Test suite for EditEventModal component
+
+Tests for the event editing modal dialog:
+- Form rendering with initial event data
+- Input field updates and changes
+- Form submission with updated data
+- Modal visibility and close behavior
+- Status dropdown selection
+
+#### Test Coverage
+
+- **Rendering Tests**: Initial values displayed correctly
+- **Input Tests**: Title, date, time, location, description changes
+- **Status Tests**: Dropdown selection updates
+- **Submission Tests**: Form data passed to onSubmit handler
+
+### SocietyHeader
+
+**File**: `components\societies\society-header.test.tsx`
+
+Test suite for SocietyHeader component
+
+Tests for the society page header navigation:
+- Header rendering with logo and branding
+- Navigation links functionality
+- ProfileMenu integration
+
+#### Test Coverage
+
+- **Rendering Tests**: Logo, branding, navigation links
+- **Integration Tests**: ProfileMenu component rendering
+- **Navigation Tests**: Dashboard link
+
+#### Edge Cases
+
+- ProfileMenu handles auth internally (tested in profile-menu.test.tsx)
+
+### SocietyHero
+
+**File**: `components\societies\society-hero.test.tsx`
+
+Test suite for SocietyHero component
+
+Tests for the society hero section:
+- Hero rendering with society information
+- Theme-based styling and visual elements
+- Action buttons (Follow, Share, Settings)
+- Management view conditional rendering
+- Responsive behavior
+
+#### Test Coverage
+
+- **Rendering Tests**: Society name, theme application, buttons
+- **Management View**: Settings button visibility for authorized users
+- **Interaction Tests**: Button clicks, navigation
+
+#### Edge Cases
+
+- Management view vs public view rendering
+- Different theme applications
+
+### SocietyTabs
+
+**File**: `components\societies\society-tabs.test.tsx`
+
+Test suite for SocietyTabs component
+
+Tests for the society tabbed interface:
+- Tab navigation (About, Events, Team)
+- About tab: Society info, heads, social links
+- Events tab: Event list, search, filter, management
+- Team tab: Team members display
+- Management permissions and controls
+
+#### Test Coverage
+
+- **Tab Navigation**: Switching between About/Events/Team tabs
+- **About Tab**: Description, heads info, social links
+- **Events Tab**: Event grid, search functionality, filters
+- **Management Features**: Create/edit/delete events (authorized users)
+
+#### Edge Cases
+
+- Empty event lists
+- Management view vs public view
+- Search with no results
+
 ### Event Formatters
 
 **File**: `lib\events\formatters.test.ts`
@@ -616,6 +749,22 @@ Comprehensive tests for role-based access control covering:
 - 1 → "Society Head"
 - 2 → "Admin"
 - Invalid (3, -1, 999, NaN, Infinity) → "Unknown"
+
+### Society Types
+
+**File**: `lib\societies\types.test.ts`
+
+Test suite for society and event type definitions
+
+These are structural tests to document the expected shape of data
+and catch accidental interface changes that could break components.
+
+#### Test Coverage
+
+- **Type Validation**: Ensures objects conform to Society, Member, Event interfaces
+- **Required Fields**: Validates all required properties are present
+- **Optional Fields**: Tests nullable and optional fields (heads can be null)
+- **Nested Objects**: Validates structure of heads, socialLinks, metrics
 
 ### Stats
 

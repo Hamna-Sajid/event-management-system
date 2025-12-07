@@ -29,6 +29,8 @@ interface SelectProps {
   placeholder?: string
   /** Additional CSS classes to apply to container */
   className?: string
+  /** ID for the select button (for label association) */
+  id?: string
 }
 
 /**
@@ -85,11 +87,11 @@ interface SelectProps {
  * />
  * ```
  */
-export function Select({ value, onChange, options, placeholder = "Select an option", className = "" }: SelectProps) {
+export function Select({ value, onChange, options, placeholder = "Select an option", className = "", id }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const selectRef = useRef<HTMLDivElement>(null)
 
-  const selectedOption = options.find(option => option.value === value)
+  const selectedOption = options.find(option => option.value.toLowerCase() === value.toLowerCase())
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -111,6 +113,7 @@ export function Select({ value, onChange, options, placeholder = "Select an opti
     <div ref={selectRef} className={`relative ${className}`}>
       <button
         type="button"
+        id={id}
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-2 rounded-lg bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] text-white focus:outline-none focus:border-[#d02243] focus:bg-[rgba(255,255,255,0.1)] flex items-center justify-between hover:bg-[rgba(255,255,255,0.1)] transition-colors"
       >
