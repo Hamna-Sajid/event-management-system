@@ -381,6 +381,100 @@ Comprehensive tests for the Hero section component covering:
 - Links: /signup and /signin
 - All buttons enabled by default
 
+### EditEventModal
+
+**File**: `components\societies\edit-event-modal.test.tsx`
+
+Test suite for EditEventModal component
+
+Tests for the event editing modal dialog:
+- Form rendering with initial event data
+- Input field updates and changes
+- Form submission with updated data
+- Modal visibility and close behavior
+- Status dropdown selection
+
+#### Test Coverage
+
+- **Rendering Tests**: Initial values displayed correctly
+- **Input Tests**: Title, date, time, location, description changes
+- **Status Tests**: Dropdown selection updates
+- **Submission Tests**: Form data passed to onSubmit handler
+
+### SocietyHeader
+
+**File**: `components\societies\society-header.test.tsx`
+
+Test suite for SocietyHeader component
+
+Tests for the society page header navigation:
+- Header rendering with society name
+- Navigation links functionality
+- Authentication state handling
+- Sign out functionality
+- Router integration
+
+#### Test Coverage
+
+- **Rendering Tests**: Society name display, navigation links
+- **Auth Tests**: Sign out button, logout flow
+- **Navigation Tests**: Router push calls, link clicks
+
+#### Edge Cases
+
+- Handles Firebase auth errors gracefully
+- Router push failures
+
+### SocietyHero
+
+**File**: `components\societies\society-hero.test.tsx`
+
+Test suite for SocietyHero component
+
+Tests for the society hero section:
+- Hero rendering with society information
+- Theme-based styling and visual elements
+- Action buttons (Follow, Share, Settings)
+- Management view conditional rendering
+- Responsive behavior
+
+#### Test Coverage
+
+- **Rendering Tests**: Society name, theme application, buttons
+- **Management View**: Settings button visibility for authorized users
+- **Interaction Tests**: Button clicks, navigation
+
+#### Edge Cases
+
+- Management view vs public view rendering
+- Different theme applications
+
+### SocietyTabs
+
+**File**: `components\societies\society-tabs.test.tsx`
+
+Test suite for SocietyTabs component
+
+Tests for the society tabbed interface:
+- Tab navigation (About, Events, Team)
+- About tab: Society info, heads, social links
+- Events tab: Event list, search, filter, management
+- Team tab: Team members display
+- Management permissions and controls
+
+#### Test Coverage
+
+- **Tab Navigation**: Switching between About/Events/Team tabs
+- **About Tab**: Description, heads info, social links
+- **Events Tab**: Event grid, search functionality, filters
+- **Management Features**: Create/edit/delete events (authorized users)
+
+#### Edge Cases
+
+- Empty event lists
+- Management view vs public view
+- Search with no results
+
 ### Privileges
 
 **File**: `lib\privileges.test.ts`
@@ -445,6 +539,22 @@ Comprehensive tests for role-based access control covering:
 - 1 → "Society Head"
 - 2 → "Admin"
 - Invalid (3, -1, 999, NaN, Infinity) → "Unknown"
+
+### Society Types
+
+**File**: `lib\societies\types.test.ts`
+
+Test suite for society and event type definitions
+
+These are structural tests to document the expected shape of data
+and catch accidental interface changes that could break components.
+
+#### Test Coverage
+
+- **Type Validation**: Ensures objects conform to Society, Member, Event interfaces
+- **Required Fields**: Validates all required properties are present
+- **Optional Fields**: Tests nullable and optional fields (heads can be null)
+- **Nested Objects**: Validates structure of heads, socialLinks, metrics
 
 ### Stats
 

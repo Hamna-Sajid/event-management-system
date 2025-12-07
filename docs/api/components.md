@@ -144,11 +144,51 @@ export default function LandingPage() {
 }
 ```
 
+### EditEventModal
+
+**File**: `components\societies\edit-event-modal.tsx`
+
+Modal dialog for editing existing event details
+
+This component provides a form for editing event information:
+- Event title, date, time, location
+- Event description
+- Event status (Upcoming, Ongoing, Completed)
+- Metrics preserved during edit (views, likes, wishlists, shares)
+Features:
+- Themed styling based on society theme
+- Form validation and submission
+- Modal overlay with backdrop
+- Cancel and save actions
+- Auto-populates with current event data
+
+#### Example
+
+Basic usage:
+```tsx
+const [isModalOpen, setIsModalOpen] = useState(false)
+const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+
+const handleEditSubmit = (updatedEvent: Event) => {
+  // Update event in database
+  updateEvent(updatedEvent)
+  setIsModalOpen(false)
+}
+
+<EditEventModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onSubmit={handleEditSubmit}
+  event={selectedEvent}
+  theme="blue"
+/>
+```
+
 ## ThemedOutlineButton
 
 ### ThemedOutlineButton
 
-**File**: `components\society-header.tsx`
+**File**: `components\societies\society-header.tsx`
 
 A themed button with an outline style that can function as a link or a button.
 
@@ -167,7 +207,7 @@ derived from the `theme` prop. It also features dynamic hover and active styles.
 
 ### SocietyHeader
 
-**File**: `components\society-header.tsx`
+**File**: `components\societies\society-header.tsx`
 
 A sticky header component for society pages, featuring navigation and logout functionality.
 
@@ -192,11 +232,41 @@ export default function SocietyPage() {
 }
 ```
 
-## society-hero.tsx
+## SocietyHero
+
+### SocietyHero
+
+**File**: `components\societies\society-hero.tsx`
+
+Hero section for society pages with themed styling and management controls
+
+This component displays the society's hero section with:
+- Animated gradient background based on society theme
+- Society name with dynamic text styling
+- Action buttons (Follow, Share, Settings)
+- Management view toggle for society heads
+- Responsive layout with glassmorphism effects
+Features:
+- Theme-aware styling with custom CSS variables
+- Hover and active states for interactive elements
+- ThemedButton sub-component for consistent button styling
+- Conditional rendering based on management permissions
+
+#### Example
+
+Management view:
+```tsx
+<SocietyHero
+  societyName="Arts Society"
+  theme="purple"
+  societyId="arts-soc-001"
+  isManagementView={true}
+/>
+```
 
 ### ThemedButton
 
-**File**: `components\society-hero.tsx`
+**File**: `components\societies\society-hero.tsx`
 
 A themed button that can function as a link or a standard button, with dynamic hover/active styles.
 
@@ -212,7 +282,7 @@ variables derived from the `theme` prop. It's a local helper component within `S
 
 ### SocietyHero
 
-**File**: `components\society-hero.tsx`
+**File**: `components\societies\society-hero.tsx`
 
 Displays a hero section for a society page, including the society's logo,
 name, and primary actions.
@@ -243,11 +313,40 @@ export default function SocietyPage() {
 }
 ```
 
-## society-tabs.tsx
+## SocietyTabs
 
 ### SocietyTabs
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
+
+Tabbed interface for displaying society information, events, and team members
+
+This component provides a comprehensive tabbed interface for society pages:
+- **About Tab**: Society description, head information, social media links
+- **Events Tab**: Grid of society events with filtering and search
+- **Team Tab**: Display of society team members and roles
+Features:
+- Three-tab navigation (About, Events, Team)
+- Event management (create, edit, delete) for authorized users
+- Search and filter functionality for events
+- Social media integration (Facebook, LinkedIn)
+- Responsive grid layouts
+- EditEventModal integration for event modifications
+
+#### Example
+
+Management view:
+```tsx
+<SocietyTabs
+  societyId="arts-soc-001"
+  isManagementView={true}
+  theme="purple"
+/>
+```
+
+### SocietyTabs
+
+**File**: `components\societies\society-tabs.tsx`
 
 Displays a tabbed interface for a society page, allowing users to navigate
 between different sections like Overview, Manage Events, Members, and About Us.
@@ -286,7 +385,7 @@ export default function SocietyPage() {
 
 ### ThemedButton
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
 
 A customizable button component that applies dynamic hover/active styles based on a theme.
 It can function as a link or a standard button.
@@ -307,7 +406,7 @@ Styles change on hover and active states using CSS variables derived from the `t
 
 ### ManageEventsTab
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
 
 Displays an interface for managing a society's events, including search, filter,
 create, edit, and delete functionalities. This tab is primarily for authorized users.
@@ -319,7 +418,7 @@ create, edit, and delete functionalities. This tab is primarily for authorized u
 
 ### OverviewTab
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
 
 Displays an overview of the society, including its mission, social media links,
 key statistics, and a preview of upcoming events.
@@ -332,7 +431,7 @@ key statistics, and a preview of upcoming events.
 
 ### MembersTab
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
 
 Displays a list of members for the society, typically showing society heads.
 
@@ -341,7 +440,7 @@ the first letter of their name.
 
 ### AboutUsTab
 
-**File**: `components\society-tabs.tsx`
+**File**: `components\societies\society-tabs.tsx`
 
 Displays detailed information about the society, including its description and contact information.
 
