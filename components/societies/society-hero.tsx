@@ -168,8 +168,7 @@ const ThemedButton = ({ children, onClick, linkHref, className = "", buttonStyle
  * }
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function SocietyHero({ societyName, theme, isManagementView = false, societyId }: SocietyHeroProps) {
+export default function SocietyHero({ societyName, theme, isManagementView = false }: SocietyHeroProps) {
   const router = useRouter()
   const logo = societyName ? societyName.charAt(0).toUpperCase() : ''
 
@@ -181,7 +180,6 @@ export default function SocietyHero({ societyName, theme, isManagementView = fal
     <div
       className="relative py-12 px-6 border-b"
       style={{
-        backgroundColor: `var(--bg-${theme})`,
         borderColor: `var(--border-${theme})`,
       }}
     >

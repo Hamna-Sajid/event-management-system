@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight, X, Search, Heart, Eye, Star } from "lucide-react"
+import { ChevronLeft, ChevronRight, X, Heart, Eye, Star } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
+import LoadingScreen from "@/components/loading-screen"
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore"
 import { firestore } from "@/firebase"
 
@@ -31,7 +32,6 @@ interface CalendarEvent {
 export default function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
-  const [searchQuery, setSearchQuery] = useState("")
   const [selectedSociety, setSelectedSociety] = useState<string>("all")
   const [selectedEventType, setSelectedEventType] = useState<string>("all")
   const [allEvents, setAllEvents] = useState<CalendarEvent[]>([]) // All events from DB
@@ -114,11 +114,6 @@ export default function CalendarView() {
     const matchesEventType = selectedEventType === "all" || event.eventType === selectedEventType
     return matchesSociety && matchesEventType
   })
-
-  const wishlistedEvents = allEvents.filter((event) => event.isWishlisted)
-  const searchedWishlistedEvents = wishlistedEvents.filter((event) =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  )
 
   const eventsMap = filteredEvents.reduce(
     (map, event) => {
@@ -209,12 +204,12 @@ export default function CalendarView() {
   )
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#110205] via-[#1a0509] to-[#110205]">
+    <main className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-[rgba(17,2,5,0.8)] border-b border-[rgba(255,255,255,0.1)]">
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-background/80 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#d02243] to-[#84162b] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-electric-blue to-magenta flex items-center justify-center">
               <span className="text-white font-bold text-lg">IE</span>
             </div>
             <span className="text-white font-semibold text-lg hidden sm:inline">Calendar</span>
@@ -222,7 +217,7 @@ export default function CalendarView() {
           <Link href="/signin">
             <Button
               variant="ghost"
-              className="text-[rgba(255,255,255,0.8)] hover:text-white hover:bg-[rgba(255,255,255,0.1)]"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent"
             >
               Back to Dashboard
             </Button>
@@ -230,63 +225,16 @@ export default function CalendarView() {
         </div>
       </header>
 
-      {/* Main Content - Two Column Workspace */}
-      <div className="max-w-7xl mx-auto px-6 py-8 h-[calc(100vh-180px)]">
+      {/* Main Content - Centered Calendar */}
+      <div className="max-w-7xl mx-auto px-6 py-8 min-h-[calc(100vh-180px)] flex items-center justify-center">
         {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-white text-lg">Loading events...</div>
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-red-400 text-lg">{error}</div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 h-full">
-            {/* Left Column: My Wishlisted Events */}
-            <div className="glass rounded-2xl p-6 flex flex-col overflow-hidden">
-              <h2 className="text-lg font-bold text-white mb-4">My Wishlisted Events</h2>
-
-              <div className="relative mb-4">
-                <Search size={18} className="absolute left-3 top-3 text-[rgba(255,255,255,0.5)]" />
-                <input
-                  type="text"
-                  placeholder="Search your events..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.15)] rounded-lg text-white placeholder-[rgba(255,255,255,0.4)] focus:outline-none focus:bg-[rgba(255,255,255,0.12)] focus:border-[#d02243] transition-all"
-                />
-              </div>
-
-              {/* Events List - Scrollable */}
-              <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-                {searchedWishlistedEvents.length > 0 ? (
-                  searchedWishlistedEvents.map((event) => (
-                    <button
-                      key={event.id}
-                      onClick={() => setSelectedEvent(event)}
-                      className="w-full text-left p-3 rounded-lg bg-[rgba(208,34,67,0.1)] border border-[rgba(208,34,67,0.3)] hover:bg-[rgba(208,34,67,0.2)] hover:border-[#d02243] transition-all group"
-                    >
-                      <p className="font-semibold text-white group-hover:text-[#d02243] transition-colors text-sm">
-                        {event.title}
-                      </p>
-                      <p className="text-xs text-[rgba(255,255,255,0.5)] mt-1">
-                        {event.date} • {event.time}
-                      </p>
-                      <p className="text-xs text-[rgba(255,255,255,0.6)] mt-1">{event.society}</p>
-                    </button>
-                  ))
-                ) : (
-                  <div className="flex items-center justify-center h-full text-[rgba(255,255,255,0.5)] text-sm">
-                    {searchQuery ? "No events match your search" : "No wishlisted events yet"}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column: Interactive Calendar */}
-            <div className="glass rounded-2xl p-6 flex flex-col overflow-hidden">
+          <LoadingScreen />
+        ) : error ? null : (
+          <div className="w-full" style={{ maxWidth: "48rem" }}>
+            {/* Interactive Calendar */}
+            <div className="glass rounded-2xl p-4 flex flex-col overflow-hidden">
               {/* Filter Bar & Month Navigation */}
-              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[rgba(255,255,255,0.1)]">
+              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
                 <Select
                   value={selectedSociety}
                   onChange={setSelectedSociety}
@@ -325,15 +273,15 @@ export default function CalendarView() {
 
                 <button
                   onClick={previousMonth}
-                  className="p-1.5 rounded-lg transition-all hover:bg-[rgba(208,34,67,0.2)]"
+                  className="p-1.5 rounded-lg transition-all hover:bg-primary/20"
                 >
-                  <ChevronLeft size={18} className="text-[rgba(255,255,255,0.7)]" />
+                  <ChevronLeft size={18} className="text-muted-foreground" />
                 </button>
 
                 <span className="text-sm font-semibold text-white min-w-[120px] text-center">{monthName}</span>
 
-                <button onClick={nextMonth} className="p-1.5 rounded-lg transition-all hover:bg-[rgba(208,34,67,0.2)]">
-                  <ChevronRight size={18} className="text-[rgba(255,255,255,0.7)]" />
+                <button onClick={nextMonth} className="p-1.5 rounded-lg transition-all hover:bg-primary/20">
+                  <ChevronRight size={18} className="text-muted-foreground" />
                 </button>
               </div>
 
@@ -341,7 +289,7 @@ export default function CalendarView() {
                 {/* Day Headers */}
                 <div className="grid grid-cols-7 gap-1 mb-2">
                   {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-                    <div key={day} className="text-center text-[rgba(255,255,255,0.5)] font-semibold text-xs py-2">
+                    <div key={day} className="text-center text-muted-foreground font-semibold text-xs py-2">
                       {day}
                     </div>
                   ))}
@@ -349,11 +297,11 @@ export default function CalendarView() {
 
                 {/* Calendar Grid - With fade transition */}
                 <div 
-                  className={`grid grid-cols-7 gap-1 flex-1 transition-opacity duration-200 ${
+                  className={`grid grid-cols-7 gap-1 transition-opacity duration-200 ${
                     isTransitioning ? "opacity-0" : "opacity-100"
                   }`}
                   style={{
-                    gridAutoRows: "minmax(50px, 1fr)"
+                    gridTemplateRows: "repeat(6, 60px)"
                   }}
                 >
                   {calendarDays.map((dayInfo, index) => {
@@ -363,10 +311,10 @@ export default function CalendarView() {
                     return (
                       <div
                         key={index}
-                        className={`rounded-lg p-2 flex flex-col transition-all border min-h-0 ${
+                        className={`rounded-lg p-1.5 flex flex-col transition-all border min-h-0 ${
                           dayInfo.isCurrentMonth
-                            ? `bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.08)] hover:border-[rgba(208,34,67,0.4)] ${hasWishlistedEvent ? "ring-1 ring-[#d02243] bg-[rgba(208,34,67,0.08)]" : ""}`
-                            : "bg-[rgba(255,255,255,0.01)] border-[rgba(255,255,255,0.03)] cursor-default"
+                            ? `bg-card/40 border-border hover:border-primary/40 ${hasWishlistedEvent ? "ring-1 ring-primary bg-primary/10" : ""}`
+                            : "bg-card/10 border-border/30 cursor-default"
                         }`}
                       >
                         {/* Day number */}
@@ -374,7 +322,7 @@ export default function CalendarView() {
                           className={`text-xs font-bold mb-1 flex-shrink-0 ${
                             dayInfo.isCurrentMonth 
                               ? "text-white" 
-                              : "text-[rgba(255,255,255,0.3)]"
+                              : "text-muted-foreground/50"
                           }`}
                         >
                           {dayInfo.day}
@@ -382,15 +330,15 @@ export default function CalendarView() {
 
                         {/* Events for this day - Only show for current month */}
                         {dayInfo.isCurrentMonth && (
-                          <div className="flex-1 flex flex-col gap-0.5 min-w-0 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-[rgba(208,34,67,0.3)] scrollbar-track-transparent">
+                          <div className="flex-1 flex flex-col gap-0.5 min-w-0 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-primary/30 scrollbar-track-transparent">
                             {dayEvents.slice(0, 3).map((event) => (
                               <button
                                 key={event.id}
                                 onClick={() => setSelectedEvent(event)}
-                                className={`text-left group cursor-pointer transition-colors text-xs truncate leading-tight hover:text-[#d02243] flex-shrink-0 ${
+                                className={`text-left group cursor-pointer transition-colors text-xs truncate leading-tight hover:text-primary flex-shrink-0 ${
                                   event.isWishlisted
-                                    ? "text-[#d02243] font-medium"
-                                    : "text-[rgba(255,255,255,0.65)]"
+                                    ? "text-primary font-medium"
+                                    : "text-muted-foreground"
                                 }`}
                                 title={event.title}
                               >
@@ -401,7 +349,7 @@ export default function CalendarView() {
                             {dayEvents.length > 3 && (
                               <button
                                 onClick={() => setSelectedEvent(dayEvents[0])}
-                                className="text-xs text-[rgba(208,34,67,0.8)] hover:text-[#d02243] transition-colors flex-shrink-0"
+                                className="text-xs text-primary/80 hover:text-primary transition-colors flex-shrink-0"
                               >
                                 +{dayEvents.length - 3} more
                               </button>
@@ -421,44 +369,44 @@ export default function CalendarView() {
       {/* Event Detail Modal */}
       {selectedEvent && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
           onClick={() => setSelectedEvent(null)}
         >
           <div
-            className="glass rounded-2xl p-6 md:p-8 max-w-md w-full backdrop-blur-xl border border-[rgba(255,255,255,0.15)] shadow-2xl"
+            className="glass rounded-2xl p-6 md:p-8 max-w-md w-full backdrop-blur-xl border border-border shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-6">
               <h2 className="text-xl md:text-2xl font-bold text-white flex-1">{selectedEvent.title}</h2>
               <button
                 onClick={() => setSelectedEvent(null)}
-                className="p-1 rounded-lg flex items-center justify-center flex-shrink-0 ml-2 hover:bg-[rgba(255,255,255,0.1)] transition-all"
+                className="p-1 rounded-lg flex items-center justify-center flex-shrink-0 ml-2 hover:bg-accent transition-all"
               >
-                <X size={18} className="text-[rgba(255,255,255,0.7)]" />
+                <X size={18} className="text-muted-foreground" />
               </button>
             </div>
 
             <div className="space-y-4 mb-8">
               <div>
-                <p className="text-xs text-[rgba(255,255,255,0.5)] uppercase tracking-wide font-semibold">Society</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Society</p>
                 <p className="text-white font-medium mt-1.5">{selectedEvent.society}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-[rgba(255,255,255,0.5)] uppercase tracking-wide font-semibold">Date</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Date</p>
                   <p className="text-white font-medium mt-1.5">{selectedEvent.date}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[rgba(255,255,255,0.5)] uppercase tracking-wide font-semibold">Time</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Time</p>
                   <p className="text-white font-medium mt-1.5">{selectedEvent.time}</p>
                 </div>
               </div>
               <div>
-                <p className="text-xs text-[rgba(255,255,255,0.5)] uppercase tracking-wide font-semibold">Venue</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">Venue</p>
                 <p className="text-white font-medium mt-1.5">{selectedEvent.venue}</p>
               </div>
               <div>
-                <p className="text-xs text-[rgba(255,255,255,0.5)] uppercase tracking-wide font-semibold">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold">
                   Engagement
                 </p>
                 <div className="flex gap-4 mt-1.5">
@@ -476,7 +424,7 @@ export default function CalendarView() {
             </div>
 
             <Link href={`/events/${selectedEvent.id}`}>
-              <Button className="w-full bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold transition-all">
+              <Button className="w-full glow-button text-white font-semibold transition-all">
                 View Event Details
               </Button>
             </Link>

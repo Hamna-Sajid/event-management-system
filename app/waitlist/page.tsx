@@ -43,7 +43,7 @@ export default function WaitlistThankYou() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="glass rounded-lg p-8">
           <div className="text-white text-lg">Loading...</div>
         </div>
@@ -51,7 +51,7 @@ export default function WaitlistThankYou() {
     )
   }
   return (
-    <div className="min-h-screen bg-[#110205] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         {/* Success Card */}
         <div className="glass rounded-xl p-8 md:p-12 space-y-8 text-center">
@@ -67,10 +67,10 @@ export default function WaitlistThankYou() {
             <h1 className="text-3xl md:text-4xl font-bold text-white">
               Hey {userName}!
             </h1>
-            <p className="text-lg text-[rgba(255,255,255,0.7)]">
+            <p className="text-lg text-muted-foreground">
               You&apos;re on the Waitlist
             </p>
-            <p className="text-sm text-[rgba(255,255,255,0.5)]">
+            <p className="text-sm text-muted-foreground/80">
               Thank you for joining the IBA Event Management System
             </p>
           </div>
@@ -83,36 +83,36 @@ export default function WaitlistThankYou() {
             
             <div className="space-y-4">
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-lg bg-[rgba(208,34,67,0.2)] flex items-center justify-center flex-shrink-0">
-                  <Mail className="text-[#d02243]" size={20} />
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Mail className="text-primary" size={20} />
                 </div>
                 <div>
                   <h3 className="font-medium text-white mb-1">Check Your Email</h3>
-                  <p className="text-sm text-[rgba(255,255,255,0.6)]">
+                  <p className="text-sm text-muted-foreground">
                     We&apos;ve sent a verification email to confirm your account.
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-lg bg-[rgba(208,34,67,0.2)] flex items-center justify-center flex-shrink-0">
-                  <Bell className="text-[#d02243]" size={20} />
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Bell className="text-primary" size={20} />
                 </div>
                 <div>
                   <h3 className="font-medium text-white mb-1">Stay Tuned</h3>
-                  <p className="text-sm text-[rgba(255,255,255,0.6)]">
+                  <p className="text-sm text-muted-foreground">
                     You&apos;ll be notified via email when the platform launches.
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-lg bg-[rgba(208,34,67,0.2)] flex items-center justify-center flex-shrink-0">
-                  <Calendar className="text-[#d02243]" size={20} />
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Calendar className="text-primary" size={20} />
                 </div>
                 <div>
                   <h3 className="font-medium text-white mb-1">Early Access</h3>
-                  <p className="text-sm text-[rgba(255,255,255,0.6)]">
+                  <p className="text-sm text-muted-foreground">
                     As a waitlist member, You&apos;ll get early access to all features.
                   </p>
                 </div>
@@ -121,9 +121,9 @@ export default function WaitlistThankYou() {
           </div>
 
           {/* Coming Soon Badge */}
-          <div className="rounded-lg bg-[rgba(208,34,67,0.1)] border border-[rgba(208,34,67,0.2)] p-4">
-            <p className="text-sm text-[rgba(255,255,255,0.7)]">
-              <span className="font-semibold text-[#d02243]">Coming Soon:</span> Discover events, 
+          <div className="rounded-lg bg-primary/10 border border-primary/20 p-4">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-primary">Coming Soon:</span> Discover events, 
               manage societies, and connect with the IBA community all in one place.
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function WaitlistThankYou() {
               <Button 
                 variant="outline" 
                 size="lg"
-                className="w-full sm:w-auto text-[rgba(255,255,255,0.5)]"
+                className="w-full sm:w-auto text-muted-foreground/80"
               >
                 Back to Home
               </Button>
@@ -148,7 +148,7 @@ export default function WaitlistThankYou() {
             Questions? Contact us at{' '}
             <a 
               href="mailto:support@iems.edu.pk" 
-              className="text-[#d02243] hover:text-[#aa1c37] transition-colors"
+              className="text-primary hover:text-secondary transition-colors"
             >
               support@iems.edu.pk
             </a>

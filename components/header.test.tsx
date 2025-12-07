@@ -109,17 +109,21 @@ describe('Header', () => {
     expect(spans.length).toBeGreaterThan(0)
   })
 
-  it('should render search button', () => {
+  it('should render search input', () => {
     render(<Header />)
     
-    const buttons = screen.getAllByRole('button')
-    // Should have search (disabled), login, and sign up buttons
-    expect(buttons.length).toBeGreaterThanOrEqual(3)
+    // Search container should have "Coming soon" title
+    const searchContainer = screen.getByTitle('Coming soon')
+    expect(searchContainer).toBeInTheDocument()
     
-    // Search button should be disabled
-    const searchButton = buttons.find(btn => btn.hasAttribute('disabled'))
-    expect(searchButton).toBeInTheDocument()
-    expect(searchButton).toHaveAttribute('title', 'Coming soon')
+    // Search is now a disabled input field
+    const searchInput = screen.getByPlaceholderText('Search events...')
+    expect(searchInput).toBeInTheDocument()
+    expect(searchInput).toBeDisabled()
+    
+    // Should have login and sign up buttons (2 total)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons.length).toBe(2)
   })
 
   it('should render login button', () => {
@@ -225,11 +229,10 @@ describe('Header', () => {
     expect(screen.getByTestId('profile-menu')).toBeInTheDocument()
     
     // Login and signup buttons should not be shown
-    const buttons = screen.getAllByRole('button')
-    const loginButton = buttons.find(btn => btn.textContent?.toLowerCase().includes('login'))
-    const signUpButton = buttons.find(btn => btn.textContent?.toLowerCase().includes('sign'))
+    const loginButton = screen.queryByRole('button', { name: /login/i })
+    const signUpButton = screen.queryByRole('button', { name: /sign/i })
     
-    expect(loginButton).toBeUndefined()
-    expect(signUpButton).toBeUndefined()
+    expect(loginButton).not.toBeInTheDocument()
+    expect(signUpButton).not.toBeInTheDocument()
   })
 })

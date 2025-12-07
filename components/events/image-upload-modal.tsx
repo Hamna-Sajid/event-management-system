@@ -170,20 +170,20 @@ export function ImageUploadModal({
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
           isDragging
-            ? 'border-[#d02243] bg-[rgba(208,34,67,0.1)]'
-            : 'border-[rgba(255,255,255,0.2)] bg-[rgba(255,255,255,0.05)]'
+            ? 'border-primary bg-accent/10'
+            : 'border-border bg-card'
         }`}
       >
         {isUploading ? (
           <>
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d02243] mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-white font-semibold">Uploading image...</p>
           </>
         ) : (
           <>
-            <Upload size={48} className="mx-auto mb-4 text-[rgba(255,255,255,0.5)]" />
+            <Upload size={48} className="mx-auto mb-4 text-muted-foreground" />
             <p className="text-white font-semibold mb-2">Drag and drop an image here</p>
-            <p className="text-[rgba(255,255,255,0.6)] text-sm mb-4">or</p>
+            <p className="text-muted-foreground text-sm mb-4">or</p>
             <label className="inline-block">
               <input
                 type="file"
@@ -192,11 +192,11 @@ export function ImageUploadModal({
                 className="hidden"
                 disabled={isUploading}
               />
-              <span className="px-6 py-3 bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold rounded-lg cursor-pointer inline-block">
+              <span className="px-6 py-3 glow-button rounded-lg cursor-pointer inline-block">
                 Browse Files
               </span>
             </label>
-            <p className="text-[rgba(255,255,255,0.5)] text-xs mt-4">
+            <p className="text-muted-foreground text-xs mt-4">
               Maximum file size: {maxSizeKB}KB
             </p>
           </>
@@ -206,7 +206,7 @@ export function ImageUploadModal({
       <Button
         onClick={onClose}
         variant="outline"
-        className="w-full mt-6 border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent"
+        className="w-full mt-6 border-border text-white hover:bg-accent bg-transparent"
         disabled={isUploading}
       >
         Cancel

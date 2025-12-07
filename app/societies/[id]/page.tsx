@@ -11,6 +11,7 @@ import { Society, Member, Event, EventContent } from "@/lib/societies/types"
 import SocietyHeader from "@/components/societies/society-header"
 import SocietyHero from "@/components/societies/society-hero"
 import SocietyTabs from "@/components/societies/society-tabs"
+import LoadingScreen from "@/components/loading-screen"
 
 export default function SocietyPage() {
   const params = useParams()
@@ -173,49 +174,66 @@ export default function SocietyPage() {
 
   const themeStyles = `
     :root {
-      --bg-default: #110205;
-      --bg-secondary-default: #2b070e;
-      --header-bg-default: rgba(17, 2, 5, 0.8);
-      --glass-default: rgba(212, 34, 67, 0.1);
-      --border-default: rgba(212, 34, 67, 0.2);
-      --accent-1-default: #d02243;
-      --accent-2-default: #aa1c37;
+      --bg-default: oklch(0.08 0 0);
+      --bg-secondary-default: oklch(0.15 0.05 328);
+      --header-bg-default: oklch(0.08 0 0 / 0.8);
+      --glass-default: oklch(0.55 0.3 264 / 0.1);
+      --border-default: oklch(0.55 0.3 264 / 0.2);
+      --accent-1-default: oklch(0.55 0.3 264);
+      --accent-2-default: oklch(0.5 0.3 328);
       --text-primary-default: #ffffff;
       --text-secondary-default: #b0b0b0;
+    }
+    body {
+      background-color: var(--bg-default);
     }
   `
 
   if (isLoading) {
-    return <div className="min-h-screen bg-[#110205] flex items-center justify-center text-white">Loading...</div>
+    return <LoadingScreen />
   }
 
   if (error) {
-    return <div className="min-h-screen bg-[#110205] flex items-center justify-center text-red-400 p-8 text-center">{error}</div>
+    return null
   }
 
   return (
-    <div style={{ backgroundColor: "var(--bg-default)" }}>
+    <>
       <style>{themeStyles}</style>
+      
       <SocietyHeader theme="default" />
-      {societyData && (
-        <>
-          <SocietyHero 
-            societyName={societyData.name} 
-            theme="default" 
-            isManagementView={isManagementView}
-            societyId={societyId}
-          />
-          <SocietyTabs
-            theme="default"
-            isManagementView={isManagementView}
-            societyData={societyData}
-            events={events}
-            members={members}
-            handleDeleteEvent={handleDeleteEvent}
-            handleEditEvent={handleEditEvent}
-          />
-        </>
-      )}
-    </div>
+      
+      <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: "var(--bg-default)" }}>
+        {/* Animated Background Blobs */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-[10%] left-[5%] w-96 h-96 bg-gradient-to-r from-electric-blue/30 to-cyan-500/30 rounded-full blur-3xl animate-blob"></div>
+          <div className="absolute top-[60%] right-[10%] w-80 h-80 bg-gradient-to-r from-magenta/30 to-pink-500/30 rounded-full blur-3xl animate-blob animation-delay-3000"></div>
+          <div className="absolute bottom-[15%] left-[15%] w-72 h-72 bg-gradient-to-r from-purple-500/30 to-indigo-500/30 rounded-full blur-3xl animate-blob animation-delay-5000"></div>
+          <div className="absolute top-[30%] right-[25%] w-64 h-64 bg-gradient-to-r from-cyan-500/25 to-electric-blue/25 rounded-full blur-3xl animate-blob animation-delay-7000"></div>
+        </div>
+
+        <div className="relative z-10">
+          {societyData && (
+            <>
+              <SocietyHero 
+                societyName={societyData.name} 
+                theme="default" 
+                isManagementView={isManagementView}
+                societyId={societyId}
+              />
+              <SocietyTabs
+                theme="default"
+                isManagementView={isManagementView}
+                societyData={societyData}
+                events={events}
+                members={members}
+                handleDeleteEvent={handleDeleteEvent}
+                handleEditEvent={handleEditEvent}
+              />
+            </>
+          )}
+        </div>
+      </div>
+    </>
   )
 }

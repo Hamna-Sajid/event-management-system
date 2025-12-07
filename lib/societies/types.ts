@@ -102,6 +102,8 @@ export interface Event {
   description: string;
   /** The current status of the event (e.g., 'Published', 'Draft', 'Completed') */
   status: string;
+  /** The cover image URL for the event */
+  coverImage?: string;
   /** Engagement metrics for the event */
   metrics: {
     /** Number of views */
@@ -138,6 +140,8 @@ export interface EventContent {
   description: string;
   /** The current status of the event (e.g., 'Published', 'Draft', 'Completed') */
   status: string;
+  /** The cover image URL for the event */
+  coverImage?: string;
   /** Engagement metrics for the event */
   metrics: {
     /** Number of views */

@@ -60,48 +60,65 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="min-h-[calc(100vh-80px)] flex items-center justify-center px-6 py-20">
-      <div className="max-w-4xl mx-auto text-center">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Animated background gradient */}
+      <div className="absolute inset-0 bg-gradient-premium">
+        <div className="absolute top-10 left-1/4 w-96 h-96 bg-electric-blue rounded-full blur-3xl opacity-30 animate-blob" />
+        <div
+          className="absolute bottom-10 right-1/4 w-80 h-80 bg-magenta rounded-full blur-3xl opacity-30 animate-blob"
+          style={{ animationDelay: "2s" }}
+        />
+        <div
+          className="absolute top-1/3 right-10 w-96 h-96 bg-purple-500 rounded-full blur-3xl opacity-25 animate-blob"
+          style={{ animationDelay: "4s" }}
+        />
+        <div
+          className="absolute bottom-1/3 left-10 w-[28rem] h-[28rem] bg-electric-blue rounded-full blur-3xl opacity-25 animate-blob"
+          style={{ animationDelay: "6s" }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-6 text-center">
         {/* Badge */}
         <div className="inline-block mb-8 px-4 py-2 glass rounded-full">
-          <span className="text-sm text-[rgba(255,255,255,0.8)]">✨ Coming Soon to IBA</span>
+          <span className="text-sm text-foreground/80">✨ Coming Soon to IBA</span>
         </div>
 
         {/* Main Headline */}
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
           Your Gateway to{" "}
-          <span className="bg-gradient-to-r from-[#d02243] to-[#aa1c37] bg-clip-text text-transparent">IBA Events</span>
+          <span className="bg-gradient-to-r from-electric-blue to-magenta bg-clip-text text-transparent">IBA Events</span>
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg md:text-xl text-[rgba(255,255,255,0.7)] mb-12 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
           Discover events, connect with societies, and manage your campus experience all in one place. 
           Join the waitlist for early access.
         </p>
 
         {/* Hero Card with Glassmorphism */}
-        <div className="glass rounded-2xl p-8 md:p-12 mb-12 max-w-2xl mx-auto glass-hover">
+        <div className="glass glass-hover rounded-2xl p-8 md:p-12 mb-12 max-w-2xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.events}</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Upcoming Events</p>
+              <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-magenta bg-clip-text text-transparent mb-2">{stats.events}</div>
+              <p className="text-sm text-muted-foreground">Upcoming Events</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.societies}</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Active Societies</p>
+              <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-magenta bg-clip-text text-transparent mb-2">{stats.societies}</div>
+              <p className="text-sm text-muted-foreground">Active Societies</p>
             </div>
             <div>
-              <div className="text-3xl font-bold text-[#d02243] mb-2">{stats.users}</div>
-              <p className="text-sm text-[rgba(255,255,255,0.6)]">Users</p>
+              <div className="text-3xl font-bold bg-gradient-to-r from-electric-blue to-magenta bg-clip-text text-transparent mb-2">{stats.users}</div>
+              <p className="text-sm text-muted-foreground">Users</p>
             </div>
           </div>
 
-          <p className="text-[rgba(255,255,255,0.8)] mb-6">
+          <p className="text-foreground/80 mb-6">
             Be among the first to experience a unified platform for discovering and managing all IBA events.
           </p>
 
           <Link href="/signup">
-            <Button className="w-full bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold py-6 text-lg">
+            <Button className="w-full glow-button py-6 text-lg">
               Join Waitlist
               <ArrowRight size={20} className="ml-2" />
             </Button>
@@ -113,7 +130,7 @@ export default function Hero() {
           <Link href="/signin">
             <Button
               variant="outline"
-              className="border-[rgba(255,255,255,0.2)] text-white hover:bg-[rgba(255,255,255,0.1)] bg-transparent w-full sm:w-auto"
+              className="border-border text-foreground hover:bg-magenta w-full sm:w-auto "
             >
               Already have an account?
             </Button>

@@ -108,11 +108,11 @@ export function EventHeader({
   currentUser 
 }: EventHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-md bg-[rgba(17,2,5,0.8)] border-b border-[rgba(255,255,255,0.1)]">
+    <header className="sticky top-0 z-40 backdrop-blur-md bg-background/80 border-b border-border">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link
           href="/"
-          className="flex items-center gap-2 text-[rgba(255,255,255,0.7)] hover:text-white transition-colors"
+          className="flex items-center gap-2 text-muted-foreground hover:text-white transition-colors"
         >
           <ArrowLeft size={20} />
           <span className="hidden sm:inline">Back</span>
@@ -125,7 +125,7 @@ export function EventHeader({
           >
             <Heart
               size={20}
-              className={isFavorited ? "fill-[#d02243] text-[#d02243]" : "text-[rgba(255,255,255,0.7)]"}
+              className={isFavorited ? "fill-primary text-primary" : "text-muted-foreground"}
             />
           </button>
           
@@ -133,7 +133,7 @@ export function EventHeader({
             onClick={onShare}
             className="p-2 rounded-lg glass glass-hover flex items-center justify-center cursor-pointer"
           >
-            <Share2 size={20} className="text-[rgba(255,255,255,0.7)]" />
+            <Share2 size={20} className="text-muted-foreground" />
           </button>
           
           {currentUser ? (
@@ -142,14 +142,14 @@ export function EventHeader({
             <>
               <Button
                 variant="ghost"
-                className="text-[rgba(255,255,255,0.8)] hover:text-white hover:bg-[rgba(255,255,255,0.1)]"
+                className="text-muted-foreground hover:text-white hover:bg-accent"
                 onClick={() => window.location.href = '/signin'}
               >
                 <LogIn size={18} className="mr-2" />
                 <span className="hidden sm:inline">Login</span>
               </Button>
               <Button 
-                className="bg-[#d02243] hover:bg-[#aa1c37] text-white font-semibold"
+                className="glow-button"
                 onClick={() => window.location.href = '/signup'}
               >
                 <UserPlus size={18} className="mr-2" />

@@ -7,6 +7,7 @@ import { firestore, auth } from "@/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { ProfileMenu } from "@/components/profile-menu"
 
 export default function UserProfilePage() {
   const params = useParams()
@@ -56,18 +57,18 @@ export default function UserProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
-        <div className="text-white text-xl">Loading profile data...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-foreground text-xl">Loading profile data...</div>
       </div>
     )
   }
 
   if (error || !userData) {
     return (
-      <div className="min-h-screen bg-[#110205] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-white text-2xl mb-4">Error: {error || "User not found"}</h1>
-          <Link href="/" className="text-[#d02243] hover:text-[#aa1c37]">
+          <h1 className="text-foreground text-2xl mb-4">Error: {error || "User not found"}</h1>
+          <Link href="/" className="text-primary hover:text-secondary">
             Return to Home
           </Link>
         </div>
@@ -76,18 +77,19 @@ export default function UserProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#110205]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur-md bg-[rgba(17,2,5,0.8)] border-b border-[rgba(255,255,255,0.1)]">
+      <header className="sticky top-0 z-40 backdrop-blur-md bg-background/95 border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-[rgba(255,255,255,0.7)] hover:text-white transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-white transition-colors"
           >
             <ArrowLeft size={20} />
             <span>Back</span>
           </Link>
           <h1 className="text-white text-xl font-semibold">User Profile</h1>
+          <ProfileMenu />
         </div>
       </header>
 
@@ -95,24 +97,24 @@ export default function UserProfilePage() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="glass rounded-2xl p-8">
           <h2 className="text-3xl font-bold text-white mb-6">
-            {(userData.name as string) || "User Profile"}
+            {(userData.fullName as string) || "User Profile"}
           </h2>
           
           <div className="mb-6">
-            <p className="text-[rgba(255,255,255,0.6)] mb-4">
+            <p className="text-muted-foreground mb-4">
               This page is under development. Below is the raw user data:
             </p>
           </div>
 
           {/* JSON Dump */}
-          <div className="bg-[rgba(0,0,0,0.3)] rounded-lg p-6 overflow-auto">
-            <pre className="text-[rgba(255,255,255,0.8)] text-sm font-mono whitespace-pre-wrap">
+          <div className="bg-card rounded-lg p-6 overflow-auto border border-border">
+            <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
               {JSON.stringify(userData, null, 2)}
             </pre>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-[rgba(255,255,255,0.1)]">
-            <p className="text-[rgba(255,255,255,0.6)] text-sm">
+          <div className="mt-6 pt-6 border-t border-border">
+            <p className="text-muted-foreground text-sm">
               <strong className="text-white">Note:</strong> The full user profile page will be implemented by the development team. 
               This temporary view shows the raw data structure.
             </p>

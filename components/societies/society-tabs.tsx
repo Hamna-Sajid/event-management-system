@@ -42,6 +42,7 @@
 
 import { useState, useEffect } from "react"
 import { MapPin, Calendar, Share2, Mail, Edit2, Eye, Trash2, Plus, Search, Facebook, Linkedin } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
@@ -113,11 +114,11 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
   const [activeTab, setActiveTab] = useState(isManagementView ? "Manage Events" : "Overview")
 
   return (
-    <div style={{ backgroundColor: `var(--bg-${theme})`, minHeight: "100vh" }}>
+    <div style={{ minHeight: "100vh" }}>
       <div
         className="border-b sticky top-16 z-40 backdrop-blur-md"
         style={{
-          backgroundColor: `var(--header-bg-${theme})`,
+          backgroundColor: 'transparent',
           borderColor: `var(--border-${theme})`,
         }}
       >
@@ -126,7 +127,7 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className="py-4 px-2 font-semibold border-b-2 transition-all"
+              className="py-4 px-2 font-semibold border-b-2 transition-all cursor-pointer"
               style={{
                 color: activeTab === tab ? `var(--accent-1-${theme})` : `var(--text-secondary-${theme})`,
                 borderColor: activeTab === tab ? `var(--accent-1-${theme})` : "transparent",
@@ -138,7 +139,7 @@ export default function SocietyTabs({ theme, isManagementView = false, societyDa
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12" style={{ backgroundColor: `var(--bg-${theme})` }}>
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {activeTab === "Overview" && <OverviewTab theme={theme} societyData={societyData} events={events} members={members} />}
         {activeTab === "Manage Events" && <ManageEventsTab theme={theme} initialEvents={events} handleDeleteEvent={handleDeleteEvent} handleEditEvent={handleEditEvent} />}
         {activeTab === "Members" && <MembersTab theme={theme} members={members} />}
@@ -335,7 +336,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: `1px solid var(--border-${theme})`, backgroundColor: `rgba(212, 34, 67, 0.05)` }}>
+                <tr style={{ borderBottom: `1px solid var(--border-${theme})`, backgroundColor: `hsl(var(--primary) / 0.05)` }}>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Event Title</th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Date & Time</th>
                   <th className="px-6 py-4 text-left font-semibold" style={{ color: `var(--text-primary-${theme})` }}>Status</th>
@@ -345,7 +346,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
               </thead>
               <tbody>
                 {filteredEvents.map((event, idx) => (
-                  <tr key={event.id} style={{ borderBottom: `1px solid var(--border-${theme})`, backgroundColor: idx % 2 === 0 ? "transparent" : `rgba(212, 34, 67, 0.02)` }}>
+                  <tr key={event.id} style={{ borderBottom: `1px solid var(--border-${theme})`, backgroundColor: idx % 2 === 0 ? "transparent" : `hsl(var(--primary) / 0.02)` }}>
                     <td className="px-6 py-4" style={{ verticalAlign: "middle", color: `var(--text-primary-${theme})` }}><div className="font-semibold">{event.title}</div></td>
                     <td className="px-6 py-4" style={{ verticalAlign: "middle", color: `var(--text-secondary-${theme})` }}>
                       <div className="flex items-center gap-2 flex-nowrap">
@@ -367,7 +368,7 @@ function ManageEventsTab({ theme, initialEvents, handleDeleteEvent, handleEditEv
                         <Link href={`/events/${event.id}`}>
                           <button className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `var(--glass-${theme})`, color: `var(--accent-1-${theme})`, border: `1px solid var(--border-${theme})` }} title="View Event"><Eye size={16} /></button>
                         </Link>
-                        <button onClick={() => handleDeleteEvent(event.id)} className="p-2 rounded-lg transition-all hover:opacity-80" style={{ backgroundColor: `rgba(239, 68, 68, 0.1)`, color: "#ef4444", border: `1px solid rgba(239, 68, 68, 0.3)` }} title="Delete Event"><Trash2 size={16} /></button>
+                        <button onClick={() => handleDeleteEvent(event.id)} className="p-2 rounded-lg transition-all hover:opacity-80 bg-destructive/10 text-destructive border border-destructive/30 hover:bg-destructive/20" title="Delete Event"><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>
@@ -437,17 +438,44 @@ function OverviewTab({ theme, societyData, events, members }: { theme: string, s
 
       <div>
         <h2 className="text-3xl font-bold mb-6" style={{ color: `var(--text-primary-${theme})` }}>Upcoming Events</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {events.slice(0, 3).map((event) => (
             <Link href={`/events/${event.id}`} key={event.id}>
-              <div className="p-6 rounded-2xl h-full" style={{ backgroundColor: `var(--glass-${theme})`, backdropFilter: "blur(10px)", border: `1px solid var(--border-${theme})`, color: `var(--text-primary-${theme})` }}>
-                <h3 className="text-xl font-bold mb-3" style={{ color: `var(--accent-1-${theme})` }}>{event.title}</h3>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><Calendar size={16} />{new Date(event.date).toLocaleDateString()}</div>
-                  <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}><MapPin size={16} />{event.location || 'TBD'}</div>
+              <div className="glass rounded-lg overflow-hidden hover:bg-accent transition-all cursor-pointer group h-full">
+                {/* Event Cover Image */}
+                {event.coverImage && event.coverImage !== "/placeholder.png" ? (
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={event.coverImage}
+                      alt={event.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-48 bg-card flex items-center justify-center">
+                    <Calendar size={32} style={{ color: `var(--text-secondary-${theme})` }} />
+                  </div>
+                )}
+                
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors" style={{ color: `var(--text-primary-${theme})` }}>
+                    {event.title}
+                  </h3>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}>
+                      <Calendar size={16} />
+                      {new Date(event.date).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center gap-2" style={{ color: `var(--text-secondary-${theme})` }}>
+                      <MapPin size={16} />
+                      {event.location || 'TBD'}
+                    </div>
+                  </div>
+                  <p style={{ color: `var(--text-secondary-${theme})` }} className="leading-relaxed line-clamp-2 mb-4">
+                    {event.description}
+                  </p>
                 </div>
-                <p style={{ color: `var(--text-secondary-${theme})` }} className="mb-4 leading-relaxed line-clamp-2">{event.description}</p>
-                <Button className="w-full font-semibold" style={{ backgroundColor: `var(--accent-1-${theme})`, color: "white" }}>View Event</Button>
               </div>
             </Link>
           ))}

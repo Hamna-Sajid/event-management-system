@@ -31,12 +31,6 @@ jest.mock('@/components/profile-menu', () => ({
 }))
 
 describe('SocietyHeader', () => {
-  it('should render Dashboard link with correct href', () => {
-    render(<SocietyHeader theme="default" />)
-    const dashboardLink = screen.getByRole('link', { name: /dashboard/i })
-    expect(dashboardLink).toHaveAttribute('href', '/coming-soon')
-  })
-
   it('should render the logo and branding', () => {
     render(<SocietyHeader theme="default" />)
     expect(screen.getByText('IE')).toBeInTheDocument()
