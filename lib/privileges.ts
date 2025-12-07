@@ -210,16 +210,16 @@ export async function canManageSociety(userId: string): Promise<boolean> {
 /**
  * @function getPrivilegeName
  * Converts a numeric privilege level to its human-readable name.
- * 
+ *
  * @param privilege - The numeric privilege level (0, 1, or 2)
  * @returns The name of the privilege level as a string
- * 
+ *
  * @example
  * ```tsx
  * const roleName = getPrivilegeName(user.privilege);
  * // Returns: "Normal User", "Society Head", or "Admin"
  * ```
- * 
+ *
  * @category Privileges
  */
 export function getPrivilegeName(privilege: number): string {
@@ -233,4 +233,50 @@ export function getPrivilegeName(privilege: number): string {
     default:
       return 'Unknown'
   }
+}
+
+/**
+ * @function canCreateEvents
+ * Checks if a user can create events for a specific society.
+ *
+ * @param userId - The user's unique identifier
+ * @param societyId - The society's unique identifier
+ * @returns Promise resolving to true if the user is authorized to create events for that society
+ *
+ * @remarks
+ * This function checks:
+ * 1. If the user is an admin (can create events for any society)
+ * 2. If the user is a society head AND belongs to the specified society
+ *
+ * @example
+ * ```ts
+ * if (await canCreateEvents(userId, societyId)) {
+ *   // Allow event creation
+ * }
+ * ```
+ *
+ * @category Privileges
+ */
+export async function canCreateEvents(userId: string, societyId: string): Promise<boolean> {
+  const privilege = await getUserPrivilege(userId);
+
+  // Admins can create events for any society
+  if (privilege >= UserPrivilege.ADMIN) {
+    return true;
+  }
+
+  // Society heads can create events for their own society
+  if (privilege === UserPrivilege.SOCIETY_HEAD) {
+    try {
+      const userDoc = await getDoc(doc(firestore, 'users', userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        return userData.societyId === societyId;
+      }
+    } catch (error) {
+      console.error('Error checking user society:', error);
+    }
+  }
+
+  return false;
 }
