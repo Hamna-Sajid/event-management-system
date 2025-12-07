@@ -1,3 +1,23 @@
+/**
+ * @testSuite EditEventModal
+ * 
+ * Test suite for EditEventModal component
+ * 
+ * @remarks
+ * Tests for the event editing modal dialog:
+ * - Form rendering with initial event data
+ * - Input field updates and changes
+ * - Form submission with updated data
+ * - Modal visibility and close behavior
+ * - Status dropdown selection
+ * 
+ * @testCoverage
+ * - **Rendering Tests**: Initial values displayed correctly
+ * - **Input Tests**: Title, date, time, location, description changes
+ * - **Status Tests**: Dropdown selection updates
+ * - **Submission Tests**: Form data passed to onSubmit handler
+ */
+
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'

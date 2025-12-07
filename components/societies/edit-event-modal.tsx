@@ -1,25 +1,50 @@
+/**
+ * @component EditEventModal
+ * 
+ * Modal dialog for editing existing event details
+ * 
+ * @remarks
+ * This component provides a form for editing event information:
+ * - Event title, date, time, location
+ * - Event description
+ * - Event status (Upcoming, Ongoing, Completed)
+ * - Metrics preserved during edit (views, likes, wishlists, shares)
+ * 
+ * Features:
+ * - Themed styling based on society theme
+ * - Form validation and submission
+ * - Modal overlay with backdrop
+ * - Cancel and save actions
+ * - Auto-populates with current event data
+ * 
+ * @example
+ * Basic usage:
+ * ```tsx
+ * const [isModalOpen, setIsModalOpen] = useState(false)
+ * const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+ * 
+ * const handleEditSubmit = (updatedEvent: Event) => {
+ *   // Update event in database
+ *   updateEvent(updatedEvent)
+ *   setIsModalOpen(false)
+ * }
+ * 
+ * <EditEventModal
+ *   isOpen={isModalOpen}
+ *   onClose={() => setIsModalOpen(false)}
+ *   onSubmit={handleEditSubmit}
+ *   event={selectedEvent}
+ *   theme="blue"
+ * />
+ * ```
+ */
+
 "use client"
 
 import { useState, useEffect } from 'react'
-import { Button } from './ui/button'
-import { Select } from './ui/select'
-
-// Event interfaces for type safety
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  description: string;
-  status: string;
-  metrics: {
-    views: number;
-    likes: number;
-    wishlists: number;
-    shares: number;
-  };
-}
+import { Button } from '../ui/button'
+import { Select } from '../ui/select'
+import { Event } from '@/lib/societies/types'
 
 interface EditEventModalProps {
   isOpen: boolean

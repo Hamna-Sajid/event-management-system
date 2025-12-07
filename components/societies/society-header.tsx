@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useState } from "react"
 import { getAuth, signOut } from "firebase/auth"
-import { app } from "../firebase"
+import { app } from "../../firebase"
 import { useRouter } from "next/navigation"
 
 /**

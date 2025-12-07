@@ -1,3 +1,44 @@
+/**
+ * @component SocietyHero
+ * 
+ * Hero section for society pages with themed styling and management controls
+ * 
+ * @remarks
+ * This component displays the society's hero section with:
+ * - Animated gradient background based on society theme
+ * - Society name with dynamic text styling
+ * - Action buttons (Follow, Share, Settings)
+ * - Management view toggle for society heads
+ * - Responsive layout with glassmorphism effects
+ * 
+ * Features:
+ * - Theme-aware styling with custom CSS variables
+ * - Hover and active states for interactive elements
+ * - ThemedButton sub-component for consistent button styling
+ * - Conditional rendering based on management permissions
+ * 
+ * @example
+ * Basic usage:
+ * ```tsx
+ * <SocietyHero
+ *   societyName="Computing Society"
+ *   theme="blue"
+ *   societyId="computing-soc-001"
+ * />
+ * ```
+ * 
+ * @example
+ * Management view:
+ * ```tsx
+ * <SocietyHero
+ *   societyName="Arts Society"
+ *   theme="purple"
+ *   societyId="arts-soc-001"
+ *   isManagementView={true}
+ * />
+ * ```
+ */
+
 "use client"
 
 import { useState } from "react"

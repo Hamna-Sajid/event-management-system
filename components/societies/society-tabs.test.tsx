@@ -1,3 +1,28 @@
+/**
+ * @testSuite SocietyTabs
+ * 
+ * Test suite for SocietyTabs component
+ * 
+ * @remarks
+ * Tests for the society tabbed interface:
+ * - Tab navigation (About, Events, Team)
+ * - About tab: Society info, heads, social links
+ * - Events tab: Event list, search, filter, management
+ * - Team tab: Team members display
+ * - Management permissions and controls
+ * 
+ * @testCoverage
+ * - **Tab Navigation**: Switching between About/Events/Team tabs
+ * - **About Tab**: Description, heads info, social links
+ * - **Events Tab**: Event grid, search functionality, filters
+ * - **Management Features**: Create/edit/delete events (authorized users)
+ * 
+ * @edgeCases
+ * - Empty event lists
+ * - Management view vs public view
+ * - Search with no results
+ */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

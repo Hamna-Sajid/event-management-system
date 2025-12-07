@@ -1,3 +1,43 @@
+/**
+ * @component SocietyTabs
+ * 
+ * Tabbed interface for displaying society information, events, and team members
+ * 
+ * @remarks
+ * This component provides a comprehensive tabbed interface for society pages:
+ * - **About Tab**: Society description, head information, social media links
+ * - **Events Tab**: Grid of society events with filtering and search
+ * - **Team Tab**: Display of society team members and roles
+ * 
+ * Features:
+ * - Three-tab navigation (About, Events, Team)
+ * - Event management (create, edit, delete) for authorized users
+ * - Search and filter functionality for events
+ * - Social media integration (Facebook, LinkedIn)
+ * - Responsive grid layouts
+ * - EditEventModal integration for event modifications
+ * 
+ * @example
+ * Basic usage:
+ * ```tsx
+ * <SocietyTabs
+ *   societyId="computing-soc-001"
+ *   isManagementView={false}
+ *   theme="blue"
+ * />
+ * ```
+ * 
+ * @example
+ * Management view:
+ * ```tsx
+ * <SocietyTabs
+ *   societyId="arts-soc-001"
+ *   isManagementView={true}
+ *   theme="purple"
+ * />
+ * ```
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -6,90 +46,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Select } from "@/components/ui/select"
 import EditEventModal from "./edit-event-modal"
-
-/**
- * @interface Society
- * Represents the structure of a society document in Firestore.
- */
-interface Society {
-  /** The name of the society. */
-  name: string;
-  /** The date the society was created. */
-  dateCreated: string;
-  /**
-   * A map of head roles (CEO, CFO, COO) to user UIDs.
-   * Can be null if the position is vacant.
-   */
-  heads: {
-    CEO: string | null;
-    CFO: string | null;
-    COO: string | null;
-  };
-  /** The maximum number of heads the society can have. */
-  maxHeads: number;
-  /** A brief description of the society. */
-  description: string;
-  /** The official contact email for the society. */
-  contactEmail: string;
-  /** A map of social media profile links. */
-  socialLinks: {
-    facebook: string;
-    instagram: string;
-    linkedin: string;
-  };
-  /** An array of event IDs associated with the society. */
-  events: string[];
-  /** The UID of the user who created the society. */
-  createdBy: string;
-}
-
-/**
- * @interface Member
- * Represents a member of a society, typically a head.
- */
-interface Member {
-  /** The user's unique ID. */
-  id: string;
-  /** The full name of the member. */
-  name: string;
-  /** The role of the member within the society. */
-  role: string;
-  /** The email address of the member. */
-  email: string;
-}
-
-
-/**
- * @interface Event
- * Represents the structure of an event, including its content and metadata.
- */
-interface Event {
-  /** The unique identifier for the event. */
-  id: string;
-  /** The title of the event. */
-  title: string;
-  /** The date of the event. */
-  date: string;
-  /** The time of the event. */
-  time: string;
-  /** The location of the event. */
-  location: string;
-  /** A detailed description of the event. */
-  description: string;
-  /** The current status of the event (e.g., 'published', 'draft'). */
-  status: string;
-  /** Engagement metrics for the event. */
-  metrics: {
-    /** Number of views. */
-    views: number;
-    /** Number of likes. */
-    likes: number;
-    /** Number of times added to wishlist. */
-    wishlists: number;
-    /** Number of shares. */
-    shares: number;
-  };
-}
+import { Society, Member, Event } from "@/lib/societies/types"
 
 /**
  * Props for the {@link SocietyTabs} component.

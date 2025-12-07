@@ -1,3 +1,26 @@
+/**
+ * @testSuite SocietyHeader
+ * 
+ * Test suite for SocietyHeader component
+ * 
+ * @remarks
+ * Tests for the society page header navigation:
+ * - Header rendering with society name
+ * - Navigation links functionality
+ * - Authentication state handling
+ * - Sign out functionality
+ * - Router integration
+ * 
+ * @testCoverage
+ * - **Rendering Tests**: Society name display, navigation links
+ * - **Auth Tests**: Sign out button, logout flow
+ * - **Navigation Tests**: Router push calls, link clicks
+ * 
+ * @edgeCases
+ * - Handles Firebase auth errors gracefully
+ * - Router push failures
+ */
+
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SocietyHeader from './society-header'
@@ -17,7 +40,7 @@ jest.mock('firebase/auth', () => ({
 }))
 
 // Mock app from firebase
-jest.mock('../firebase', () => ({
+jest.mock('../../firebase', () => ({
     app: {},
 }))
 

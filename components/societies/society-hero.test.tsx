@@ -1,3 +1,26 @@
+/**
+ * @testSuite SocietyHero
+ * 
+ * Test suite for SocietyHero component
+ * 
+ * @remarks
+ * Tests for the society hero section:
+ * - Hero rendering with society information
+ * - Theme-based styling and visual elements
+ * - Action buttons (Follow, Share, Settings)
+ * - Management view conditional rendering
+ * - Responsive behavior
+ * 
+ * @testCoverage
+ * - **Rendering Tests**: Society name, theme application, buttons
+ * - **Management View**: Settings button visibility for authorized users
+ * - **Interaction Tests**: Button clicks, navigation
+ * 
+ * @edgeCases
+ * - Management view vs public view rendering
+ * - Different theme applications
+ */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

@@ -4,9 +4,9 @@ import SocietyPage from './page'
 import '@testing-library/jest-dom'
 import { getDoc, getDocs, deleteDoc, updateDoc, arrayRemove, doc } from 'firebase/firestore'
 import { useParams, useRouter } from 'next/navigation'
-import SocietyHero from '@/components/society-hero'
+import SocietyHero from '@/components/societies/society-hero'
 import { getUserPrivilege } from '@/lib/privileges'
-import SocietyTabs from '@/components/society-tabs'
+import SocietyTabs from '@/components/societies/society-tabs'
 
 // Mock Firebase module
 jest.mock('../../../firebase', () => ({
@@ -56,13 +56,13 @@ jest.mock('next/navigation', () => ({
 }))
 
 // Mock components
-jest.mock('@/components/society-header', () => {
+jest.mock('@/components/societies/society-header', () => {
     const Mock = () => <div data-testid="society-header" />
     Mock.displayName = 'SocietyHeader'
     return Mock
 })
-jest.mock('@/components/society-hero')
-jest.mock('@/components/society-tabs')
+jest.mock('@/components/societies/society-hero')
+jest.mock('@/components/societies/society-tabs')
 
 
 const mockUseParams = useParams as jest.Mock
@@ -158,28 +158,34 @@ describe('SocietyPage', () => {
   })
 
   it('should show loading state initially', () => {
-    mockGetDoc.mockResolvedValue({ exists: () => false })
+    mockGetDoc.mockImplementation(() => new Promise(() => {})) // Never resolves to keep loading
     render(<SocietyPage />)
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 
   it('should show error if no society ID is provided', async () => {
     mockUseParams.mockReturnValue({ id: undefined })
-    render(<SocietyPage />)
+    await act(async () => {
+      render(<SocietyPage />)
+    })
     expect(await screen.findByText('No society ID provided.')).toBeInTheDocument()
   })
   
   it('should show error if society is not found', async () => {
     mockGetDoc.mockResolvedValue({ exists: () => false });
-    render(<SocietyPage />)
+    await act(async () => {
+      render(<SocietyPage />)
+    })
     expect(await screen.findByText('Society not found.')).toBeInTheDocument()
   })
 
   it('should render the page with society data for an admin', async () => {
     ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Admin
-    render(<SocietyPage />)
+    await act(async () => {
+      render(<SocietyPage />)
+    })
 
-    act(() => {
+    await act(async () => {
       if (onAuthStateChangedCallback) {
         onAuthStateChangedCallback({ uid: 'admin-uid' });
       }
@@ -191,10 +197,12 @@ describe('SocietyPage', () => {
   })
 
   describe('Event Handlers', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Assume admin for these tests
-        render(<SocietyPage />)
-        act(() => {
+        await act(async () => {
+          render(<SocietyPage />)
+        })
+        await act(async () => {
             if (onAuthStateChangedCallback) {
               onAuthStateChangedCallback({ uid: 'admin-uid' });
             }
@@ -243,11 +251,14 @@ describe('SocietyPage', () => {
   describe('Management View and Redirects', () => {
     it('should pass isManagementView=true when user is a society head', async () => {
         ;(getUserPrivilege as jest.Mock).mockResolvedValue(1) // Society Head
-        render(<SocietyPage />);
+        
+        await act(async () => {
+          render(<SocietyPage />);
+        });
     
         await screen.findByTestId('society-hero');
     
-        act(() => {
+        await act(async () => {
           if (onAuthStateChangedCallback) {
             onAuthStateChangedCallback({ uid: 'head-uid' });
           }
@@ -265,11 +276,14 @@ describe('SocietyPage', () => {
     
       it('should pass isManagementView=true when user is an admin', async () => {
         ;(getUserPrivilege as jest.Mock).mockResolvedValue(2) // Admin
-        render(<SocietyPage />);
+        
+        await act(async () => {
+          render(<SocietyPage />);
+        });
     
         await screen.findByTestId('society-hero');
     
-        act(() => {
+        await act(async () => {
           if (onAuthStateChangedCallback) {
             onAuthStateChangedCallback({ uid: 'admin-uid' });
           }
