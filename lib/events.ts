@@ -1,4 +1,4 @@
-import { doc, setDoc, getFirestore, getDoc } from "firebase/firestore";
+import { doc, setDoc, getFirestore, getDoc, updateDoc, arrayUnion, deleteDoc, arrayRemove } from "firebase/firestore";
 import { app } from "../firebase";
 
 const firestore = getFirestore(app);
@@ -71,7 +71,6 @@ export async function createEvent(eventData: {
         mapLink: ""
       },
       registrationLink: eventData.registrationLink || "",
-      registrationDeadline: eventData.registrationDeadline,
       hasSubEvents: false, // Will be updated if sub-events are added
       subEventIds: [], // Will be populated if sub-events are added
       status: eventData.status,
@@ -90,8 +89,29 @@ export async function createEvent(eventData: {
       createdBy: eventData.createdBy
     };
 
+    if (eventData.registrationDeadline !== undefined) {
+      eventDoc.registrationDeadline = eventData.registrationDeadline;
+    }
+
     // Save to Firestore
     await setDoc(doc(firestore, "events", eventId), eventDoc);
+
+    // Update the society's events array to include this new event ID
+    try {
+      await updateDoc(doc(firestore, "societies", eventData.societyId), {
+        events: arrayUnion(eventId),
+        updatedAt: new Date()
+      });
+    } catch (societyError) {
+      // If updating the society fails, delete the event we just created to maintain data consistency
+      try {
+        await deleteDoc(doc(firestore, "events", eventId));
+      } catch (rollbackError) {
+        console.error("Error rolling back event creation after society update failed:", rollbackError);
+      }
+      console.error("Error updating society with new event:", societyError);
+      throw societyError;
+    }
 
     return eventId;
   } catch (error) {
@@ -158,6 +178,24 @@ export async function createSubEvent(subEventData: {
     // Save to Firestore
     await setDoc(doc(firestore, "subEvents", subEventId), subEventDoc);
 
+    // Update the parent event's subEventIds array to include this new sub-event ID
+    try {
+      await updateDoc(doc(firestore, "events", subEventData.parentEventId), {
+        subEventIds: arrayUnion(subEventId),
+        hasSubEvents: true,
+        updatedAt: new Date()
+      });
+    } catch (eventError) {
+      // If updating the parent event fails, delete the sub-event we just created to maintain data consistency
+      try {
+        await deleteDoc(doc(firestore, "subEvents", subEventId));
+      } catch (rollbackError) {
+        console.error("Error rolling back sub-event creation after parent event update failed:", rollbackError);
+      }
+      console.error("Error updating parent event with new sub-event:", eventError);
+      throw eventError;
+    }
+
     return subEventId;
   } catch (error) {
     console.error("Error creating sub-event:", error);
@@ -178,4 +216,21 @@ function generateSearchKeywords(title: string, description: string, tags: string
   const words = text.split(/\s+/).filter(word => word.length > 2);
   const uniqueWords = Array.from(new Set(words));
   return uniqueWords;
+}
+
+/**
+ * Removes an event ID from a society's events array
+ * @param eventId - The ID of the event to remove
+ * @param societyId - The ID of the society to update
+ */
+export async function removeEventFromSociety(eventId: string, societyId: string): Promise<void> {
+  try {
+    await updateDoc(doc(firestore, "societies", societyId), {
+      events: arrayRemove(eventId),
+      updatedAt: new Date()
+    });
+  } catch (error) {
+    console.error("Error removing event from society:", error);
+    throw error;
+  }
 }
