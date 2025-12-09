@@ -89,9 +89,7 @@ export async function createEvent(eventData: {
       createdBy: eventData.createdBy
     };
 
-    if (eventData.registrationDeadline !== undefined) {
-      eventDoc.registrationDeadline = eventData.registrationDeadline;
-    }
+    
 
     // Save to Firestore
     await setDoc(doc(firestore, "events", eventId), eventDoc);

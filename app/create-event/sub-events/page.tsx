@@ -11,7 +11,7 @@ const styles = {
     minHeight: "100vh",
     width: "100vw",
     background: "radial-gradient(circle at 50% 0, #123075 70%, #2d0353 100%)",
-    boxSizing: "border-box"
+    boxSizing: "border-box" as const
   },
   card: {
     maxWidth: 550,
@@ -59,12 +59,12 @@ const styles = {
     borderRadius: 11,
     padding: "23px 18px 17px 18px",
     marginBottom: 17,
-    position: "relative",
+    position: "relative" as const,
     boxShadow: "0 2px 16px #3119592b"
   },
   subEventTitle: { fontWeight: 700, fontSize: "1.1em", marginBottom: 7, color: "#2146a0" },
   deleteBtn: {
-    position: "absolute",
+    position: "absolute" as const,
     top: 19,
     right: 15,
     background: "none",
@@ -84,7 +84,7 @@ const styles = {
   dashed: {
     border: "2px dashed #7049f7",
     borderRadius: 8,
-    textAlign: "center",
+    textAlign: "center" as const,
     margin: "13px 6px 2px 6px",
     padding: "16px 8px",
     cursor: "pointer",
