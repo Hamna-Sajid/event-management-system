@@ -162,7 +162,8 @@ export default function SubEventsPage() {
           if (userData.societyId) {
             const societySnap = await getDoc(doc(firestore, "societies", userData.societyId));
             const societyData = societySnap.exists() ? societySnap.data() : {};
-            setSocietyName((societyData.name || userData.societyId).toLowerCase());
+            // Replace spaces with hyphens and convert to lowercase for URL-friendly format
+            setSocietyName((societyData.name || userData.societyId).toLowerCase().replace(/\s+/g, '-'));
           }
         } catch (err) {
           console.error("Error loading user/society data:", err);
